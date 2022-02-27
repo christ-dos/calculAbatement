@@ -32,7 +32,7 @@ VALUES ('Romy','Riboulet',12/01/2020, 01/02/2022,'christine@mail.fr');
 
 
 CREATE TABLE mensuelle (
-                          id TINYINT  AUTO_INCREMENT NOT NULL,
+                          mensuelle_id TINYINT  AUTO_INCREMENT NOT NULL,
                           mois VARCHAR(10) NOT NULL,
                           annee VARCHAR(4) NOT NULL,
                           salaire_imposable DECIMAL(8,2),
@@ -41,7 +41,7 @@ CREATE TABLE mensuelle (
                           jour_travaille TINYINT,
                           heure_travaille DECIMAL(4,2),
                           enfant_id TINYINT NOT NULL,
-                          PRIMARY KEY (id)
+                          PRIMARY KEY (mensuelle_id)
 )
 ENGINE = innoDB;
 
