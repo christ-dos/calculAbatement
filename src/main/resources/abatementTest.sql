@@ -12,6 +12,7 @@ CREATE TABLE utilisateur (
                              PRIMARY KEY (email)
 )
 ENGINE = innoDB;
+
 INSERT INTO utilisateur(email,password, nom, prenom)
 VALUES ('christine@mail.fr', 'pass', 'Duarte', 'Christine');
 
