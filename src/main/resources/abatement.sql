@@ -4,41 +4,53 @@ CREATE DATABASE abatement;
 
 USE abatement;
 
-CREATE TABLE enfant
-(
-    id TINYINT AUTO_INCREMENT
-    PRIMARY KEY ,
-    prenom VARCHAR(100)    NOT NULL,
-    nom VARCHAR(100)    NOT NULL,
-    date_naissance VARCHAR(15)    NOT NULL,
-    date_contrat VARCHAR(15)
-)
-ENGINE = innoDB;
-
-INSERT INTO enfant(prenom, nom, date_naissance, date_contrat)
-VALUES ('Romy','Riboulet','12/01/2020','02/05/2020');
-
-CREATE TABLE mensuelle
-(
-    id TINYINT AUTO_INCREMENT NOT NULL
-    PRIMARY KEY ,
-    mois VARCHAR(15)    NOT NULL ,
-    annee VARCHAR(4)    NOT NULL ,
-    salaire_imposable DECIMAL (8,2),
-    repas TINYINT(3) ,
-    gouter TINYINT(3),
-    jour_travaillé TINYINT(3),
-    heure_travaillé decimal(4,2)
-
-)
-ENGINE = innoDB;
-
-CREATE TABLE utilisateur
-(
-    email        VARCHAR(100) NOT NULL
-    PRIMARY KEY ,
-    password VARCHAR(100)    NOT NULL
+CREATE TABLE utilisateur (
+                             email VARCHAR(100) NOT NULL,
+                             password VARCHAR(100) NOT NULL,
+                             PRIMARY KEY (email)
 )
     ENGINE = innoDB;
 
+CREATE TABLE enfant (
+                        id TINYINT  AUTO_INCREMENT NOT NULL ,
+                        nom VARCHAR(100) NOT NULL,
+                        prenom VARCHAR(100) NOT NULL,
+                        date_naissance DATE,
+                        debut_contrat DATE NOT NULL,
+                        utilisateur_email VARCHAR(100) NOT NULL,
+                        PRIMARY KEY (id)
+)
+    ENGINE = innoDB;
+
+CREATE TABLE mensuelle (
+                           id TINYINT  AUTO_INCREMENT NOT NULL,
+                           mois VARCHAR(10) NOT NULL,
+                           annee VARCHAR(4) NOT NULL,
+                           salaire_imposable DECIMAL(8,2),
+                           repas TINYINT,
+                           gouter TINYINT,
+                           jour_travaille TINYINT,
+                           heure_travaille DECIMAL(4,2),
+                           enfant_id TINYINT NOT NULL,
+                           PRIMARY KEY (id)
+)
+    ENGINE = innoDB;
+
+ALTER TABLE enfant ADD CONSTRAINT utilisateur_enfant_fk
+    FOREIGN KEY (utilisateur_email)
+        REFERENCES utilisateur (email)
+        ON DELETE NO ACTION
+        ON UPDATE NO ACTION;
+
+ALTER TABLE mensuelle ADD CONSTRAINT enfant_mesuelle_fk
+    FOREIGN KEY (enfant_id)
+        REFERENCES enfant (id)
+        ON DELETE NO ACTION
+        ON UPDATE NO ACTION;
+
 commit;
+
+
+
+
+
