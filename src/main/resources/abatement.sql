@@ -7,6 +7,8 @@ USE abatement;
 CREATE TABLE utilisateur (
                              email VARCHAR(100) NOT NULL,
                              password VARCHAR(100) NOT NULL,
+                             nom VARCHAR(100) NOT NULL,
+                             prenom VARCHAR(100) NOT NULL,
                              PRIMARY KEY (email)
 )
     ENGINE = innoDB;
@@ -23,7 +25,7 @@ CREATE TABLE enfant (
     ENGINE = innoDB;
 
 CREATE TABLE mensuelle (
-                           id TINYINT  AUTO_INCREMENT NOT NULL,
+                           mensuelle_id TINYINT  AUTO_INCREMENT NOT NULL,
                            mois VARCHAR(10) NOT NULL,
                            annee VARCHAR(4) NOT NULL,
                            salaire_imposable DECIMAL(8,2),
@@ -32,7 +34,7 @@ CREATE TABLE mensuelle (
                            jour_travaille TINYINT,
                            heure_travaille DECIMAL(4,2),
                            enfant_id TINYINT NOT NULL,
-                           PRIMARY KEY (id)
+                           PRIMARY KEY (mensuelle_id)
 )
     ENGINE = innoDB;
 
