@@ -7,6 +7,8 @@ USE abatement;
 CREATE TABLE utilisateur (
                              email VARCHAR(100) NOT NULL,
                              password VARCHAR(100) NOT NULL,
+                             nom VARCHAR(100) NOT NULL,
+                             prenom VARCHAR(100) NOT NULL,
                              PRIMARY KEY (email)
 )
     ENGINE = innoDB;

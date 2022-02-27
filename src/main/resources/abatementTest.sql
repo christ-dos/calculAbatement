@@ -7,11 +7,13 @@ USE abatement_test;
 CREATE TABLE utilisateur (
                              email VARCHAR(100) NOT NULL,
                              password VARCHAR(100) NOT NULL,
+                             nom VARCHAR(100) NOT NULL,
+                             prenom VARCHAR(100) NOT NULL,
                              PRIMARY KEY (email)
 )
 ENGINE = innoDB;
-INSERT INTO utilisateur(email,password)
-VALUES ('christine@mail.fr', 'pass');
+INSERT INTO utilisateur(email,password, nom, prenom)
+VALUES ('christine@mail.fr', 'pass', 'Duarte', 'Christine');
 
 
 CREATE TABLE enfant (
