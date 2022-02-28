@@ -10,7 +10,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class CalculAbatementApplication implements CommandLineRunner {
     @Autowired
-    private UserServiceImpl utilisateurService;
+    private UserServiceImpl userService;
 
     public static void main(String[] args) {
         SpringApplication.run(CalculAbatementApplication.class, args);
@@ -19,11 +19,11 @@ public class CalculAbatementApplication implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         System.out.println("hello World");
-        Iterable<User> utilisateurs = utilisateurService.getAllUsers();
-        utilisateurs.forEach(user-> System.out.println(user.getEmail()));
-       User  utilisateur = new User("sylvia@mail.fr", "pass", "Dupont", "Sylvia");
+        Iterable<User> users = userService.getAllUsers();
+        users.forEach(user-> System.out.println(user.getEmail()));
+       User  user = new User("sylvia@mail.fr", "pass", "Dupont", "Sylvia");
 
-       System.out.println(utilisateurService.addUser(utilisateur));
+       System.out.println(userService.addUser(user));
 
 
     }

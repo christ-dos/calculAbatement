@@ -1,6 +1,6 @@
 package com.myprojet.calculabatement.services;
 
-import com.myprojet.calculabatement.exceptions.UtilisateurExistantException;
+import com.myprojet.calculabatement.exceptions.UserAlreadyExistException;
 import com.myprojet.calculabatement.models.User;
 import com.myprojet.calculabatement.repositories.UserRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +21,7 @@ public class UserServiceImpl {
     public User addUser(User user) {
         boolean userExist = userRepository.existsById(user.getEmail());
         if (userExist) {
-            throw new UtilisateurExistantException("L'utilisateur que vous essayez d'ajouter existe déja");
+            throw new UserAlreadyExistException("L'utilisateur que vous essayez d'ajouter existe déja");
         }
         return userRepository.save(user);
     }

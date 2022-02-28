@@ -13,17 +13,18 @@ import java.sql.Date;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Enfant {
+public class Child {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private String nom;
-    private String prenom;
-    @Column(name = "date_naissance")
-    private Date dateNaissance;
-    @Column(name = "debut_contrat")
-    private Date  debutContrat;
-
-    @Column(name = "utilisateur_email")
-    private String utilisateurEmail;
+    @Column(name = "child_lastname")
+    private String lastname;
+    @Column(name = "child_firstname")
+    private String firstname;
+    @Column(name = "birth_Date")
+    private Date birthDate;
+    @Column(name = "begin_contract")
+    private Date beginContract;
+    @Column(name = "user_email")
+    private String userEmail;
 }

@@ -7,7 +7,6 @@ import lombok.Setter;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 @Entity
@@ -15,23 +14,22 @@ import javax.validation.constraints.NotNull;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "utilisateur")
 public class User {
     @Id
     @NotNull(message = "l'Email de l'utilisateur ne peut pas être vide")
     private String email;
     private String password;
-    private String nom;
-    private String prenom;
-    //private List<Enfant> enfants;
-
+    private String lastname;
+    private String firstname;
+    //private List<child> children;
+    
     @Override
     public String toString() {
-        return "Utilisateur{" +
+        return "User{" +
                 "email='" + email + '\'' +
                 ", password='" + password + '\'' +
-                ", nom='" + nom + '\'' +
-                ", prenom='" + prenom + '\'' +
+                ", lastname='" + lastname + '\'' +
+                ", firstname='" + firstname + '\'' +
                 '}';
     }
 }

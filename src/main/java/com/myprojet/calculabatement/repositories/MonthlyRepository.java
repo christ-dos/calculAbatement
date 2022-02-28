@@ -1,9 +1,9 @@
 package com.myprojet.calculabatement.repositories;
 
-import com.myprojet.calculabatement.models.Mensuelle;
+import com.myprojet.calculabatement.models.Monthly;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface MensuelleRepository extends CrudRepository<Mensuelle, Integer> {
+public interface MonthlyRepository extends CrudRepository<Monthly, Integer> {
 }
