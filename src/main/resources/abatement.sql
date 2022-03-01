@@ -4,52 +4,54 @@ CREATE DATABASE abatement;
 
 USE abatement;
 
-CREATE TABLE utilisateur (
-                             email VARCHAR(100) NOT NULL,
-                             password VARCHAR(100) NOT NULL,
-                             nom VARCHAR(100) NOT NULL,
-                             prenom VARCHAR(100) NOT NULL,
-                             PRIMARY KEY (email)
+CREATE TABLE user (
+                      email VARCHAR(100) NOT NULL,
+                      password VARCHAR(100) NOT NULL,
+                      lastname VARCHAR(100) NOT NULL,
+                      firstname VARCHAR(100) NOT NULL,
+                      PRIMARY KEY (email)
 )
     ENGINE = innoDB;
 
-CREATE TABLE enfant (
-                        id TINYINT  AUTO_INCREMENT NOT NULL ,
-                        nom VARCHAR(100) NOT NULL,
-                        prenom VARCHAR(100) NOT NULL,
-                        date_naissance DATE,
-                        debut_contrat DATE NOT NULL,
-                        utilisateur_email VARCHAR(100) NOT NULL,
-                        PRIMARY KEY (id)
+INSERT INTO user(email,password, lastname, firstname)
+VALUES ('christine@mail.fr', 'pass', 'Duarte', 'Christine');
+
+CREATE TABLE child (
+                      id TINYINT AUTO_INCREMENT NOT NULL,
+                      child_lastname VARCHAR(100) NOT NULL,
+                      child_firstname VARCHAR(100) NOT NULL,
+                      birth_date DATE,
+                      begin_contract DATE NOT NULL,
+                      user_email VARCHAR(100) NOT NULL,
+                      PRIMARY KEY (id)
 )
     ENGINE = innoDB;
 
-CREATE TABLE mensuelle (
-                           mensuelle_id TINYINT  AUTO_INCREMENT NOT NULL,
-                           mois VARCHAR(10) NOT NULL,
-                           annee VARCHAR(4) NOT NULL,
-                           salaire_imposable DECIMAL(8,2),
-                           repas TINYINT,
-                           gouter TINYINT,
-                           jour_travaille TINYINT,
-                           heure_travaille DECIMAL(4,2),
-                           enfant_id TINYINT NOT NULL,
-                           PRIMARY KEY (mensuelle_id)
-)
-    ENGINE = innoDB;
+CREATE TABLE monthly (
+                         monthly_id TINYINT AUTO_INCREMENT NOT NULL,
+                         month VARCHAR(10) NOT NULL,
+                         year VARCHAR(4) NOT NULL,
+                         taxable_salary DECIMAL(8,2),
+                         lunch TINYINT,
+                         taste TINYINT,
+                         day_worked TINYINT,
+                         hours_worked DECIMAL(4,2),
+                         child_id TINYINT NOT NULL,
+                         PRIMARY KEY (monthly_id)
+);
 
-ALTER TABLE enfant ADD CONSTRAINT utilisateur_enfant_fk
-    FOREIGN KEY (utilisateur_email)
-        REFERENCES utilisateur (email)
+
+ALTER TABLE child ADD CONSTRAINT user_kid_fk
+    FOREIGN KEY (user_email)
+        REFERENCES user (email)
         ON DELETE NO ACTION
         ON UPDATE NO ACTION;
 
-ALTER TABLE mensuelle ADD CONSTRAINT enfant_mesuelle_fk
-    FOREIGN KEY (enfant_id)
-        REFERENCES enfant (id)
+ALTER TABLE monthly ADD CONSTRAINT kid_monthly_fk
+    FOREIGN KEY (child_id)
+        REFERENCES child (id)
         ON DELETE NO ACTION
         ON UPDATE NO ACTION;
-
 commit;
 
 
