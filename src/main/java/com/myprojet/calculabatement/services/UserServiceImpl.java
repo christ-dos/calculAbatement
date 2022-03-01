@@ -25,7 +25,7 @@ public class UserServiceImpl implements UserService {
     public User addUser(User user) {
         boolean userExist = userRepository.existsById(user.getEmail());
         if (userExist) {
-            log.error("Service: user not found!");
+            log.error("Service: User already exists!");
             throw new UserAlreadyExistException("L'utilisateur que vous essayez d'ajouter existe déja!");
         }
         log.debug("Service: User added with email: " + user.getEmail());

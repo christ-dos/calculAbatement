@@ -22,10 +22,10 @@ public class CalculAbatementApplication implements CommandLineRunner {
         System.out.println("hello World");
         Iterable<User> users = userService.getAllUsers();
         users.forEach(user-> System.out.println(user.getEmail()));
-        User  userUpdated = new User("sylvia@mail.fr", "pass", "Duval", "shana");
-
-       System.out.println(userService.updateUser(userUpdated));
-       System.out.println("mon utilisateur: " + userService.getUserById("christine@mail.fr"));
+//        User  userUpdated = new User("sylvia@mail.fr", "pass", "Duval", "shana");
+//
+//       System.out.println(userService.updateUser(userUpdated));
+       System.out.println("mon utilisateur: " + userService.getUserById("christine@email.fr"));
 
 
     }

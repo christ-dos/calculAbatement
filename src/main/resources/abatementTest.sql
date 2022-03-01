@@ -14,22 +14,23 @@ CREATE TABLE user (
 ENGINE = innoDB;
 
 INSERT INTO user(email,password, lastname, firstname)
-VALUES ('christine@mail.fr', 'pass', 'Duarte', 'Christine');
+VALUES ('christine@email.fr', 'pass', 'Duarte', 'Christine'),
+       ('sylvie@email.fr', 'pass', 'Santos', 'Sylvie');
 
 
 CREATE TABLE child (
                        id TINYINT AUTO_INCREMENT NOT NULL,
                        child_lastname VARCHAR(100) NOT NULL,
                        child_firstname VARCHAR(100) NOT NULL,
-                       birth_date DATE,
-                       begin_contract DATE NOT NULL,
+                       birth_date VARCHAR(10),
+                       begin_contract VARCHAR(10) NOT NULL,
                        user_email VARCHAR(100) NOT NULL,
                        PRIMARY KEY (id)
 )
 ENGINE = innoDB;
 
-INSERT INTO child(child_lastname, child_firstname, birth_date, begin_contract, user_email)
-VALUES ('Romy','Riboulet',12/01/2020, 01/02/2022,'christine@mail.fr');
+# INSERT INTO child(child_lastname, child_firstname, birth_date, begin_contract, user_email)
+# VALUES ('Romy','Riboulet','12/01/2020', '01/02/2022','christine@email.fr');
 
 
 CREATE TABLE monthly (
@@ -46,8 +47,8 @@ CREATE TABLE monthly (
 )
 ENGINE = innoDB;
 
-INSERT INTO monthly  (month, year, taxable_salary, lunch, taste, day_worked, hours_worked, child_id)
-VALUES ('février', '2022', 600.50, 18, 18, 18, 0, 1);
+# INSERT INTO monthly  (month, year, taxable_salary, lunch, taste, day_worked, hours_worked, child_id)
+# VALUES ('février', '2022', 600.50, 18, 18, 18, 0, 1);
 
 
 ALTER TABLE child ADD CONSTRAINT user_child_fk

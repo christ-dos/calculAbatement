@@ -20,8 +20,8 @@ CREATE TABLE child (
                       id TINYINT AUTO_INCREMENT NOT NULL,
                       child_lastname VARCHAR(100) NOT NULL,
                       child_firstname VARCHAR(100) NOT NULL,
-                      birth_date DATE,
-                      begin_contract DATE NOT NULL,
+                      birth_date VARCHAR(10),
+                      begin_contract VARCHAR(10) NOT NULL,
                       user_email VARCHAR(100) NOT NULL,
                       PRIMARY KEY (id)
 )

@@ -22,9 +22,9 @@ public class Child {
     @Column(name = "child_firstname")
     private String firstname;
     @Column(name = "birth_Date")
-    private Date birthDate;
+    private String birthDate;
     @Column(name = "begin_contract")
-    private Date beginContract;
+    private String beginContract;
     @Column(name = "user_email")
     private String userEmail;
 }
