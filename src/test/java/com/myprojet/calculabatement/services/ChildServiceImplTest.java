@@ -14,7 +14,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.*;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
@@ -87,7 +88,7 @@ public class ChildServiceImplTest {
     }
 
     @Test
-    public void deleteChildByIdTest() {
+    public void deleteChildByIdTest_thenReturnMessageConfirmationOfDeletion() {
         //GIVEN
         int childId = 1;
         //WHEN
@@ -109,29 +110,28 @@ public class ChildServiceImplTest {
         when(childRepositoryMock.findChildrenByUserEmail(isA(String.class))).thenReturn(children);
         List<Child> childrenResult = (List<Child>) childServiceTest.getChildrenByUserEmail("christine@email.fr");
         //THEN
-        assertEquals(3,childrenResult.size());
+        assertEquals(3, childrenResult.size());
         assertEquals(1, childrenResult.get(0).getId());
         assertEquals(3, childrenResult.get(2).getId());
         verify(childRepositoryMock, times(1)).findChildrenByUserEmail(isA(String.class));
     }
 
     @Test
-    public void getChildByIdTest_whenChildExist_thenReturnChildFound(){
+    public void getChildByIdTest_whenChildExist_thenReturnChildFound() {
         //GIVEN
         Child childExist = new Child(1, "Riboulet", "Romy", "12/05/2020", "02/05/2020", "christine@email.fr");
         //WHEN
         when(childRepositoryMock.findById(isA(Integer.class))).thenReturn(Optional.of(childExist));
         Child childFound = childServiceTest.getChildById(childExist.getId());
         //THEN
-        assertEquals(1,childFound.getId());
-        assertEquals("Riboulet",childFound.getLastname());
-        assertEquals("Romy",childFound.getFirstname());
+        assertEquals(1, childFound.getId());
+        assertEquals("Riboulet", childFound.getLastname());
+        assertEquals("Romy", childFound.getFirstname());
         verify(childRepositoryMock, times(1)).findById(childExist.getId());
-
     }
 
     @Test
-    public void getChildByIdTest_whenChildNotExist_thenThrowChildNotFoundException(){
+    public void getChildByIdTest_whenChildNotExist_thenThrowChildNotFoundException() {
         //GIVEN
         Child childNotExist = new Child(1, "Riboulet", "Romy", "12/05/2020", "02/05/2020", "christine@email.fr");
         //WHEN
@@ -140,5 +140,4 @@ public class ChildServiceImplTest {
         assertThrows(ChildNotFoundException.class, () -> childServiceTest.getChildById(childNotExist.getId()));
         verify(childRepositoryMock, times(1)).findById(childNotExist.getId());
     }
-
 }
