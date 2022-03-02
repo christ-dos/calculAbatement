@@ -107,12 +107,38 @@ public class ChildServiceImplTest {
         );
         //WHEN
         when(childRepositoryMock.findChildrenByUserEmail(isA(String.class))).thenReturn(children);
-        List<Child> childrenResult = (List<Child>) childServiceTest.getAllChildrenByUserEmail("christine@email.fr");
+        List<Child> childrenResult = (List<Child>) childServiceTest.getChildrenByUserEmail("christine@email.fr");
         //THEN
         assertEquals(3,childrenResult.size());
         assertEquals(1, childrenResult.get(0).getId());
         assertEquals(3, childrenResult.get(2).getId());
         verify(childRepositoryMock, times(1)).findChildrenByUserEmail(isA(String.class));
+    }
+
+    @Test
+    public void getChildByIdTest_whenChildExist_thenReturnChildFound(){
+        //GIVEN
+        Child childExist = new Child(1, "Riboulet", "Romy", "12/05/2020", "02/05/2020", "christine@email.fr");
+        //WHEN
+        when(childRepositoryMock.findById(isA(Integer.class))).thenReturn(Optional.of(childExist));
+        Child childFound = childServiceTest.getChildById(childExist.getId());
+        //THEN
+        assertEquals(1,childFound.getId());
+        assertEquals("Riboulet",childFound.getLastname());
+        assertEquals("Romy",childFound.getFirstname());
+        verify(childRepositoryMock, times(1)).findById(childExist.getId());
+
+    }
+
+    @Test
+    public void getChildByIdTest_whenChildNotExist_thenThrowChildNotFoundException(){
+        //GIVEN
+        Child childNotExist = new Child(1, "Riboulet", "Romy", "12/05/2020", "02/05/2020", "christine@email.fr");
+        //WHEN
+        when(childRepositoryMock.findById(isA(Integer.class))).thenReturn(Optional.empty());
+        //THEN
+        assertThrows(ChildNotFoundException.class, () -> childServiceTest.getChildById(childNotExist.getId()));
+        verify(childRepositoryMock, times(1)).findById(childNotExist.getId());
     }
 
 }

@@ -51,7 +51,7 @@ public class ChildServiceImpl {
         return "L'enfant a bien été supprimé!";
     }
 
-    public Iterable<Child> getAllChildrenByUserEmail(String userEmail) {
+    public Iterable<Child> getChildrenByUserEmail(String userEmail) {
         return childRepository.findChildrenByUserEmail(userEmail);
     }
 
