@@ -25,7 +25,7 @@ public class UserServiceImpl implements UserService {
     public User addUser(User user) {
         boolean userExist = userRepository.existsById(user.getEmail());
         if (userExist) {
-            log.error("Service: User already exists!");
+            log.error("Service: User with email: " + user.getEmail() + " already exists!");
             throw new UserAlreadyExistException("L'utilisateur que vous essayez d'ajouter existe déja!");
         }
         log.debug("Service: User added with email: " + user.getEmail());
@@ -51,7 +51,7 @@ public class UserServiceImpl implements UserService {
     public String deleteUserById(String userId){
         userRepository.deleteById(userId);
         log.debug("Service: User deleted with email: " + userId);
-        return "L'utilisateur a bien été supprimé!";
+        return "L'utilisateur a été supprimé avec succes!";
     }
 
     @Override
@@ -67,7 +67,7 @@ public class UserServiceImpl implements UserService {
             log.error("Service: User not found with email: " + userId);
             throw new UserNotFoundException("L'utilisateur n'a pas été trouvé!");
         }
-        log.info("Service: User found with: " + userId);
+        log.info("Service: User found with ID: " + userId);
         return userFound.get();
     }
 }

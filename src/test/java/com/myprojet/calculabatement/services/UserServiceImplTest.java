@@ -21,6 +21,7 @@ import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 @ExtendWith(MockitoExtension.class)
 public class UserServiceImplTest {
+
     private UserServiceImpl userServiceTest;
     @Mock
     private UserRepository userRepositoryMock;
@@ -86,6 +87,17 @@ public class UserServiceImplTest {
     }
 
     @Test
+    public void deleteUserByIdTest_thenReturnUtilisateurSupprime() {
+        //GIVEN
+        String userId = "filipa@email.fr";
+        //WHEN
+        doNothing().when(userRepositoryMock).deleteById(userId);
+        String responseDeleted = userServiceTest.deleteUserById(userId);
+        //THEN
+        assertEquals("L'utilisateur a bien été supprimé!", responseDeleted);
+    }
+
+    @Test
     public void getUserByIdTest_whenUserExists_thenReturnUserWithEmailLola() {
         //GIVEN
         String userId = "lola@email.fr";
@@ -98,16 +110,6 @@ public class UserServiceImplTest {
         assertEquals(user.getFirstname(), userTest.getFirstname());
         assertEquals(user.getLastname(), userTest.getLastname());
         verify(userRepositoryMock, times(1)).findById(userId);
-    }
-
-    @Test
-    public void getUserByIdTest_whenUserNotExists_thenThrowUserNotFoundException() {
-        //GIVEN
-        String UserIdNotExist = "notexist@email.fr";
-        //WHEN
-        //THEN
-        verify(userRepositoryMock, times(0)).findById(isA(String.class));
-        assertThrows(UserNotFoundException.class, () -> userServiceTest.getUserById(UserIdNotExist));
     }
 
     @Test
@@ -128,13 +130,12 @@ public class UserServiceImplTest {
     }
 
     @Test
-    public void deleteUserByIdTest_thenReturnUtilisateurSupprime() {
+    public void getUserByIdTest_whenUserNotExists_thenThrowUserNotFoundException() {
         //GIVEN
-        String userId = "filipa@email.fr";
+        String UserIdNotExist = "notexist@email.fr";
         //WHEN
-        doNothing().when(userRepositoryMock).deleteById(userId);
-        String responseDeleted = userServiceTest.deleteUserById(userId);
         //THEN
-        assertEquals("L'utilisateur a bien été supprimé!", responseDeleted);
+        verify(userRepositoryMock, times(0)).findById(isA(String.class));
+        assertThrows(UserNotFoundException.class, () -> userServiceTest.getUserById(UserIdNotExist));
     }
 }
