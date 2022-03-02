@@ -35,6 +35,7 @@ public class UserServiceImplTest {
         //GIVEN
         User userNotExist = new User("samsam@email.fr", "pass", "Burret", "Samantha");
         //WHEN
+        when(userRepositoryMock.existsById(isA(String.class))).thenReturn(false);
         when(userRepositoryMock.save(isA(User.class))).thenReturn(userNotExist);
         User userSaved = userServiceTest.addUser(userNotExist);
         //THEN
@@ -56,12 +57,11 @@ public class UserServiceImplTest {
     }
 
     @Test
-    public void updateUserTest_whenUserNotExist_thenReturnUserUpdated() {
+    public void updateUserTest_whenUserNotExist_thenThrowUserNotFoundException() {
         //GIVEN
         User userNotExist = new User("samuel@email.fr", "pass", "Barnabet", "Samuel");
         //WHEN
         when(userRepositoryMock.findById(isA(String.class))).thenReturn(Optional.empty());
-
         //THEN
         assertThrows(UserNotFoundException.class, () -> userServiceTest.updateUser(userNotExist));
         verify(userRepositoryMock, times(1)).findById(userNotExist.getEmail());
@@ -72,14 +72,15 @@ public class UserServiceImplTest {
     public void updateUserTest_whenUserExist_thenReturnUserUpdated() {
         //GIVEN
         User userExist = new User("melinda@email.fr", "pass", "Barquo", "Melinda");
+        User userExistUpdated = new User("melinda@email.fr", "passUpdated", "Barquo", "Melinda");
         //WHEN
         when(userRepositoryMock.findById(isA(String.class))).thenReturn(Optional.of(userExist));
-        when(userRepositoryMock.save(isA(User.class))).thenReturn(userExist);
-        User userSaved = userServiceTest.updateUser(userExist);
+        when(userRepositoryMock.save(isA(User.class))).thenReturn(userExistUpdated);
+        User userUpdatedSaved = userServiceTest.updateUser(userExistUpdated);
         //THEN
-        assertEquals("melinda@email.fr", userSaved.getEmail());
-        assertEquals("Barquo", userSaved.getLastname());
-        assertEquals("Melinda", userSaved.getFirstname());
+        assertEquals("melinda@email.fr", userUpdatedSaved.getEmail());
+        assertEquals("Barquo", userUpdatedSaved.getLastname());
+        assertEquals("passUpdated", userUpdatedSaved.getPassword());
         verify(userRepositoryMock, times(1)).save(isA(User.class));
         verify(userRepositoryMock, times(1)).findById(isA(String.class));
     }
