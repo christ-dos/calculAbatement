@@ -36,25 +36,25 @@ public class ChildServiceImplTest {
         //GIVEN
         Child childNotExist = new Child(550, "Riza", "Lazar", "19/08/2020", "02/05/2020", "christine@email.fr");
         //WHEN
-        when(childRepositoryMock.existsById(isA(Integer.class))).thenReturn(false);
+        when(childRepositoryMock.existsById(anyInt())).thenReturn(false);
         when(childRepositoryMock.save(isA(Child.class))).thenReturn(childNotExist);
         Child childSaved = childServiceTest.addChild(childNotExist);
         //THEN
         assertEquals(550, childSaved.getId());
         assertEquals("Riza", childSaved.getLastname());
         assertEquals("Lazar", childSaved.getFirstname());
-        verify(childRepositoryMock, times(1)).save(childNotExist);
+        verify(childRepositoryMock, times(1)).save(isA(Child.class));
     }
 
     @Test
     public void addChildTest_whenChildAlreadyExist_thenThrowChildAlreadyExistException() {
         Child childAlreadyExist = new Child(1, "Riboulet", "Romy", "12/05/2020", "02/05/2020", "christine@email.fr");
         //WHEN
-        when(childRepositoryMock.existsById(isA(Integer.class))).thenReturn(true);
+        when(childRepositoryMock.existsById(anyInt())).thenReturn(true);
         //THEN
         assertThrows(ChildAlreadyExistException.class, () -> childServiceTest.addChild(childAlreadyExist));
-        verify(childRepositoryMock, times(1)).existsById(childAlreadyExist.getId());
-        verify(childRepositoryMock, times(0)).save(childAlreadyExist);
+        verify(childRepositoryMock, times(1)).existsById(anyInt());
+        verify(childRepositoryMock, times(0)).save(isA(Child.class));
     }
 
     @Test
@@ -62,11 +62,11 @@ public class ChildServiceImplTest {
         //GIVEN
         Child childNotExist = new Child(990, "Martin", "Paul", "12/09/2020", "02/05/2020", "christine@email.fr");
         //WHEN
-        when(childRepositoryMock.findById(isA(Integer.class))).thenReturn(Optional.empty());
+        when(childRepositoryMock.findById(anyInt())).thenReturn(Optional.empty());
         //THEN
         assertThrows(ChildNotFoundException.class, () -> childServiceTest.updateChild(childNotExist));
-        verify(childRepositoryMock, times(1)).findById(childNotExist.getId());
-        verify(childRepositoryMock, times(0)).save(childNotExist);
+        verify(childRepositoryMock, times(1)).findById(anyInt());
+        verify(childRepositoryMock, times(0)).save(isA(Child.class));
     }
 
     @Test
@@ -75,7 +75,7 @@ public class ChildServiceImplTest {
         Child childExist = new Child(1, "Riboulet", "Romy", "12/05/2020", "02/05/2020", "christine@email.fr");
         Child childExistUpdated = new Child(1, "RibouletUpdated", "Romy", "12/05/2020", "02/05/2020", "christine@email.fr");
         //WHEN
-        when(childRepositoryMock.findById(isA(Integer.class))).thenReturn(Optional.of(childExist));
+        when(childRepositoryMock.findById(anyInt())).thenReturn(Optional.of(childExist));
         when(childRepositoryMock.save(isA(Child.class))).thenReturn(childExistUpdated);
         Child childUpdatedSaved = childServiceTest.updateChild(childExistUpdated);
         //THEN
@@ -84,7 +84,7 @@ public class ChildServiceImplTest {
         assertEquals("Romy", childUpdatedSaved.getFirstname());
 
         verify(childRepositoryMock, times(1)).save(isA(Child.class));
-        verify(childRepositoryMock, times(1)).findById(isA(Integer.class));
+        verify(childRepositoryMock, times(1)).findById(anyInt());
     }
 
     @Test
@@ -95,7 +95,8 @@ public class ChildServiceImplTest {
         doNothing().when(childRepositoryMock).deleteById(childId);
         String responseDeletionChild = childServiceTest.deleteChildById(childId);
         //THEN
-        assertEquals("L'enfant a bien été supprimé!", responseDeletionChild);
+        assertEquals("L'enfant a été supprimé avec succes!", responseDeletionChild);
+        verify(childRepositoryMock, times(1)).deleteById(anyInt());
     }
 
     @Test
@@ -113,7 +114,7 @@ public class ChildServiceImplTest {
         assertEquals(3, childrenResult.size());
         assertEquals(1, childrenResult.get(0).getId());
         assertEquals(3, childrenResult.get(2).getId());
-        verify(childRepositoryMock, times(1)).findChildrenByUserEmail(isA(String.class));
+        verify(childRepositoryMock, times(1)).findChildrenByUserEmail(anyString());
     }
 
     @Test
@@ -121,23 +122,23 @@ public class ChildServiceImplTest {
         //GIVEN
         Child childExist = new Child(1, "Riboulet", "Romy", "12/05/2020", "02/05/2020", "christine@email.fr");
         //WHEN
-        when(childRepositoryMock.findById(isA(Integer.class))).thenReturn(Optional.of(childExist));
-        Child childFound = childServiceTest.getChildById(childExist.getId());
+        when(childRepositoryMock.findById(anyInt())).thenReturn(Optional.of(childExist));
+        Child childFound = childServiceTest.getChildById(anyInt());
         //THEN
         assertEquals(1, childFound.getId());
         assertEquals("Riboulet", childFound.getLastname());
         assertEquals("Romy", childFound.getFirstname());
-        verify(childRepositoryMock, times(1)).findById(childExist.getId());
+        verify(childRepositoryMock, times(1)).findById(anyInt());
     }
 
     @Test
-    public void getChildByIdTest_whenChildNotExist_thenThrowChildNotFoundException() {
+    public void getChildByIdTest_whenChildNotExists_thenThrowChildNotFoundException() {
         //GIVEN
         Child childNotExist = new Child(1, "Riboulet", "Romy", "12/05/2020", "02/05/2020", "christine@email.fr");
         //WHEN
-        when(childRepositoryMock.findById(isA(Integer.class))).thenReturn(Optional.empty());
+        when(childRepositoryMock.findById(anyInt())).thenReturn(Optional.empty());
         //THEN
         assertThrows(ChildNotFoundException.class, () -> childServiceTest.getChildById(childNotExist.getId()));
-        verify(childRepositoryMock, times(1)).findById(childNotExist.getId());
+        verify(childRepositoryMock, times(1)).findById(anyInt());
     }
 }

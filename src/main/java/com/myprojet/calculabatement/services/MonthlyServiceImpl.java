@@ -24,7 +24,7 @@ public class MonthlyServiceImpl implements MonthlyService {
     public Monthly addMonthly(Monthly monthly) {
         boolean monthlyExists = monthlyRepository.existsById(monthly.getMonthlyId());
         if (monthlyExists) {
-            log.error("Service: monthly with ID: " + monthly.getMonthlyId() + " already exists!");
+            log.error("Service: monthly added with ID: " + monthly.getMonthlyId() + " already exists!");
             throw new MonthlyAlreadyExistException("La déclaration mensuelle que vous essayez d'ajouter existe déja");
         }
         log.debug("Service: Monthly added with ID: " + monthly.getMonthlyId());
@@ -54,7 +54,7 @@ public class MonthlyServiceImpl implements MonthlyService {
     public String deleteMonthlyById(int monthlyId) {
         monthlyRepository.deleteById(monthlyId);
         log.debug("Service: Monthly deleted with ID: " + monthlyId);
-        return "La déclaration mesuelle a été supprimé avec succes";
+        return "La déclaration mesuelle a été supprimé avec succes!";
     }
 
     @Override
@@ -67,6 +67,11 @@ public class MonthlyServiceImpl implements MonthlyService {
     public Iterable<Monthly> getAllMonthlyByChildId(int childId) {
         log.info("Service: List of Monthly by childId displayed!");
         return monthlyRepository.findMonthlyByChildId(childId);
+    }
+
+    @Override
+    public Iterable<Monthly> getAllMonthlyByYear(String year){
+        return monthlyRepository.findMonthlyByYear(year);
     }
 
     @Override

@@ -7,5 +7,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface MonthlyRepository extends CrudRepository<Monthly, Integer> {
 
-    Iterable<Monthly>findMonthlyByChildId(int childId);
+    Iterable<Monthly> findMonthlyByChildId(int childId);
+    Iterable<Monthly> findMonthlyByYear(String year);
 }

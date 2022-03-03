@@ -36,25 +36,25 @@ public class UserServiceImplTest {
         //GIVEN
         User userNotExist = new User("samsam@email.fr", "pass", "Burret", "Samantha");
         //WHEN
-        when(userRepositoryMock.existsById(isA(String.class))).thenReturn(false);
+        when(userRepositoryMock.existsById(anyString())).thenReturn(false);
         when(userRepositoryMock.save(isA(User.class))).thenReturn(userNotExist);
         User userSaved = userServiceTest.addUser(userNotExist);
         //THEN
         assertEquals("samsam@email.fr", userSaved.getEmail());
         assertEquals("Burret", userSaved.getLastname());
         assertEquals("Samantha", userSaved.getFirstname());
-        verify(userRepositoryMock, times(1)).save(userNotExist);
+        verify(userRepositoryMock, times(1)).save(isA(User.class));
     }
 
     @Test
     public void addUserTest_whenUserAlreadyExist_thenThrowUserAlreadyExistException() {
         User userAlreadyExist = new User("christine@email.fr", "pass", "Duarte", "Christine");
         //WHEN
-        when(userRepositoryMock.existsById(isA(String.class))).thenReturn(true);
+        when(userRepositoryMock.existsById(anyString())).thenReturn(true);
         //THEN
         assertThrows(UserAlreadyExistException.class, () -> userServiceTest.addUser(userAlreadyExist));
-        verify(userRepositoryMock, times(1)).existsById(userAlreadyExist.getEmail());
-        verify(userRepositoryMock, times(0)).save(userAlreadyExist);
+        verify(userRepositoryMock, times(1)).existsById(anyString());
+        verify(userRepositoryMock, times(0)).save(isA(User.class));
     }
 
     @Test
@@ -62,11 +62,11 @@ public class UserServiceImplTest {
         //GIVEN
         User userNotExist = new User("samuel@email.fr", "pass", "Barnabet", "Samuel");
         //WHEN
-        when(userRepositoryMock.findById(isA(String.class))).thenReturn(Optional.empty());
+        when(userRepositoryMock.findById(anyString())).thenReturn(Optional.empty());
         //THEN
         assertThrows(UserNotFoundException.class, () -> userServiceTest.updateUser(userNotExist));
-        verify(userRepositoryMock, times(1)).findById(userNotExist.getEmail());
-        verify(userRepositoryMock, times(0)).save(userNotExist);
+        verify(userRepositoryMock, times(1)).findById(anyString());
+        verify(userRepositoryMock, times(0)).save(isA(User.class));
     }
 
     @Test
@@ -75,7 +75,7 @@ public class UserServiceImplTest {
         User userExist = new User("melinda@email.fr", "pass", "Barquo", "Melinda");
         User userExistUpdated = new User("melinda@email.fr", "passUpdated", "Barquo", "Melinda");
         //WHEN
-        when(userRepositoryMock.findById(isA(String.class))).thenReturn(Optional.of(userExist));
+        when(userRepositoryMock.findById(anyString())).thenReturn(Optional.of(userExist));
         when(userRepositoryMock.save(isA(User.class))).thenReturn(userExistUpdated);
         User userUpdatedSaved = userServiceTest.updateUser(userExistUpdated);
         //THEN
@@ -83,7 +83,7 @@ public class UserServiceImplTest {
         assertEquals("Barquo", userUpdatedSaved.getLastname());
         assertEquals("passUpdated", userUpdatedSaved.getPassword());
         verify(userRepositoryMock, times(1)).save(isA(User.class));
-        verify(userRepositoryMock, times(1)).findById(isA(String.class));
+        verify(userRepositoryMock, times(1)).findById(anyString());
     }
 
     @Test
@@ -94,7 +94,7 @@ public class UserServiceImplTest {
         doNothing().when(userRepositoryMock).deleteById(userId);
         String responseDeleted = userServiceTest.deleteUserById(userId);
         //THEN
-        assertEquals("L'utilisateur a bien été supprimé!", responseDeleted);
+        assertEquals("L'utilisateur a été supprimé avec succes!", responseDeleted);
     }
 
     @Test
@@ -103,13 +103,13 @@ public class UserServiceImplTest {
         String userId = "lola@email.fr";
         User user = new User("lola@email.fr", "pass", "Sanchez", "Lola");
         //WHEN
-        when(userRepositoryMock.findById(isA(String.class))).thenReturn(java.util.Optional.of(user));
+        when(userRepositoryMock.findById(anyString())).thenReturn(java.util.Optional.of(user));
         User userTest = userServiceTest.getUserById(userId);
         //THEN
         assertEquals(userId, userTest.getEmail());
         assertEquals(user.getFirstname(), userTest.getFirstname());
         assertEquals(user.getLastname(), userTest.getLastname());
-        verify(userRepositoryMock, times(1)).findById(userId);
+        verify(userRepositoryMock, times(1)).findById(anyString());
     }
 
     @Test
@@ -135,7 +135,7 @@ public class UserServiceImplTest {
         String UserIdNotExist = "notexist@email.fr";
         //WHEN
         //THEN
-        verify(userRepositoryMock, times(0)).findById(isA(String.class));
         assertThrows(UserNotFoundException.class, () -> userServiceTest.getUserById(UserIdNotExist));
+        verify(userRepositoryMock, times(1)).findById(anyString());
     }
 }

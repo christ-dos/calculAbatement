@@ -14,7 +14,7 @@ CREATE TABLE user (
     ENGINE = innoDB;
 
 INSERT INTO user(email,password, lastname, firstname)
-VALUES ('christine@mail.fr', 'pass', 'Duarte', 'Christine');
+VALUES ('christine@email.fr', 'pass', 'Duarte', 'Christine');
 
 CREATE TABLE child (
                       id TINYINT AUTO_INCREMENT NOT NULL,
