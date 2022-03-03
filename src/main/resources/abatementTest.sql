@@ -13,9 +13,9 @@ CREATE TABLE user (
 )
 ENGINE = innoDB;
 
-INSERT INTO user(email,password, lastname, firstname)
-VALUES ('christine@email.fr', 'pass', 'Duarte', 'Christine'),
-       ('sylvie@email.fr', 'pass', 'Santos', 'Sylvie');
+# INSERT INTO user(email,password, lastname, firstname)
+# VALUES ('christine@email.fr', 'pass', 'Duarte', 'Christine'),
+#        ('sylvie@email.fr', 'pass', 'Santos', 'Sylvie');
 
 
 CREATE TABLE child (

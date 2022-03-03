@@ -1,6 +1,8 @@
 package com.myprojet.calculabatement.repositories;
 
 import com.myprojet.calculabatement.models.Child;
+import com.myprojet.calculabatement.models.User;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,6 +23,20 @@ public class ChildRepositoryTest {
     @Autowired
     private ChildRepository childRepositoryTest;
 
+    @Autowired
+    private UserRepository userRepositoryTest;
+
+    @BeforeEach
+    public void setPerTest() {
+        User userSaved = new User("christine@email.fr", "pass", "Duarte", "Christine");
+        userRepositoryTest.save(userSaved);
+        User userSylvie = new User("sylvie@email.fr", "pass", "Martines", "Sylvie");
+        userRepositoryTest.save(userSylvie);
+
+        Child childToSave = new Child(1, "Benoit", "Evan", "14/12/2014", "15/03/2020", "sylvie@email.fr");
+        childRepositoryTest.save(childToSave);
+    }
+
     @Test
     public void findChildByUserEmailTest_ThenReturnListWithTwoChildren() {
         // GIVEN
@@ -38,55 +54,52 @@ public class ChildRepositoryTest {
     @Test
     public void saveChildTest_thenReturnChildAdded() {
         //GIVEN
-        Child childToSave = new Child(1, "Benoit", "Evan", "14/12/2014", "15/03/2020", "christine@email.fr");
+        Child childToSave = new Child(2, "Benoit", "Evan", "14/12/2014", "15/03/2020", "christine@email.fr");
         //WHEN
         Child childResult = childRepositoryTest.save(childToSave);
         //THEN
-        assertEquals(1, childResult.getId());
+        assertEquals(2, childResult.getId());
         assertEquals("Benoit", childResult.getLastname());
         assertEquals("Evan", childResult.getFirstname());
     }
 
     @Test
-    public void existByIdTest_whenChildExist_thenReturnTrue(){
+    public void existByIdTest_whenChildExist_thenReturnTrue() {
         //GIVEN
-        Child childTest = new Child(1, "Benoit", "Evan", "14/12/2014", "15/03/2020", "christine@email.fr");
         //WHEN
-        Child childResult = childRepositoryTest.save(childTest);
-        Boolean childExist = childRepositoryTest.existsById(1);
+        boolean childExist = childRepositoryTest.existsById(1);
         //THEN
         assertTrue(childExist);
     }
 
     @Test
-    public void existByIdTest_whenChildNotExist_thenReturnFalse(){
+    public void existByIdTest_whenChildNotExist_thenReturnFalse() {
         //GIVEN
-        Child childTest = new Child(1, "Benoit", "Evan", "14/12/2014", "15/03/2020", "christine@email.fr");
+        Child childTest = new Child(999, "Benoit", "Evan", "14/12/2014", "15/03/2020", "christine@email.fr");
         //WHEN
-        Boolean childExist = childRepositoryTest.existsById(1);
+        boolean childNotExist = childRepositoryTest.existsById(999);
         //THEN
         //verify that child is not present in DB
-        assertFalse(childExist);
+        assertFalse(childNotExist);
+
     }
 
     @Test
-    public void findByIdTest_whenChildExist_thenReturnChildFound(){
+    public void findByIdTest_whenChildExist_thenReturnChildFound() {
         //GIVEN
-        Child childTest= new Child(1, "Benoit", "Evan", "14/12/2014", "15/03/2020", "christine@email.fr");
         //WHEN
-        Child childResult = childRepositoryTest.save(childTest);
-        Optional<Child> childFind = childRepositoryTest.findById(1);
+        Optional<Child> childFound = childRepositoryTest.findById(1);
         //THEN
         //verify that child is present in DB
-        assertTrue(childFind.isPresent());
+        assertTrue(childFound.isPresent());
     }
 
     @Test
-    public void findByIdTest_whenChildNotExist_thenReturnEmptyOptinal(){
+    public void findByIdTest_whenChildNotExist_thenReturnEmptyOptional() {
         //GIVEN
-        Child childTest = new Child(1, "Benoit", "Evan", "14/12/2014", "15/03/2020", "christine@email.fr");
+        Child childTest = new Child(999, "Benoit", "Evan", "14/12/2014", "15/03/2020", "christine@email.fr");
         //WHEN
-        Optional<Child> childFind = childRepositoryTest.findById(1);
+        Optional<Child> childFind = childRepositoryTest.findById(999);
         //THEN
         //verify that child is not present in DB
         assertFalse(childFind.isPresent());
@@ -94,9 +107,8 @@ public class ChildRepositoryTest {
 
     @Test
     public void deleteByIdTest_whenChildExist() {
-        Child childTest = new Child(1, "Benoit", "Evan", "14/12/2014", "15/03/2020", "christine@email.fr");
+        //GIVEN
         //WHEN
-        Child childResult = childRepositoryTest.save(childTest);
         Optional<Child> childFoundBeforeDeletion = childRepositoryTest.findById(1);
         childRepositoryTest.deleteById(1);
         Optional<Child> childFoundAfterDeletion = childRepositoryTest.findById(1);

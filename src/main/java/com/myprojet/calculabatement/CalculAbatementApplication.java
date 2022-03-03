@@ -20,12 +20,12 @@ public class CalculAbatementApplication implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         System.out.println("hello World");
-        Iterable<User> users = userService.getAllUsers();
-        users.forEach(user-> System.out.println(user.getEmail()));
-//        User  userUpdated = new User("sylvia@mail.fr", "pass", "Duval", "shana");
-//
-//       System.out.println(userService.updateUser(userUpdated));
-       System.out.println("mon utilisateur: " + userService.getUserById("christine@email.fr"));
+//        Iterable<User> users = userService.getAllUsers();
+//        users.forEach(user-> System.out.println(user.getEmail()));
+////        User  userUpdated = new User("sylvia@mail.fr", "pass", "Duval", "shana");
+////
+////       System.out.println(userService.updateUser(userUpdated));
+//       System.out.println("mon utilisateur: " + userService.getUserById("christine@email.fr"));
 
 
     }
