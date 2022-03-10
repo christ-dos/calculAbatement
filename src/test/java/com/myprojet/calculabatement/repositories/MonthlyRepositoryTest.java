@@ -3,7 +3,6 @@ package com.myprojet.calculabatement.repositories;
 import com.myprojet.calculabatement.models.Child;
 import com.myprojet.calculabatement.models.Monthly;
 import com.myprojet.calculabatement.models.User;
-import net.bytebuddy.NamingStrategy;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,8 +74,6 @@ public class MonthlyRepositoryTest {
         //verify that monthly is not present in DB
         assertFalse(monthlyNotExist);
     }
-
-
 
     @Test
     public void deleteByIdTest_whenMonthlyExist() {
@@ -172,5 +169,4 @@ public class MonthlyRepositoryTest {
         //verify that monthly is present in DB
         assertFalse(monthlyFound.isPresent());
     }
-
 }
