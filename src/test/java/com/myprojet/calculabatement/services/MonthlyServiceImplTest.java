@@ -10,6 +10,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.Month;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -38,13 +39,13 @@ public class MonthlyServiceImplTest {
     @Test
     public void addMonthlyTest_whenMonthlyNotExist_thenReturnChildAdded() {
         //GIVEN
-        Monthly monthlyNotExist = new Monthly(500, "janvier", "2022", 650D, 20, 20, 20, 0, 1);
+        Monthly monthlyNotExist = new Monthly(500, Month.JANUARY, "2022", 650D, 20, 20, 20, 0, 1);
         //WHEN
         when(monthlyRepositoryMock.save(isA(Monthly.class))).thenReturn(monthlyNotExist);
         Monthly monthlyadded = monthlyServiceTest.addMonthly(monthlyNotExist);
         //THEN
         assertEquals(500, monthlyadded.getMonthlyId());
-        assertEquals("janvier", monthlyadded.getMonth());
+        assertEquals(Month.JANUARY, monthlyadded.getMonth());
         assertEquals("2022", monthlyadded.getYear());
         assertEquals(650D, monthlyadded.getTaxableSalary());
         assertEquals(1, monthlyadded.getChildId());
@@ -55,7 +56,7 @@ public class MonthlyServiceImplTest {
     @Test
     public void addMonthlyTest_whenMonthlyAlreadyExist_thenThrowMonthlyAlreadyExistException() {
         //GIVEN
-        Monthly monthlyAlreadyExist = new Monthly(1, "janvier", "2021", 680D, 18, 18, 20, 8, 1);
+        Monthly monthlyAlreadyExist = new Monthly(1, Month.JANUARY, "2021", 680D, 18, 18, 20, 8, 1);
         //WHEN
         when(monthlyRepositoryMock.existsById(anyInt())).thenReturn(true);
         //THEN
@@ -66,7 +67,7 @@ public class MonthlyServiceImplTest {
 
     @Test
     public void updateMonthlyTest_whenMonthlyNotExist_thenThrowMonthlyNotFoundException() {
-        Monthly monthlyNotExist = new Monthly(990, "janvier", "2023", 620D, 18, 18, 20, 8, 1);
+        Monthly monthlyNotExist = new Monthly(990, Month.JANUARY, "2023", 620D, 18, 18, 20, 8, 1);
         //WHEN
         when(monthlyRepositoryMock.findById(anyInt())).thenReturn(Optional.empty());
         //THEN
@@ -77,15 +78,15 @@ public class MonthlyServiceImplTest {
 
     @Test
     public void updateMonthlyTest_whenMonthlyExist_thenReturnMonthlyUpdated() {
-        Monthly monthlyExist = new Monthly(1, "janvier", "2022", 620D, 18, 18, 20, 8, 1);
-        Monthly monthlyExistUpdated = new Monthly(1, "janvierUpdated", "2022", 650D, 18, 18, 20, 8, 1);
+        Monthly monthlyExist = new Monthly(1, Month.JANUARY, "2022", 620D, 18, 18, 20, 8, 1);
+        Monthly monthlyExistUpdated = new Monthly(1, Month.FEBRUARY, "2022", 650D, 18, 18, 20, 8, 1);
         //WHEN
         when(monthlyRepositoryMock.findById(anyInt())).thenReturn(Optional.of(monthlyExist));
         when(monthlyRepositoryMock.save(isA(Monthly.class))).thenReturn(monthlyExistUpdated);
         Monthly monthlyUpdatedSaved = monthlyServiceTest.updateMonthly(monthlyExistUpdated);
         //THEN
         assertEquals(1, monthlyUpdatedSaved.getMonthlyId());
-        assertEquals("janvierUpdated", monthlyUpdatedSaved.getMonth());
+        assertEquals(Month.FEBRUARY, monthlyUpdatedSaved.getMonth());
         assertEquals(650D, monthlyUpdatedSaved.getTaxableSalary());
 
         verify(monthlyRepositoryMock, times(1)).save(isA(Monthly.class));
@@ -110,9 +111,9 @@ public class MonthlyServiceImplTest {
     public void getAllMonthlyTest_whenListContainThreeElements_thenReturnTheeElementsOfMonthly() {
         //GIVEN
         List<Monthly> allMonthlies = Arrays.asList(
-                new Monthly(1, "décembre", "2021", 620D, 18, 18, 20, 8, 1),
-                new Monthly(2, "janvier", "2022", 620D, 18, 18, 20, 8, 1),
-                new Monthly(3, "février", "2022", 620D, 18, 18, 20, 8, 2)
+                new Monthly(1, Month.DECEMBER, "2021", 620D, 18, 18, 20, 8, 1),
+                new Monthly(2, Month.JANUARY, "2022", 620D, 18, 18, 20, 8, 1),
+                new Monthly(3, Month.FEBRUARY, "2022", 620D, 18, 18, 20, 8, 2)
         );
         //WHEN
         when(monthlyRepositoryMock.findAll()).thenReturn(allMonthlies);
@@ -125,9 +126,9 @@ public class MonthlyServiceImplTest {
     @Test
     public void getAllMonthlyByChildIdTest_whenListContainThreeElements_thenReturnTheeElementsOfMonthly() {
         List<Monthly> MonthliesByChildId = Arrays.asList(
-                new Monthly(1, "décembre", "2021", 620D, 18, 18, 20, 8, 1),
-                new Monthly(2, "janvier", "2022", 620D, 18, 18, 20, 8, 1),
-                new Monthly(3, "février", "2022", 620D, 18, 18, 20, 8, 1)
+                new Monthly(1, Month.DECEMBER, "2021", 620D, 18, 18, 20, 8, 1),
+                new Monthly(2, Month.JANUARY, "2022", 620D, 18, 18, 20, 8, 1),
+                new Monthly(3, Month.FEBRUARY, "2022", 620D, 18, 18, 20, 8, 1)
         );
         //WHEN
         when(monthlyRepositoryMock.findMonthlyByChildId(anyInt())).thenReturn(MonthliesByChildId);
@@ -142,9 +143,9 @@ public class MonthlyServiceImplTest {
     public void getAllMonthlyByYearTest_whenListContainThreeElements_thenReturnTheeElementsOfMonthly() {
         //GIVEN
         List<Monthly> MonthliesByYear = Arrays.asList(
-                new Monthly(1, "janvier", "2022", 620D, 18, 18, 20, 8, 1),
-                new Monthly(2, "février", "2022", 620D, 18, 18, 20, 8, 1),
-                new Monthly(3, "mars", "2022", 620D, 18, 18, 20, 8, 1)
+                new Monthly(1, Month.DECEMBER, "2021", 620D, 18, 18, 20, 8, 1),
+                new Monthly(2, Month.JANUARY, "2022", 620D, 18, 18, 20, 8, 1),
+                new Monthly(3, Month.FEBRUARY, "2022", 620D, 18, 18, 20, 8, 1)
         );
         when(monthlyRepositoryMock.findMonthlyByYear(anyString())).thenReturn(MonthliesByYear);
         List<Monthly> monthliesByYearResult = (List<Monthly>) monthlyServiceTest.getAllMonthlyByYear("2022");
@@ -157,13 +158,13 @@ public class MonthlyServiceImplTest {
     @Test
     public void getMonthlyByChildIdTest_whenMonthlyExist_thenReturnMonthlyFound() {
         //GIVEN
-        Monthly monthlyExist = new Monthly(1, "janvier", "2022", 620D, 18, 18, 20, 8, 1);
+        Monthly monthlyExist = new Monthly(1, Month.JANUARY, "2022", 620D, 18, 18, 20, 8, 1);
         //WHEN
         when(monthlyRepositoryMock.findById(anyInt())).thenReturn(Optional.of(monthlyExist));
         Monthly monthlyFound = monthlyServiceTest.getMonthlyById(anyInt());
         //THEN
         assertEquals(1, monthlyFound.getMonthlyId());
-        assertEquals("janvier", monthlyFound.getMonth());
+        assertEquals(Month.JANUARY, monthlyFound.getMonth());
         assertEquals("2022", monthlyFound.getYear());
         assertEquals(1, monthlyFound.getChildId());
         verify(monthlyRepositoryMock, times(1)).findById(anyInt());
@@ -172,7 +173,7 @@ public class MonthlyServiceImplTest {
     @Test
     public void getMonthlyByChildIdTest_whenMonthlyNotExist_thenThrowMonthlyNotFoundException() {
         //GIVEN
-        Monthly monthlyNotExist = new Monthly(900, "janvier", "2022", 620D, 18, 18, 20, 8, 1);
+        Monthly monthlyNotExist = new Monthly(900, Month.JANUARY, "2022", 620D, 18, 18, 20, 8, 1);
         //WHEN
         when(monthlyRepositoryMock.findById(anyInt())).thenReturn(Optional.empty());
         //THEN

@@ -29,7 +29,7 @@ CREATE TABLE child (
 
 CREATE TABLE monthly (
                          monthly_id TINYINT AUTO_INCREMENT NOT NULL,
-                         month VARCHAR(10) NOT NULL,
+                         month ENUM('JANUARY','FEBRUARY','MARCH', 'APRIL','MAY','JUNE','JULY','AUGUST','SEPTEMBER','OCTOBER','NOVEMBER','DECEMBER') NOT NULL,
                          year VARCHAR(4) NOT NULL,
                          taxable_salary DECIMAL(8,2),
                          lunch TINYINT,
