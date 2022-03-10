@@ -62,6 +62,7 @@ public class CalculAbatementApplication implements CommandLineRunner {
 //        System.out.println(localDate.getMonth().getValue());  //default, print ISO_LOCAL_DATE
 //
 //        System.out.println(formatter.format(localDate)); // print formatter date
+        System.out.println(Month.JANUARY);
 
 
     }
