@@ -4,6 +4,7 @@ import com.myprojet.calculabatement.models.Monthly;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.Month;
 import java.util.List;
 
 @Repository
@@ -13,5 +14,5 @@ public interface MonthlyRepository extends CrudRepository<Monthly, Integer> {
 
     Iterable<Monthly> findMonthlyByYear(String year);
 
-    Iterable<Monthly> findAllByMonth(String months);
+
 }
