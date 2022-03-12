@@ -4,7 +4,7 @@ import com.myprojet.calculabatement.models.Child;
 import com.myprojet.calculabatement.models.Monthly;
 import com.myprojet.calculabatement.repositories.ChildRepository;
 import com.myprojet.calculabatement.repositories.MonthlyRepository;
-import com.myprojet.calculabatement.services.CalculateTaxRelief;
+import com.myprojet.calculabatement.services.CalculateTaxReliefService;
 import com.myprojet.calculabatement.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -27,7 +27,7 @@ public class CalculAbatementApplication implements CommandLineRunner {
     private ChildRepository childRepository;
 
     @Autowired
-    private CalculateTaxRelief calculateTaxRelief;
+    private CalculateTaxReliefService calculateTaxReliefService;
 
     public static void main(String[] args) {
         SpringApplication.run(CalculAbatementApplication.class, args);
@@ -61,7 +61,7 @@ public class CalculAbatementApplication implements CommandLineRunner {
 //        System.out.println(formatter.format(localDate)); // print formatter date
         // List<Monthly> montglies = (List<Monthly>) monthlyRepository.findByMonthLessThan(Month.DECEMBER.getValue());
         //Arrays.stream(Month.values()).forEach(x->System.out.println(x));
-        double month = calculateTaxRelief.calculateTaxReliefByChild(10.15, 10.20, Month.AUGUST, "2022", 1);
+        double month = calculateTaxReliefService.calculateTaxReliefByChild(10.15, 10.20, Month.AUGUST, "2022", 1);
        // month.forEach(x->System.out.println("les valeurs: " +x));
         System.out.println("totalHeures: " + month);
 

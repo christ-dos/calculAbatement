@@ -1,5 +1,6 @@
 package com.myprojet.calculabatement.services;
 
+import com.myprojet.calculabatement.exceptions.MonthlyNotFoundException;
 import com.myprojet.calculabatement.models.Monthly;
 import com.myprojet.calculabatement.repositories.MonthlyRepository;
 import org.apache.commons.math3.util.Precision;
@@ -10,23 +11,24 @@ import java.time.Month;
 import java.util.List;
 
 @Service
-public class CalculateTaxRelief {
+public class CalculateTaxReliefService {
     private MonthlyRepository monthlyRepository;
 
     @Autowired
-    public CalculateTaxRelief(MonthlyRepository monthlyRepository) {
+    public CalculateTaxReliefService(MonthlyRepository monthlyRepository) {
         this.monthlyRepository = monthlyRepository;
     }
 
     public double calculateTaxReliefByChild(double rateSmic1, double rateSmic2, Month monthOfIncrease, String year, int childId) {
-        List<Monthly> monthliesByYear;
         double taxRelief;
-
-        monthliesByYear = (List<Monthly>) monthlyRepository.findMonthlyByYear(year);
+        List<Monthly>  monthliesByYear = (List<Monthly>) monthlyRepository.findMonthlyByYear(year);
+        if(monthliesByYear.isEmpty()){
+            throw new MonthlyNotFoundException("Il n'y a aucune entrée enregistré pour l'année: " + year);
+        }
         //Si le tarif du Smic a changé une seule fois dans l'année, on calcul l'abatement pour l'année entière.
         if (rateSmic2 == 0D) {
             taxRelief = getTaxReliefByChildForAFullYear(monthliesByYear, childId, rateSmic1);
-        }else {
+        } else {
             //Sinon on calcul sur 2 periodes avec 2 tarif smic différents
             taxRelief = getTaxReliefByChildWhenUpwardOccurredTwoTimesInYear(monthliesByYear, childId, monthOfIncrease, rateSmic1, rateSmic2);
         }
