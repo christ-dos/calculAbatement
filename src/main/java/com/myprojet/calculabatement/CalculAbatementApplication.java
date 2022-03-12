@@ -44,9 +44,9 @@ public class CalculAbatementApplication implements CommandLineRunner {
 
         monthlyRepository.save(new Monthly(1, Month.JANUARY, "2022", 650D, 20, 20, 20, 10, 1));
         monthlyRepository.save(new Monthly(2, Month.AUGUST, "2022", 650D, 20, 20, 20, 10.00, 1));
-        monthlyRepository.save(new Monthly(3, Month.DECEMBER, "2022", 650D, 20, 20, 20, 10.30, 1));
+        monthlyRepository.save(new Monthly(3, Month.DECEMBER, "2022", 650D, 20, 20, 20, 10.50, 1));
         monthlyRepository.save(new Monthly(4, Month.DECEMBER, "2021", 650D, 20, 20, 20, 0, 1));
-        monthlyRepository.save(new Monthly(5, Month.MARCH, "2022", 650D, 20, 20, 30, 10.00, 2));
+        monthlyRepository.save(new Monthly(5, Month.MARCH, "2022", 650D, 20, 20, 20, 0D, 1));
 //       // monthly.forEach(x-> System.out.println(x));
         //LocalDateTime date  = LocalDateTime.now();
         //  System.out.println("le mois: " + date.getMonthValue());
@@ -61,8 +61,8 @@ public class CalculAbatementApplication implements CommandLineRunner {
 //        System.out.println(formatter.format(localDate)); // print formatter date
         // List<Monthly> montglies = (List<Monthly>) monthlyRepository.findByMonthLessThan(Month.DECEMBER.getValue());
         //Arrays.stream(Month.values()).forEach(x->System.out.println(x));
-        double month = calculateTaxRelief.calculateTaxReliefByChild(10.15, 0D, Month.MARCH, "2022", 1);
-        //month.forEach(x->System.out.println("les valeurs: " +x));
+        double month = calculateTaxRelief.calculateTaxReliefByChild(10.15, 10.20, Month.AUGUST, "2022", 1);
+       // month.forEach(x->System.out.println("les valeurs: " +x));
         System.out.println("totalHeures: " + month);
 
 
