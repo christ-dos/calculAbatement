@@ -51,7 +51,7 @@ public class MonthlyRepositoryTest {
         Monthly monthlyResult = monthlyRepositoryTest.save(monthlyToSave);
         //THEN
         assertEquals(2, monthlyResult.getMonthlyId());
-        assertEquals("janvier", monthlyResult.getMonth());
+        assertEquals(Month.JANUARY, monthlyResult.getMonth());
         assertEquals("2022", monthlyResult.getYear());
         assertEquals(1, monthlyResult.getChildId());
     }
@@ -135,9 +135,9 @@ public class MonthlyRepositoryTest {
     public void findMonthlyByYearTest_whenMonthliesContainThreeElements_thenReturnIterableWithTwoElementsWithYear2022() {
         //GIVEN
         List<Monthly> monthlies = Arrays.asList(
-                new Monthly(1, Month.JANUARY, "2021", 650D, 20, 20, 20, 0, 1),
-                new Monthly(2, Month.FEBRUARY, "2022", 650D, 20, 20, 20, 0, 1),
-                new Monthly(3, Month.MARCH, "2022", 650D, 20, 20, 20, 0, 2)
+                new Monthly(1, Month.JANUARY, "2021", 650D, 20, 20, 20, 10.0, 1),
+                new Monthly(2, Month.FEBRUARY, "2022", 650D, 20, 20, 20, 10.5, 1),
+                new Monthly(3, Month.MARCH, "2022", 650D, 20, 20, 20, 15, 1)
         );
         //WHEN
         monthlyRepositoryTest.saveAll(monthlies);

@@ -39,7 +39,7 @@ public class MonthlyServiceImplTest {
     @Test
     public void addMonthlyTest_whenMonthlyNotExist_thenReturnChildAdded() {
         //GIVEN
-        Monthly monthlyNotExist = new Monthly(500, Month.JANUARY, "2022", 650D, 20, 20, 20, 0, 1);
+        Monthly monthlyNotExist = new Monthly(500, Month.JANUARY, "2022", 650D, 20, 20, 20, 10.0, 1);
         //WHEN
         when(monthlyRepositoryMock.save(isA(Monthly.class))).thenReturn(monthlyNotExist);
         Monthly monthlyadded = monthlyServiceTest.addMonthly(monthlyNotExist);
@@ -151,7 +151,6 @@ public class MonthlyServiceImplTest {
         List<Monthly> monthliesByYearResult = (List<Monthly>) monthlyServiceTest.getAllMonthlyByYear("2022");
         //THEN
         assertEquals(3, monthliesByYearResult.size());
-
         verify(monthlyRepositoryMock, times(1)).findMonthlyByYear(anyString());
     }
 

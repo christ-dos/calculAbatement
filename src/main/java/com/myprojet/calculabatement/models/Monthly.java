@@ -20,6 +20,7 @@ public class Monthly {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "monthly_Id")
     private int monthlyId;
+    @Enumerated(EnumType.STRING)
     private Month month;
     private String year;
     @Column(name = "taxable_salary")
