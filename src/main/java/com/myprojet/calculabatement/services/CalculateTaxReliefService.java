@@ -21,8 +21,8 @@ public class CalculateTaxReliefService {
 
     public double calculateTaxReliefByChild(double rateSmic1, double rateSmic2, Month monthOfIncrease, String year, int childId) {
         double taxRelief;
-        List<Monthly>  monthliesByYear = (List<Monthly>) monthlyRepository.findMonthlyByYear(year);
-        if(monthliesByYear.isEmpty()){
+        List<Monthly> monthliesByYear = (List<Monthly>) monthlyRepository.findMonthlyByYear(year);
+        if (monthliesByYear.isEmpty()) {
             throw new MonthlyNotFoundException("Il n'y a aucune entrée enregistré pour l'année: " + year);
         }
         //Si le tarif du Smic a changé une seule fois dans l'année, on calcul l'abatement pour l'année entière.
@@ -40,11 +40,13 @@ public class CalculateTaxReliefService {
     }
 
     private double getTaxReliefByChildForAFullYear(List<Monthly> monthliesByYear, int childId, double rateSmic1) {
-        int sumDaysWorked = monthliesByYear.stream().filter(monthly -> monthly.getChildId() == childId)
+        int sumDaysWorked = monthliesByYear.stream()
+                .filter(monthly -> monthly.getChildId() == childId)
                 .map(Monthly::getDayWorked)
                 .reduce(0, Integer::sum);
 
-        double sumHoursWorked = monthliesByYear.stream().filter(monthly -> monthly.getChildId() == childId)
+        double sumHoursWorked = monthliesByYear.stream()
+                .filter(monthly -> monthly.getChildId() == childId)
                 .map(Monthly::getHoursWorked)
                 .mapToDouble(Double::doubleValue)
                 .sum();
