@@ -3,6 +3,7 @@ package com.myprojet.calculabatement.services;
 import com.myprojet.calculabatement.exceptions.MonthlyNotFoundException;
 import com.myprojet.calculabatement.models.Monthly;
 import com.myprojet.calculabatement.repositories.MonthlyRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.math3.util.Precision;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,6 +12,7 @@ import java.time.Month;
 import java.util.List;
 
 @Service
+@Slf4j
 public class CalculateTaxReliefService {
     private MonthlyRepository monthlyRepository;
 
@@ -21,30 +23,38 @@ public class CalculateTaxReliefService {
 
     public double calculateTaxReliefByChild(double rateSmic1, double rateSmic2, Month monthOfIncrease, String year, int childId) {
         double taxRelief;
-        List<Monthly>  monthliesByYear = (List<Monthly>) monthlyRepository.findMonthlyByYear(year);
-        if(monthliesByYear.isEmpty()){
+        List<Monthly> monthliesByYear = (List<Monthly>) monthlyRepository.findMonthlyByYear(year);
+        if (monthliesByYear.isEmpty()) {
+            log.error("Service: Monthly not found for year: " + year);
             throw new MonthlyNotFoundException("Il n'y a aucune entrée enregistré pour l'année: " + year);
         }
         //Si le tarif du Smic a changé une seule fois dans l'année, on calcul l'abatement pour l'année entière.
         if (rateSmic2 == 0D) {
             taxRelief = getTaxReliefByChildForAFullYear(monthliesByYear, childId, rateSmic1);
+            log.debug("Service: Calculation tax relief for a full year: " + year);
         } else {
             //Sinon on calcul sur 2 periodes avec 2 tarif smic différents
-            taxRelief = getTaxReliefByChildWhenUpwardOccurredTwoTimesInYear(monthliesByYear, childId, monthOfIncrease, rateSmic1, rateSmic2);
+            taxRelief = getTaxReliefByChildWhenUpwardOccurredTwoTimesInYear(
+                    monthliesByYear, childId, monthOfIncrease, rateSmic1, rateSmic2);
+            log.debug("Service: Calculation tax relief for two periods in month of increase: " + monthOfIncrease);
         }
+        log.info("Service: Displaying the value of the tax relief by child id and by year");
         return Precision.round(taxRelief, 2);
     }
 
     private int convertHoursWorkedInDaysAndRoundedUpToNextInteger(double hoursWorked) {
+        log.info ("Service: Convert the sum of hours in days");
         return (int) Math.ceil(hoursWorked / 8);
     }
 
     private double getTaxReliefByChildForAFullYear(List<Monthly> monthliesByYear, int childId, double rateSmic1) {
-        int sumDaysWorked = monthliesByYear.stream().filter(monthly -> monthly.getChildId() == childId)
+        int sumDaysWorked = monthliesByYear.stream()
+                .filter(monthly -> monthly.getChildId() == childId)
                 .map(Monthly::getDayWorked)
                 .reduce(0, Integer::sum);
 
-        double sumHoursWorked = monthliesByYear.stream().filter(monthly -> monthly.getChildId() == childId)
+        double sumHoursWorked = monthliesByYear.stream()
+                .filter(monthly -> monthly.getChildId() == childId)
                 .map(Monthly::getHoursWorked)
                 .mapToDouble(Double::doubleValue)
                 .sum();
