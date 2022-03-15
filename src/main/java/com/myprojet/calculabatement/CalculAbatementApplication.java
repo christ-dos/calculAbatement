@@ -5,6 +5,7 @@ import com.myprojet.calculabatement.repositories.ChildRepository;
 import com.myprojet.calculabatement.repositories.MonthlyRepository;
 import com.myprojet.calculabatement.services.CalculateFoodCompensationService;
 import com.myprojet.calculabatement.services.CalculateTaxReliefService;
+import com.myprojet.calculabatement.services.TaxableSalarySiblingService;
 import com.myprojet.calculabatement.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -31,6 +32,9 @@ public class CalculAbatementApplication implements CommandLineRunner {
 
     @Autowired
     private CalculateFoodCompensationService calculateFoodCompensationService;
+
+    @Autowired
+    private TaxableSalarySiblingService taxableSalarySiblingService;
 
     public static void main(String[] args) {
         SpringApplication.run(CalculAbatementApplication.class, args);
@@ -66,9 +70,10 @@ public class CalculAbatementApplication implements CommandLineRunner {
         //Arrays.stream(Month.values()).forEach(x->System.out.println(x));
        // double month = calculateTaxReliefService.calculateTaxReliefByChild(10.15, 10.20, Month.AUGUST, "2022", 1);
         // month.forEach(x->System.out.println("les valeurs: " +x));
-       double totalRepas = calculateFoodCompensationService.calculateFoodCompensationByYearAndByChildId("2022", 1D,0.5,1);
+       //double totalRepas = calculateFoodCompensationService.calculateFoodCompensationByYearAndByChildId("2022", 1D,0.5,1);
         //totalRepas.forEach(x->System.out.println("les valeurs: " +x));
-       System.out.println("total: " + totalRepas);
+        double result = taxableSalarySiblingService.calculateTaxableSalarySibling(245.7,0.7801, 0);
+       System.out.println("total: " + result);
 
 
     }
