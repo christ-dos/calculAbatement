@@ -7,6 +7,7 @@ import com.myprojet.calculabatement.services.CalculateFoodCompensationService;
 import com.myprojet.calculabatement.services.CalculateTaxReliefService;
 import com.myprojet.calculabatement.services.TaxableSalarySiblingService;
 import com.myprojet.calculabatement.services.UserService;
+import com.myprojet.calculabatement.configuration.CustomProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -35,6 +36,12 @@ public class CalculAbatementApplication implements CommandLineRunner {
 
     @Autowired
     private TaxableSalarySiblingService taxableSalarySiblingService;
+
+    @Autowired
+    private CustomProperties customProperties;
+
+
+
 
     public static void main(String[] args) {
         SpringApplication.run(CalculAbatementApplication.class, args);
@@ -73,7 +80,7 @@ public class CalculAbatementApplication implements CommandLineRunner {
        //double totalRepas = calculateFoodCompensationService.calculateFoodCompensationByYearAndByChildId("2022", 1D,0.5,1);
         //totalRepas.forEach(x->System.out.println("les valeurs: " +x));
         double result = taxableSalarySiblingService.calculateTaxableSalarySibling(245.7,0.7801, 0);
-       System.out.println("total: " + result);
+       System.out.println(customProperties.getApiInseeBdmUrl());
 
 
     }
