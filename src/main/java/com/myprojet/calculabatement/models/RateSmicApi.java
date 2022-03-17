@@ -5,6 +5,11 @@ import lombok.Data;
 @Data
 public class RateSmicApi {
     private String timePeriod;
-    private double smicValue;
+    private String smicValue;
+    private String obsStatus;
+    private String obsQual;
+    private String obsType;
+
+
 
 }

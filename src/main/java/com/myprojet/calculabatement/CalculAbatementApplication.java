@@ -1,5 +1,6 @@
 package com.myprojet.calculabatement;
 
+import com.myprojet.calculabatement.configuration.CustomProperties;
 import com.myprojet.calculabatement.models.Child;
 import com.myprojet.calculabatement.models.Monthly;
 import com.myprojet.calculabatement.models.RateSmicApi;
@@ -10,13 +11,10 @@ import com.myprojet.calculabatement.services.CalculateFoodCompensationService;
 import com.myprojet.calculabatement.services.CalculateTaxReliefService;
 import com.myprojet.calculabatement.services.TaxableSalarySiblingService;
 import com.myprojet.calculabatement.services.UserService;
-import com.myprojet.calculabatement.configuration.CustomProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 
 import java.time.Month;
 import java.util.Arrays;
@@ -47,8 +45,6 @@ public class CalculAbatementApplication implements CommandLineRunner {
 
     @Autowired
     private RateSmicProxy rateSmicProxy;
-
-
 
 
     public static void main(String[] args) {
@@ -83,15 +79,15 @@ public class CalculAbatementApplication implements CommandLineRunner {
 //        System.out.println(formatter.format(localDate)); // print formatter date
         // List<Monthly> montglies = (List<Monthly>) monthlyRepository.findByMonthLessThan(Month.DECEMBER.getValue());
         //Arrays.stream(Month.values()).forEach(x->System.out.println(x));
-       // double month = calculateTaxReliefService.calculateTaxReliefByChild(10.15, 10.20, Month.AUGUST, "2022", 1);
+        // double month = calculateTaxReliefService.calculateTaxReliefByChild(10.15, 10.20, Month.AUGUST, "2022", 1);
         // month.forEach(x->System.out.println("les valeurs: " +x));
-       //double totalRepas = calculateFoodCompensationService.calculateFoodCompensationByYearAndByChildId("2022", 1D,0.5,1);
+        //double totalRepas = calculateFoodCompensationService.calculateFoodCompensationByYearAndByChildId("2022", 1D,0.5,1);
         //totalRepas.forEach(x->System.out.println("les valeurs: " +x));
-        double result = taxableSalarySiblingService.calculateTaxableSalarySibling(245.7,0.7801, 0);
-       System.out.println(customProperties.getApiInseeBdmUrl());
-       Iterable<RateSmicApi> results = rateSmicProxy.getRateSmicByInseeApi();
+        double result = taxableSalarySiblingService.calculateTaxableSalarySibling(245.7, 0.7801, 0);
+        System.out.println(customProperties.getApiInseeBdmUrl());
+        Iterable<RateSmicApi> results = rateSmicProxy.getRateSmicByInseeApi();
         System.out.println(results);
-     //  results.forEach(x-> System.out.println(x));
+        //  results.forEach(x-> System.out.println(x));
 
 
     }

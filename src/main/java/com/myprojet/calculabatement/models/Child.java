@@ -6,13 +6,12 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.sql.Date;
 
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 public class Child {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,4 +26,5 @@ public class Child {
     private String beginContract;
     @Column(name = "user_email")
     private String userEmail;
+
 }
