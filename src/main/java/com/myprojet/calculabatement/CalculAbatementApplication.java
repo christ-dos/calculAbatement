@@ -4,6 +4,7 @@ import com.myprojet.calculabatement.configuration.CustomProperties;
 import com.myprojet.calculabatement.models.Child;
 import com.myprojet.calculabatement.models.Monthly;
 import com.myprojet.calculabatement.models.RateSmicApi;
+import com.myprojet.calculabatement.models.SeriesSmic;
 import com.myprojet.calculabatement.proxies.RateSmicProxy;
 import com.myprojet.calculabatement.repositories.ChildRepository;
 import com.myprojet.calculabatement.repositories.MonthlyRepository;
@@ -18,6 +19,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.time.Month;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 @SpringBootApplication
@@ -85,9 +87,10 @@ public class CalculAbatementApplication implements CommandLineRunner {
         //totalRepas.forEach(x->System.out.println("les valeurs: " +x));
         double result = taxableSalarySiblingService.calculateTaxableSalarySibling(245.7, 0.7801, 0);
         System.out.println(customProperties.getApiInseeBdmUrl());
-        Iterable<RateSmicApi> results = rateSmicProxy.getRateSmicByInseeApi();
-        System.out.println(results);
-        //  results.forEach(x-> System.out.println(x));
+        List<RateSmicApi> results = rateSmicProxy.getRateSmicByInseeApi("2021", String.valueOf(Month.DECEMBER.getValue()));
+       // Arrays.stream(results).forEach(x->System.out.println(x));
+       System.out.println(results);
+       //results.forEach(x-> System.out.println(x));
 
 
     }
