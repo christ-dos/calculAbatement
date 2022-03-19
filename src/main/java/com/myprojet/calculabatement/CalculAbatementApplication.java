@@ -84,7 +84,7 @@ public class CalculAbatementApplication implements CommandLineRunner {
         //totalRepas.forEach(x->System.out.println("les valeurs: " +x));
         double result = taxableSalarySiblingService.calculateTaxableSalarySibling(245.7, 0.7801, 0);
         System.out.println(customProperties.getApiInseeBdmUrl());
-        double results = calculateTaxReliefService.calculateTaxReliefByChild(Month.OCTOBER,"2021", 1);
+        double results = calculateTaxReliefService.calculateTaxReliefByChild("2021", 1);
        // Arrays.stream(results).forEach(x->System.out.println(x));
        System.out.println(results);
        //results.forEach(x-> System.out.println(x));

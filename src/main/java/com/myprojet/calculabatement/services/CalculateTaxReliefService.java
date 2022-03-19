@@ -10,8 +10,9 @@ import org.apache.commons.math3.util.Precision;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.Month;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,21 +29,23 @@ public class CalculateTaxReliefService {
         this.rateSmicProxy = rateSmicProxy;
     }
 
-    public double calculateTaxReliefByChild(Month monthOfIncrease, String year, int childId) {
+    public double calculateTaxReliefByChild(String year, int childId) {
         double taxRelief = 0;
         //get smic values by insee Api
         List<RateSmicApi> smicValues = rateSmicProxy.getRateSmicByInseeApi(year, "12");
+        List<Monthly> monthliesByYear = (List<Monthly>) monthlyRepository.findMonthlyByYear(year);
+        if (monthliesByYear.isEmpty() || Integer.parseInt(year) > LocalDate.now().getYear()) {
+            log.error("Service: Monthly not found for year: " + year);
+            throw new MonthlyNotFoundException("Il n'y a aucune entrée enregistré pour l'année: " + year);
+        }
         //group rateSmic by values
         List<List<RateSmicApi>> listsRateSmicGroupByRateSmicValue = smicValues.stream()
                 .collect(Collectors.groupingBy(RateSmicApi::getSmicValue)).values().stream()
                 .filter(smicWithSameValue -> smicWithSameValue.size() >= 1)
                 .collect(Collectors.toList());
 
-        List<Monthly> monthliesByYear = (List<Monthly>) monthlyRepository.findMonthlyByYear(year);
-        if (monthliesByYear.isEmpty()) {
-            log.error("Service: Monthly not found for year: " + year);
-            throw new MonthlyNotFoundException("Il n'y a aucune entrée enregistré pour l'année: " + year);
-        }
+        int monthOfIncrease = getMonthOfIncrease(listsRateSmicGroupByRateSmicValue );
+
         //Si le tarif du Smic a changé une seule fois dans l'année, on calcul l'abatement pour l'année entière.
         if (listsRateSmicGroupByRateSmicValue.size() == 1) {
             taxRelief = getTaxReliefByChildForAFullYear(monthliesByYear, childId, listsRateSmicGroupByRateSmicValue);
@@ -67,8 +70,6 @@ public class CalculateTaxReliefService {
         List<Double> listSmicValues = getRateSmicValue(listsSmicValuesGroupByRateSmicValue);
         double rateSmic1 = listSmicValues.get(0);
         double rateSmic2 = listSmicValues.get(1);
-        System.out.println("rateSmic1:" + rateSmic1);
-        System.out.println("rateSmic2:" + rateSmic2);
 
         int sumDaysWorked = monthliesByYear.stream()
                 .filter(monthly -> monthly.getChildId() == childId)
@@ -84,37 +85,35 @@ public class CalculateTaxReliefService {
         return totalDaysWorked * (rateSmic1 * 3);
     }
 
-    private double getTaxReliefByChildWhenUpwardOccurredTwoTimesInYear(List<Monthly> monthliesByYear, int childId, Month monthOfIncrease, List<List<RateSmicApi>> listsSmicValuesGroupByRateSmicValue) {
+    private double getTaxReliefByChildWhenUpwardOccurredTwoTimesInYear(List<Monthly> monthliesByYear, int childId, int monthOfIncrease, List<List<RateSmicApi>> listsSmicValuesGroupByRateSmicValue) {
         List<Double> listSmicValues = getRateSmicValue(listsSmicValuesGroupByRateSmicValue);
         double rateSmic1 = listSmicValues.get(0);
         double rateSmic2 = listSmicValues.get(1);
-        System.out.println("rateSmic1:" + rateSmic1);
-        System.out.println("rateSmic2:" + rateSmic2);
+
         //Si le tarif du Smic a changé 2 fois dans l'année, on calcul l'abatement pour 2 périodes distinctes.
         Integer sumDaysWorkedFirstPeriod = monthliesByYear.stream()
                 .filter(monthly -> monthly.getChildId() == childId)
-                .filter(monthly -> monthly.getMonth().getValue() < monthOfIncrease.getValue())
+                .filter(monthly -> monthly.getMonth().getValue() < monthOfIncrease)
                 .map(Monthly::getDayWorked)
                 .reduce(0, Integer::sum);
         double sumHoursWorkedFirstPeriod = monthliesByYear.stream()
                 .filter(monthly -> monthly.getChildId() == childId)
-                .filter(monthly -> monthly.getMonth().getValue() < monthOfIncrease.getValue())
+                .filter(monthly -> monthly.getMonth().getValue() < monthOfIncrease)
                 .map(Monthly::getHoursWorked)
                 .mapToDouble(Double::doubleValue)
                 .sum();
 
         int totalDaysWorkedFirstPeriod = sumDaysWorkedFirstPeriod + convertHoursWorkedInDaysAndRoundedUpToNextInteger(sumHoursWorkedFirstPeriod);
         double taxReliefFirstPeriod = totalDaysWorkedFirstPeriod * (rateSmic1 * 3);
-        System.out.println("periode 1 :" + taxReliefFirstPeriod);// clean code
 
         Integer sumDaysWorkedSecondPeriod = monthliesByYear.stream()
                 .filter(monthly -> monthly.getChildId() == childId)
-                .filter(monthly -> monthly.getMonth().getValue() >= monthOfIncrease.getValue())
+                .filter(monthly -> monthly.getMonth().getValue() >= monthOfIncrease)
                 .map(Monthly::getDayWorked)
                 .reduce(0, Integer::sum);
         double sumHoursWorkedSecondPeriod = monthliesByYear.stream()
                 .filter(monthly -> monthly.getChildId() == childId)
-                .filter(monthly -> monthly.getMonth().getValue() >= monthOfIncrease.getValue())
+                .filter(monthly -> monthly.getMonth().getValue() >= monthOfIncrease)
                 .map(Monthly::getHoursWorked)
                 .mapToDouble(Double::doubleValue)
                 .sum();
@@ -144,6 +143,19 @@ public class CalculateTaxReliefService {
             listSmicValues.add(rateSmic2);
         }
         return listSmicValues;
+    }
+
+    private int getMonthOfIncrease(List<List<RateSmicApi>> listsRateSmicGroupByRateSmicValue ){
+        List<RateSmicApi> firstListGroupByRateSmicValue = listsRateSmicGroupByRateSmicValue
+                .get(0);
+        //obtain last element of the group list and get timePeriod of increase
+        String timePeriodLastRateSmicApi = firstListGroupByRateSmicValue.get(firstListGroupByRateSmicValue.size() - 1)
+                .getTimePeriod();
+        List<String> listStringTimePeriod = Arrays.asList(timePeriodLastRateSmicApi.split("-"));
+        int monthOfIncrease = Integer.parseInt(listStringTimePeriod.get(1));
+
+        log.info("Service : get the month of increase");
+        return monthOfIncrease;
     }
 }
 
