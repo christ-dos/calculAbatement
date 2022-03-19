@@ -1,17 +1,19 @@
 package com.myprojet.calculabatement.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-
 public class RateSmicApi {
+
     @JsonProperty("TIME_PERIOD")
     private String timePeriod;
     @JsonProperty("OBS_VALUE")
