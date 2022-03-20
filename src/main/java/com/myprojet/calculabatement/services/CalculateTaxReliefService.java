@@ -1,6 +1,7 @@
 package com.myprojet.calculabatement.services;
 
 import com.myprojet.calculabatement.exceptions.MonthlyNotFoundException;
+import com.myprojet.calculabatement.exceptions.SmicValueByApiNotFoundException;
 import com.myprojet.calculabatement.models.Monthly;
 import com.myprojet.calculabatement.models.RateSmicApi;
 import com.myprojet.calculabatement.proxies.RateSmicProxy;
@@ -33,8 +34,12 @@ public class CalculateTaxReliefService {
         double taxRelief = 0;
         //get smic values by insee Api
         List<RateSmicApi> smicValues = rateSmicProxy.getRateSmicByInseeApi(year, "12");
+        if(smicValues.isEmpty()){
+            log.error("Service: Impossible obtain rate smic values via insee Api");
+            throw new SmicValueByApiNotFoundException("Les valeurs du Smic n'ont pas été obtenus via Insee Api");
+        }
         List<Monthly> monthliesByYear = (List<Monthly>) monthlyRepository.findMonthlyByYear(year);
-        if (monthliesByYear.isEmpty() || Integer.parseInt(year) > LocalDate.now().getYear()) {
+        if (monthliesByYear.isEmpty()) {
             log.error("Service: Monthly not found for year: " + year);
             throw new MonthlyNotFoundException("Il n'y a aucune entrée enregistré pour l'année: " + year);
         }
@@ -50,7 +55,7 @@ public class CalculateTaxReliefService {
         if (listsRateSmicGroupByRateSmicValue.size() == 1) {
             taxRelief = getTaxReliefByChildForAFullYear(monthliesByYear, childId, listsRateSmicGroupByRateSmicValue);
             log.debug("Service: Calculation tax relief for a full year: " + year);
-        } else if (listsRateSmicGroupByRateSmicValue.size() == 2) {
+        } else if (listsRateSmicGroupByRateSmicValue.size() >= 2) {
             //Sinon on calcul sur 2 periodes avec 2 tarifs smic différents
             taxRelief = getTaxReliefByChildWhenUpwardOccurredTwoTimesInYear(
                     monthliesByYear, childId, monthOfIncrease, listsRateSmicGroupByRateSmicValue);
@@ -61,7 +66,7 @@ public class CalculateTaxReliefService {
     }
 
     private int convertHoursWorkedInDaysAndRoundedUpToNextInteger(double hoursWorked) {
-        log.info("Service: Convert the sum of hours in days");
+        log.info("Service: Convert hours sum to days");
         return (int) Math.ceil(hoursWorked / 8);
     }
 
@@ -130,7 +135,7 @@ public class CalculateTaxReliefService {
         double rateSmic2 = 0;
         List<Double> listSmicValues = new ArrayList<>();
 
-        if (listsSmicValuesGroupByRateSmicValue.size() == 2) {
+        if (listsSmicValuesGroupByRateSmicValue.size() >= 2) {
             rateSmic2 = Double.parseDouble(listsSmicValuesGroupByRateSmicValue.get(0).get(0).getSmicValue());
             rateSmic1 = Double.parseDouble(listsSmicValuesGroupByRateSmicValue.get(1)
                     .get(listsSmicValuesGroupByRateSmicValue.get(1).size() - 1).getSmicValue());
