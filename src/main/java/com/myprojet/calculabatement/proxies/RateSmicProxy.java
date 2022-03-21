@@ -22,24 +22,30 @@ import java.util.List;
 @Component
 @Slf4j
 public class RateSmicProxy {
-    @Autowired
     private CustomProperties customProperties;
 
+    private RestTemplate restTemplate;
+
+    @Autowired
+    public RateSmicProxy(CustomProperties customProperties, RestTemplate restTemplate) {
+        this.customProperties = customProperties;
+        this.restTemplate = restTemplate;
+    }
+
     public List<RateSmicApi> getRateSmicByInseeApi(String year, String monthValue) {
-        if( Integer.parseInt(year) > LocalDate.now().getYear() ||  Integer.parseInt(year) <= 1951){
+        if (Integer.parseInt(year) > LocalDate.now().getYear() || Integer.parseInt(year) <= 1951) {
             log.error("RateSmicProxy: Invalid year for requête!");
-            throw  new IllegalYearException("L'année n'est pas valide");
+            throw new IllegalYearException("L'année n'est pas valide");
         }
-        String baseApiUrl = customProperties.getApiInseeBdmUrl();
         monthValue = StringUtils.leftPad(monthValue, 2, "0");
+        String baseApiUrl = customProperties.getApiInseeBdmUrl();
         String getRateSmicUrl = baseApiUrl + "/data/SERIES_BDM/000822484?startPeriod=" + year + "-01" + "&endPeriod=" + year + "-" + monthValue;
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_XML);
         headers.set("Authorization", "Bearer 6bc53e08-2e61-3693-b166-19a02350b0c4");
-      //  headers.set("Accept", "application/vnd.sdmx.structurespecificdata+xml;version=2.1");
 
-        RestTemplate restTemplate = new RestTemplate();
+
         HttpEntity<String> entity = new HttpEntity<>(headers);
         ResponseEntity<String> response = restTemplate.exchange(
                 getRateSmicUrl,
@@ -47,27 +53,38 @@ public class RateSmicProxy {
                 entity,
                 String.class
         );
-        if (response.getBody() == null) {
-            throw new ResponseNullException("La requête n'a reçu aucune réponse");
+        if (response.getBody().isEmpty()) {
+            log.error("RateSmicProxy: No result found for request at Insee Api!");
+            throw new ResponseNullException("La requête n'a reçu aucune réponse!");
         }
-        //conversion Xml en Json
+        SeriesSmic seriesSmic = getMappedObjectFromJson(response);
+        if (seriesSmic == null) {
+            log.error("RateSmicProxy: An Error occurred during the mapping of the object, the variable seriesSmic is null");
+            throw new NullPointerException("Erreur lors du mapping de l'objet");
+        }
+        log.info("display Smic values for year: " + year);
+        return seriesSmic.getObs();
+    }
+
+    private String conversionResponseApiXmlToJson(ResponseEntity<String> response) {
+        //Conversion Xml en Json
         JSONObject json = XML.toJSONObject(response.getBody());
         String jsonString = json.toString(4);
-        //découpage du json pour récupérer uniquement le tableau Obs
+        //Découpage du json pour récupérer uniquement le tableau Obs avec les valeurs du smic
         String jsonSubStringObs = "{" + jsonString.substring(jsonString.indexOf("Series") + 100, jsonString.indexOf("LAST_UPDATE") - 15) + "}";
-        //Mapping en objet Java
+        return jsonSubStringObs;
+    }
+
+    private SeriesSmic getMappedObjectFromJson(ResponseEntity<String> response) {
+        String jsonSubStringObs = conversionResponseApiXmlToJson(response);
         SeriesSmic seriesSmic = null;
+        //Mapping en objet Java
         try {
             seriesSmic = new ObjectMapper().readValue(jsonSubStringObs, SeriesSmic.class);
         } catch (JsonProcessingException e) {
             log.error("RateSmicProxy: error occurred during deserialization !");
-            System.out.println("Une erreur est survenu lors de la déserialisation");
         }
-        log.info("display of smic values for year: " + year);
-        if (seriesSmic == null) {
-            log.error("RateSmicProxy: Error in object mapping, the variable seriesSmic is null");
-            throw new NullPointerException("Erreur lors du mapping de l'objet");
-        }
-        return seriesSmic.getObs();
+        System.out.println(jsonSubStringObs);
+        return seriesSmic;
     }
 }

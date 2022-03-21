@@ -16,4 +16,6 @@ import org.springframework.context.annotation.Configuration;
 @Slf4j
 public class CustomProperties {
     private String apiInseeBdmUrl;
+
+
 }
