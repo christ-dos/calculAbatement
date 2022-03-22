@@ -122,7 +122,7 @@ public class RateSmicProxyTest {
         //GIVEN
         String year = "2022";
         String monthValue = " 12";
-        String NoContentFound = "";
+        String NoContentFound = null;
         //WHEN
         ResponseEntity<String> response = new ResponseEntity<>(NoContentFound, HttpStatus.NO_CONTENT);
         when(restTemplate.exchange(

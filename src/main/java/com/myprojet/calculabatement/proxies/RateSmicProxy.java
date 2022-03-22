@@ -52,10 +52,6 @@ public class RateSmicProxy {
                 entity,
                 String.class
         );
-        if (response.getBody().isEmpty()) {
-            log.error("Proxy: No result found for request at Insee Api!");
-            throw new ResponseNullException("La requête n'a reçu aucune réponse!");
-        }
         SeriesSmic seriesSmic = getMappedObjectFromJson(response);
         if (seriesSmic == null) {
             log.error("Proxy: An Error occurred during the mapping of the object, the variable seriesSmic is null");
@@ -67,6 +63,10 @@ public class RateSmicProxy {
 
     private String conversionResponseApiXmlToJson(ResponseEntity<String> response) {
         //Conversion Xml en Json
+        if (response.getBody() == null) {
+            log.error("Proxy: No result found for request at Insee Api!");
+            throw new ResponseNullException("La requête n'a reçu aucune réponse!");
+        }
         JSONObject json = XML.toJSONObject(response.getBody());
         String jsonString = json.toString(4);
         //Découpage du json pour récupérer uniquement le tableau Obs avec les valeurs du smic
