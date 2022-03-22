@@ -45,7 +45,6 @@ public class RateSmicProxy {
         headers.setContentType(MediaType.APPLICATION_XML);
         headers.set("Authorization", "Bearer 6bc53e08-2e61-3693-b166-19a02350b0c4");
 
-
         HttpEntity<String> entity = new HttpEntity<>(headers);
         ResponseEntity<String> response = restTemplate.exchange(
                 getRateSmicUrl,

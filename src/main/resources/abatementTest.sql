@@ -54,7 +54,7 @@ VALUES ('MARCH', '2022', 600.50, 18, 18, 18, 0, 1);
 ALTER TABLE child ADD CONSTRAINT user_child_fk
     FOREIGN KEY (user_email)
         REFERENCES user (email)
-        ON DELETE NO ACTION
+        ON DELETE CASCADE
         ON UPDATE NO ACTION;
 
 ALTER TABLE monthly ADD CONSTRAINT child_monthly_fk

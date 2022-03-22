@@ -59,12 +59,12 @@ public class CalculAbatementApplication implements CommandLineRunner {
 //        childRepository.save(new Child(1, "Benoit", "Evan", "14/12/2014", "15/03/2020", "christine@email.fr"));
 //        childRepository.save(new Child(2, "Benoit", "Alice", "14/12/2014", "15/03/2020", "christine@email.fr"));
 //
-        monthlyRepository.save(new Monthly(1, Month.JANUARY, "2022", 650D, 10, 10, 20, 10, 1));
-        monthlyRepository.save(new Monthly(2, Month.AUGUST, "2021", 650D, 10, 10, 20, 10.00, 1));
-        monthlyRepository.save(new Monthly(3, Month.DECEMBER, "2022", 650D, 10, 10, 20, 10.50, 1));
-        monthlyRepository.save(new Monthly(4, Month.MARCH, "2021", 650D, 20, 10, 20, 0D, 1));
-        monthlyRepository.save(new Monthly(5, Month.DECEMBER, "2020", 650D, 20, 20, 20, 0D, 2));
-//       // monthly.forEach(x-> System.out.println(x));
+//        monthlyRepository.save(new Monthly(1, Month.JANUARY, "2022", 650D, 10, 10, 20, 10, 1));
+//        monthlyRepository.save(new Monthly(2, Month.AUGUST, "2021", 650D, 10, 10, 20, 10.00, 1));
+//        monthlyRepository.save(new Monthly(3, Month.DECEMBER, "2022", 650D, 10, 10, 20, 10.50, 1));
+//        monthlyRepository.save(new Monthly(4, Month.MARCH, "2021", 650D, 20, 10, 20, 0D, 1));
+//        monthlyRepository.save(new Monthly(5, Month.DECEMBER, "2020", 650D, 20, 20, 20, 0D, 2));
+////       // monthly.forEach(x-> System.out.println(x));
         //LocalDateTime date  = LocalDateTime.now();
         //  System.out.println("le mois: " + date.getMonthValue());
 //        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d-MMMM-yyyy");
@@ -82,11 +82,11 @@ public class CalculAbatementApplication implements CommandLineRunner {
         // month.forEach(x->System.out.println("les valeurs: " +x));
         //double totalRepas = calculateFoodCompensationService.calculateFoodCompensationByYearAndByChildId("2022", 1D,0.5,1);
         //totalRepas.forEach(x->System.out.println("les valeurs: " +x));
-        double result = taxableSalarySiblingService.calculateTaxableSalarySibling(245.7, 0.7801, 0);
-        System.out.println(customProperties.getApiInseeBdmUrl());
-        double results = calculateTaxReliefService.calculateTaxReliefByChild("2021", 1);
-       // Arrays.stream(results).forEach(x->System.out.println(x));
-       System.out.println(results);
+//        double result = taxableSalarySiblingService.calculateTaxableSalarySibling(245.7, 0.7801, 0);
+//        System.out.println(customProperties.getApiInseeBdmUrl());
+//        double results = calculateTaxReliefService.calculateTaxReliefByChild("2021", 1);
+//       // Arrays.stream(results).forEach(x->System.out.println(x));
+//       System.out.println(results);
        //results.forEach(x-> System.out.println(x));
 
 

@@ -82,7 +82,6 @@ public class ChildRepositoryTest {
         //THEN
         //verify that child is not present in DB
         assertFalse(childNotExist);
-
     }
 
     @Test

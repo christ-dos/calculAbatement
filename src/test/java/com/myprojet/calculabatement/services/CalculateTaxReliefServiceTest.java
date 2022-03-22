@@ -225,17 +225,21 @@ public class CalculateTaxReliefServiceTest {
         verify(monthlyRepositoryMock, times(1)).findMonthlyByYear(anyString());
     }
 
-
     @Test
     public void calculateTaxReliefByChildTest_whenNoEntryWasFoundForYear2022_thenThrowMonthlyNotFoundException() {
         //GIVEN
         List<Monthly> monthliesByYearEmpty = new ArrayList<>();
+        List<RateSmicApi> rateSmicApiList = Arrays.asList(
+                new RateSmicApi("2021-07", "10.00"),
+                new RateSmicApi("2021-06", "10.00"),
+                new RateSmicApi("2021-02", "10.00"),
+                new RateSmicApi("2021-01", "10.00")
+        );
         //WHEN
         when(monthlyRepositoryMock.findMonthlyByYear(anyString())).thenReturn(monthliesByYearEmpty);
+        when(rateSmicProxyMock.getRateSmicByInseeApi(anyString(), anyString())).thenReturn(rateSmicApiList);
         //THEN
         assertThrows(MonthlyNotFoundException.class, () -> calculateTaxReliefServiceTest.calculateTaxReliefByChild("2026", 1));
         verify(monthlyRepositoryMock, times(1)).findMonthlyByYear(anyString());
     }
-
-
 }
