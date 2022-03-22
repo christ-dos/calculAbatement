@@ -6,10 +6,7 @@ import com.myprojet.calculabatement.models.Monthly;
 import com.myprojet.calculabatement.proxies.RateSmicProxy;
 import com.myprojet.calculabatement.repositories.ChildRepository;
 import com.myprojet.calculabatement.repositories.MonthlyRepository;
-import com.myprojet.calculabatement.services.CalculateFoodCompensationService;
-import com.myprojet.calculabatement.services.CalculateTaxReliefService;
-import com.myprojet.calculabatement.services.TaxableSalarySiblingService;
-import com.myprojet.calculabatement.services.UserService;
+import com.myprojet.calculabatement.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -45,6 +42,9 @@ public class CalculAbatementApplication implements CommandLineRunner {
     @Autowired
     private RateSmicProxy rateSmicProxy;
 
+    @Autowired
+    private TotalAnnualTaxReliefsService totalAnnualTaxReliefsService;
+
 
     public static void main(String[] args) {
         SpringApplication.run(CalculAbatementApplication.class, args);
@@ -53,17 +53,17 @@ public class CalculAbatementApplication implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
 
-        List<String> months = Arrays.asList("janvier", "septembre", "juin");
+       // List<String> months = Arrays.asList("janvier", "septembre", "juin");
         // List<Monthly> monthly= (List<Monthly>) monthlyRepository.findAllByMonth("janvier");
 
 //        childRepository.save(new Child(1, "Benoit", "Evan", "14/12/2014", "15/03/2020", "christine@email.fr"));
 //        childRepository.save(new Child(2, "Benoit", "Alice", "14/12/2014", "15/03/2020", "christine@email.fr"));
 //
-//        monthlyRepository.save(new Monthly(1, Month.JANUARY, "2022", 650D, 10, 10, 20, 10, 1));
-//        monthlyRepository.save(new Monthly(2, Month.AUGUST, "2021", 650D, 10, 10, 20, 10.00, 1));
-//        monthlyRepository.save(new Monthly(3, Month.DECEMBER, "2022", 650D, 10, 10, 20, 10.50, 1));
-//        monthlyRepository.save(new Monthly(4, Month.MARCH, "2021", 650D, 20, 10, 20, 0D, 1));
-//        monthlyRepository.save(new Monthly(5, Month.DECEMBER, "2020", 650D, 20, 20, 20, 0D, 2));
+        monthlyRepository.save(new Monthly(1, Month.JANUARY, "2021", 650D, 10, 10, 20, 10.0, 1));
+        monthlyRepository.save(new Monthly(2, Month.AUGUST, "2021", 650D, 10, 10, 20, 10.0, 1));
+        monthlyRepository.save(new Monthly(3, Month.DECEMBER, "2022", 650D, 10, 10, 20, 10.50, 1));
+        monthlyRepository.save(new Monthly(4, Month.MARCH, "2022", 650D, 20, 10, 20, 0D, 1));
+        monthlyRepository.save(new Monthly(5, Month.DECEMBER, "2021", 650D, 20, 10, 20, 10.0, 2));
 ////       // monthly.forEach(x-> System.out.println(x));
         //LocalDateTime date  = LocalDateTime.now();
         //  System.out.println("le mois: " + date.getMonthValue());
@@ -88,7 +88,8 @@ public class CalculAbatementApplication implements CommandLineRunner {
 //       // Arrays.stream(results).forEach(x->System.out.println(x));
 //       System.out.println(results);
        //results.forEach(x-> System.out.println(x));
-
+        double total = totalAnnualTaxReliefsService.getTotalAnnualReliefs();
+        System.out.println("total " + total);
 
     }
 }
