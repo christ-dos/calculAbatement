@@ -84,7 +84,7 @@ public class RateSmicProxy {
         } catch (JsonProcessingException e) {
             log.error("RateSmicProxy: error occurred during deserialization !");
         }
-        System.out.println(jsonSubStringObs);
+
         return seriesSmic;
     }
 }

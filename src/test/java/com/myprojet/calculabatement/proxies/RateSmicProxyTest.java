@@ -1,6 +1,5 @@
 package com.myprojet.calculabatement.proxies;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.myprojet.calculabatement.configuration.BeansConfiguration;
 import com.myprojet.calculabatement.configuration.CustomProperties;
@@ -21,7 +20,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.web.client.RestTemplate;
 
-import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -120,7 +118,7 @@ public class RateSmicProxyTest {
     }
 
     @Test
-    public void getRateSmicByInseeApiTest_WhenRequestResponseIsNull_thenThrowResponseNullException()  {
+    public void getRateSmicByInseeApiTest_WhenRequestResponseIsNull_thenThrowResponseNullException() {
         //GIVEN
         String year = "2022";
         String monthValue = " 12";
