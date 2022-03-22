@@ -13,8 +13,8 @@ import java.util.Date;
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 public class Monthly {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
