@@ -4,13 +4,12 @@ import com.myprojet.calculabatement.models.Child;
 import com.myprojet.calculabatement.models.Monthly;
 import com.myprojet.calculabatement.utils.CalculateAge;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.math3.util.Precision;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.Month;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,19 +34,20 @@ public class TotalAnnualTaxReliefsService {
         this.monthlyService = monthlyService;
     }
 
-    public double getTotalAnnualReliefs(String year, double feeLunch, double feeTaste) {
+    public double getTotalAnnualReportableAmounts(String year, double feeLunch, double feeTaste) {
         List<Child> childrenByCurrentUser = (List<Child>) childService.getChildrenByUserEmail(currentUser);
         List<Integer> listChildId = getListChildrenIdByCurrentUser(childrenByCurrentUser);
 
         double SumTaxReliefAllChildrenByCurrentUser = getSumTaxReliefAllChildrenByCurrentUser(year, listChildId);
-        double SumFoodCompensationAllChildrenByCurrentUser = getSumFoodCompensationAllChildrenByCurrentUser(year, feeLunch, feeTaste, listChildId);
+        double SumFoodCompensationAllChildrenByCurrentUser = getSumFoodCompensationAllChildrenByCurrentUser(year, feeLunch, feeTaste);
         double sumTaxableSalaryForAllChildrenByYear = getSumTaxableSalaryAllChildrenByCurrenUser(year, childrenByCurrentUser);
 
-
         double reportableAmounts = sumTaxableSalaryForAllChildrenByYear - SumTaxReliefAllChildrenByCurrentUser + SumFoodCompensationAllChildrenByCurrentUser;
-        System.out.println("SumFoodCompensationAllChildrenByCurrentUser " + SumFoodCompensationAllChildrenByCurrentUser);
-        // System.out.println(SumFoodCompensationAllChildrenByCurrentUser);
-        return sumTaxableSalaryForAllChildrenByYear;
+        if (reportableAmounts < 0) {
+            reportableAmounts = 0D;
+        }
+        log.info("Service: get reportable amounts to declare for year: " + year);
+        return Precision.round(reportableAmounts, 2);
     }
 
     private List<Integer> getListChildrenIdByCurrentUser(List<Child> childrenByCurrentUser) {
@@ -55,7 +55,7 @@ public class TotalAnnualTaxReliefsService {
         for (Child child : childrenByCurrentUser) {
             listChildId.add(child.getId());
         }
-        log.info("get list of children ID by current user: " + currentUser);
+        log.info("Service: get list of children ID by current user: " + currentUser);
         return listChildId;
     }
 
@@ -69,52 +69,30 @@ public class TotalAnnualTaxReliefsService {
         return sumTaxReliefChildrenCurrentUser;
     }
 
-    private double getSumFoodCompensationAllChildrenByCurrentUser(String year, double feeLunch, double feeTaste, List<Integer> listChildId) {
+    private double getSumFoodCompensationAllChildrenByCurrentUser(String year, double feeLunch, double feeTaste) {
         List<Child> childrenByCurrentUser = (List<Child>) childService.getChildrenByUserEmail(currentUser);
-        double sumFoodCompensationChildrenCurrentUser1 =
-                childrenByCurrentUser.stream()
-                        .map(child-> {
-                            double foodCompensationByYearAndByChildId = 0D;
-                            if (CalculateAge.getAge(child.getBirthDate()) == 1) {
-                                String birthDate = child.getBirthDate();
-                                List<String> birthDateSplit = Arrays.stream(birthDate.split("/")).collect(Collectors.toList());
-                                int birthDateMonth = Integer.parseInt(birthDateSplit.get(1));
-                                foodCompensationByYearAndByChildId = child.getMonthlies().stream()
-                                        .filter(monthly->monthly.getMonth().getValue() > birthDateMonth)
-                                        .map(childId -> calculateFoodCompensationService.calculateFoodCompensationByYearAndByChildId(year, feeLunch, feeTaste, child.getId()))
-                                        .mapToDouble(Double::doubleValue).sum();
+        double foodCompensationByYearAndByChildId = 0D;
+        List<Monthly> monthliesByYear = (List<Monthly>) monthlyService.getAllMonthlyByYear(year);
 
-                                   // foodCompensationByYearAndByChildId = calculateFoodCompensationService.calculateFoodCompensationByYearAndByChildId(year, feeLunch, feeTaste, child.getId());
-                                    //todo à tester pou verifier que ca marche
-                               log.info("je suis dans == 1");
-                                System.out.println("date anniv  mois" + foodCompensationByYearAndByChildId);
-
-                            } else if (CalculateAge.getAge(child.getBirthDate()) < 1) {
-                                foodCompensationByYearAndByChildId = 0D;
-                                log.info("je suis dans < 1");
-                            }else{
-                                foodCompensationByYearAndByChildId = calculateFoodCompensationService.calculateFoodCompensationByYearAndByChildId(year, feeLunch, feeTaste, child.getId());
-                                log.info("je suis dans >1");
-                            }
-                            return foodCompensationByYearAndByChildId;
-                        })
-                        // .forEach(x->System.out.println("MA LISTE" + x));
-//                        .map(chilId -> chilId.getId())
-//                        .map(childId -> calculateFoodCompensationService.calculateFoodCompensationByYearAndByChildId(year, feeLunch, feeTaste, childId))
-                        .mapToDouble(Double::doubleValue)
-                        .sum();
-
-
-        double sumFoodCompensationChildrenCurrentUser = listChildId.stream()
-                .map(childId -> calculateFoodCompensationService.calculateFoodCompensationByYearAndByChildId(year, feeLunch, feeTaste, childId))
-                .mapToDouble(Double::doubleValue)
-                .sum();
+        for (Child child : childrenByCurrentUser) {
+            int childAge = CalculateAge.getAge(child.getBirthDate());
+            if (childAge == 1) {
+                foodCompensationByYearAndByChildId += getSumFoodCompensationWhenChildIsOneYearOld(child, year, feeLunch, feeTaste);
+                log.info("Service: The child is one year old");
+            } else if (childAge < 1) {
+                log.info("Service: The child is less than one year old");
+                foodCompensationByYearAndByChildId += 0D;
+            } else {
+                log.info("Service: The child is one year old and over");
+                foodCompensationByYearAndByChildId += calculateFoodCompensationService.calculateFoodCompensationByYearAndByChildId(
+                        year, feeLunch, feeTaste, monthliesByYear, child.getId());
+            }
+        }
         log.info("Service: get total food compensation for all children by current user: " + currentUser + " for year: " + year);
-        return sumFoodCompensationChildrenCurrentUser1; // todo a finir
+        return foodCompensationByYearAndByChildId;
     }
 
     private double getSumTaxableSalaryAllChildrenByCurrenUser(String year, List<Child> childrenByCurrentUser) {
-        //List<Child> childrenByUser = (List<Child>) childService.getChildrenByUserEmail(currentUser);
         double sumTaxableSalaryForAllChildrenByYear =
                 childrenByCurrentUser.stream()
                         .map(child -> child.getMonthlies()
@@ -124,5 +102,26 @@ public class TotalAnnualTaxReliefsService {
                         ).mapToDouble(Double::doubleValue).sum();
         log.info("Service: get total taxable salary for all children by current user: " + currentUser + " for year: " + year);
         return sumTaxableSalaryForAllChildrenByYear;
+    }
+
+    private double getSumFoodCompensationWhenChildIsOneYearOld(Child child, String year, double feeLunch, double feeTaste) {
+        double foodCompensationByYearAndByChildId = 0D;
+
+        String birthDate = child.getBirthDate();
+        List<String> birthDateSplit = Arrays.stream(birthDate.split("/")).collect(Collectors.toList());
+        int birthDateMonth = Integer.parseInt(birthDateSplit.get(1));
+
+        List<Monthly> monthliesAfterbirthDateMonth = new ArrayList<>();
+        for (Monthly monthly : child.getMonthlies()) {
+            if (monthly.getMonth().getValue() > birthDateMonth && monthly.getYear().equals(year)) {
+                monthliesAfterbirthDateMonth.add(monthly);
+            }
+        }
+        if (!monthliesAfterbirthDateMonth.isEmpty()) {
+            foodCompensationByYearAndByChildId = calculateFoodCompensationService.calculateFoodCompensationByYearAndByChildId(year, feeLunch, feeTaste, monthliesAfterbirthDateMonth, child.getId());
+        } else {
+            foodCompensationByYearAndByChildId = 0D;
+        }
+        return foodCompensationByYearAndByChildId;
     }
 }

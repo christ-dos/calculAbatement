@@ -20,18 +20,17 @@ public class CalculateFoodCompensationService {
         this.monthlyRepository = monthlyRepository;
     }
 
-    public double calculateFoodCompensationByYearAndByChildId(String year, double feeLunch, double feeTaste, int childId) {
-        List<Monthly> monthliesByYear = (List<Monthly>) monthlyRepository.findMonthlyByYear(year);
-        if (monthliesByYear.isEmpty()) {
+    public double calculateFoodCompensationByYearAndByChildId(String year, double feeLunch, double feeTaste, List<Monthly> monthlyList, int childId) {
+        if (monthlyList.isEmpty()) {
             log.error("Service: Monthly not found for year: " + year);
             throw new MonthlyNotFoundException("Il n'y a aucune entrée enregistré pour l'année: " + year);
         }
 
-        int sumLunchByChildId = monthliesByYear.stream()
+        int sumLunchByChildId = monthlyList.stream()
                 .filter(monthly -> monthly.getChildId() == childId)
                 .map(Monthly::getLunch)
                 .reduce(0, Integer::sum);
-        int sumTasteByChildId = monthliesByYear.stream()
+        int sumTasteByChildId = monthlyList.stream()
                 .filter(monthly -> monthly.getChildId() == childId)
                 .map(Monthly::getTaste)
                 .reduce(0, Integer::sum);
@@ -41,7 +40,6 @@ public class CalculateFoodCompensationService {
             throw new FeesEqualZeroException("Le tarif des repas ne peut pas être null");
         }
         log.debug("Service: Food compensation by child id : " + childId + " and by year: " + year);
-        //return sumTasteByChildId;
         return (sumLunchByChildId * feeLunch) + (sumTasteByChildId * feeTaste);
     }
 }

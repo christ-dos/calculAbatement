@@ -44,7 +44,7 @@ public class CalculateFoodCompensationServiceTest {
         double foodCompensationExpected = (20 * 3 * 1) + (0 * 3 * 0.5); //60.0
         //WHEN
         when(monthlyRepositoryMock.findMonthlyByYear(anyString())).thenReturn(monthliesByYear);
-        double foodCompensationResult = calculateFoodCompensationServiceTest.calculateFoodCompensationByYearAndByChildId("2022", 1, 0.5, 1);
+        double foodCompensationResult = calculateFoodCompensationServiceTest.calculateFoodCompensationByYearAndByChildId("2022", 1, 0.5, monthliesByYear, 1);
         //THEN
         assertEquals(foodCompensationExpected, foodCompensationResult);
         verify(monthlyRepositoryMock, times(1)).findMonthlyByYear(anyString());
@@ -61,7 +61,7 @@ public class CalculateFoodCompensationServiceTest {
         double foodCompensationExpected = (0 * 3 * 1) + (10 * 3 * 0.5); //15.0
         //WHEN
         when(monthlyRepositoryMock.findMonthlyByYear(anyString())).thenReturn(monthliesByYear);
-        double foodCompensationResult = calculateFoodCompensationServiceTest.calculateFoodCompensationByYearAndByChildId("2022", 1, 0.5, 1);
+        double foodCompensationResult = calculateFoodCompensationServiceTest.calculateFoodCompensationByYearAndByChildId("2022", 1, 0.5,monthliesByYear , 1);
         //THEN
         assertEquals(foodCompensationExpected, foodCompensationResult);
         verify(monthlyRepositoryMock, times(1)).findMonthlyByYear(anyString());
@@ -77,7 +77,7 @@ public class CalculateFoodCompensationServiceTest {
         double foodCompensationExpected = (0 * 3 * 1) + (0 * 3 * 0.5); //0.00
         //WHEN
         when(monthlyRepositoryMock.findMonthlyByYear(anyString())).thenReturn(monthliesByYear);
-        double foodCompensationResult = calculateFoodCompensationServiceTest.calculateFoodCompensationByYearAndByChildId("2022", 1, 0.5, 1);
+        double foodCompensationResult = calculateFoodCompensationServiceTest.calculateFoodCompensationByYearAndByChildId("2022", 1, 0.5,monthliesByYear , 1);
         //THEN
         assertEquals(foodCompensationExpected, foodCompensationResult);
         verify(monthlyRepositoryMock, times(1)).findMonthlyByYear(anyString());
@@ -94,7 +94,7 @@ public class CalculateFoodCompensationServiceTest {
         when(monthlyRepositoryMock.findMonthlyByYear(anyString())).thenReturn(monthliesByYear);
         //THEN
         assertThrows(FeesEqualZeroException.class, () ->
-                calculateFoodCompensationServiceTest.calculateFoodCompensationByYearAndByChildId("2022", 0D, 1, 1));
+                calculateFoodCompensationServiceTest.calculateFoodCompensationByYearAndByChildId("2022", 0D, 1,monthliesByYear , 1));
         verify(monthlyRepositoryMock, times(1)).findMonthlyByYear(anyString());
     }
 
@@ -109,7 +109,7 @@ public class CalculateFoodCompensationServiceTest {
         when(monthlyRepositoryMock.findMonthlyByYear(anyString())).thenReturn(monthliesByYear);
         //THEN
         assertThrows(FeesEqualZeroException.class, () ->
-                calculateFoodCompensationServiceTest.calculateFoodCompensationByYearAndByChildId("2022", 0D, 0D, 1));
+                calculateFoodCompensationServiceTest.calculateFoodCompensationByYearAndByChildId("2022", 0D, 0D,monthliesByYear , 1));
         verify(monthlyRepositoryMock, times(1)).findMonthlyByYear(anyString());
     }
 
@@ -123,7 +123,7 @@ public class CalculateFoodCompensationServiceTest {
         double foodCompensationExpected = (0 * 3 * 0) + (10 * 3 * 0.5); //15.0
         //WHEN
         when(monthlyRepositoryMock.findMonthlyByYear(anyString())).thenReturn(monthliesByYear);
-        double foodCompensationResult = calculateFoodCompensationServiceTest.calculateFoodCompensationByYearAndByChildId("2022", 0D, 0.5, 1);
+        double foodCompensationResult = calculateFoodCompensationServiceTest.calculateFoodCompensationByYearAndByChildId("2022", 0D, 0.5,monthliesByYear , 1);
 
         //THEN
         assertEquals(foodCompensationExpected, foodCompensationResult);
@@ -140,7 +140,7 @@ public class CalculateFoodCompensationServiceTest {
         double foodCompensationExpected = (20 * 3 * 1) + (10 * 3 * 0.5); //75.0
         //WHEN
         when(monthlyRepositoryMock.findMonthlyByYear(anyString())).thenReturn(monthliesByYear);
-        double foodCompensationResult = calculateFoodCompensationServiceTest.calculateFoodCompensationByYearAndByChildId("2022", 1, 0.5, 1);
+        double foodCompensationResult = calculateFoodCompensationServiceTest.calculateFoodCompensationByYearAndByChildId("2022", 1, 0.5,monthliesByYear , 1);
 
         //THEN
         assertEquals(foodCompensationExpected, foodCompensationResult);
@@ -154,7 +154,7 @@ public class CalculateFoodCompensationServiceTest {
         when(monthlyRepositoryMock.findMonthlyByYear(anyString())).thenReturn(monthliesByYear2022);
         //THEN
         assertThrows(MonthlyNotFoundException.class, () ->
-                calculateFoodCompensationServiceTest.calculateFoodCompensationByYearAndByChildId("2026", 1.00, 0.5, 1));
+                calculateFoodCompensationServiceTest.calculateFoodCompensationByYearAndByChildId("2026", 1.00, 0.5,monthliesByYear2022 , 1));
         verify(monthlyRepositoryMock, times(1)).findMonthlyByYear(anyString());
 
     }
