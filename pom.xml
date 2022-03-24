@@ -74,8 +74,13 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-    </dependencies>
-
+        <!--*************** Dependency of Joda-time********************* -->
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>2.10</version>
+        </dependency>
+           </dependencies>
     <build>
         <plugins>
             <plugin>

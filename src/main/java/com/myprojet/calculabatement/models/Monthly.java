@@ -1,9 +1,6 @@
 package com.myprojet.calculabatement.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -15,6 +12,7 @@ import java.util.Date;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 public class Monthly {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,18 +32,4 @@ public class Monthly {
     @Column(name = "child_id")
     private int childId;
 
-    @Override
-    public String toString() {
-        return "Monthly{" +
-                "monthlyId=" + monthlyId +
-                ", month=" + month +
-                ", year='" + year + '\'' +
-                ", taxableSalary=" + taxableSalary +
-                ", lunch=" + lunch +
-                ", taste=" + taste +
-                ", dayWorked=" + dayWorked +
-                ", hoursWorked=" + hoursWorked +
-                ", childId=" + childId +
-                '}';
-    }
 }

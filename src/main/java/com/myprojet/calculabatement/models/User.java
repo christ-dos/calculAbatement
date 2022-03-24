@@ -1,18 +1,17 @@
 package com.myprojet.calculabatement.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
+@ToString
 @AllArgsConstructor
 public class User {
     @Id
@@ -21,15 +20,17 @@ public class User {
     private String password;
     private String lastname;
     private String firstname;
-    //private List<child> children;
-    
-    @Override
-    public String toString() {
-        return "User{" +
-                "email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                ", lastname='" + lastname + '\'' +
-                ", firstname='" + firstname + '\'' +
-                '}';
+    @OneToMany(
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_email")
+    private List<Child> children = new ArrayList<>();
+
+    public User(String email, String password, String lastname, String firstname) {
+        this.email = email;
+        this.password = password;
+        this.lastname = lastname;
+        this.firstname = firstname;
     }
 }

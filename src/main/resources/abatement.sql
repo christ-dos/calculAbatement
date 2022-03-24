@@ -45,13 +45,13 @@ ALTER TABLE child ADD CONSTRAINT user_kid_fk
     FOREIGN KEY (user_email)
         REFERENCES user (email)
         ON DELETE NO ACTION
-        ON UPDATE NO ACTION;
+        ON UPDATE CASCADE ;
 
 ALTER TABLE monthly ADD CONSTRAINT kid_monthly_fk
     FOREIGN KEY (child_id)
         REFERENCES child (id)
         ON DELETE NO ACTION
-        ON UPDATE NO ACTION;
+        ON UPDATE CASCADE ;
 commit;
 
 
