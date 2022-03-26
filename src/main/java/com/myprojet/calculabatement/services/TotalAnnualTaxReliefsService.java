@@ -16,10 +16,10 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class TotalAnnualTaxReliefsService {
-    private ChildService childService;
-    private CalculateTaxReliefService calculateTaxReliefService;
-    private CalculateFoodCompensationService calculateFoodCompensationService;
-    private MonthlyService monthlyService;
+    private final ChildService childService;
+    private final CalculateTaxReliefService calculateTaxReliefService;
+    private final CalculateFoodCompensationService calculateFoodCompensationService;
+    private final MonthlyService monthlyService;
 
     private final String currentUser = "christine@email.fr";
 
@@ -83,7 +83,7 @@ public class TotalAnnualTaxReliefsService {
                 log.info("Service: The child is less than one year old");
                 foodCompensationByYearAndByChildId += 0D;
             } else {
-                log.info("Service: The child is one year old and over");
+                log.info("Service: The child is over 1 years old");
                 foodCompensationByYearAndByChildId += calculateFoodCompensationService.calculateFoodCompensationByYearAndByChildId(
                         year, feeLunch, feeTaste, monthliesByYear, child.getId());
             }
@@ -98,14 +98,15 @@ public class TotalAnnualTaxReliefsService {
                         .map(child -> child.getMonthlies()
                                 .stream()
                                 .filter(monthly -> monthly.getYear().equals(year))
-                                .mapToDouble(Monthly::getTaxableSalary).sum()
-                        ).mapToDouble(Double::doubleValue).sum();
+                                .mapToDouble(Monthly::getTaxableSalary).sum())
+                        .mapToDouble(Double::doubleValue)
+                        .sum();
         log.info("Service: get total taxable salary for all children by current user: " + currentUser + " for year: " + year);
         return sumTaxableSalaryForAllChildrenByYear;
     }
 
     private double getSumFoodCompensationWhenChildIsOneYearOld(Child child, String year, double feeLunch, double feeTaste) {
-        double foodCompensationByYearAndByChildId = 0D;
+        double foodCompensationByYearAndByChildId;
 
         String birthDate = child.getBirthDate();
         List<String> birthDateSplit = Arrays.stream(birthDate.split("/")).collect(Collectors.toList());
