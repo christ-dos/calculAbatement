@@ -31,7 +31,7 @@ public class Child {
             orphanRemoval = true,
             fetch = FetchType.EAGER)
     @JoinColumn(name = "child_id")
-    private List<Monthly> Monthlies = new ArrayList<>();
+    private List<Monthly> monthlies = new ArrayList<>();
 
     public Child(int id, String lastname, String firstname, String birthDate, String beginContract, String userEmail) {
         this.id = id;

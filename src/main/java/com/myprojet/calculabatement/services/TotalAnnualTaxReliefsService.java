@@ -35,7 +35,7 @@ public class TotalAnnualTaxReliefsService {
     }
 
     public double getTotalAnnualReportableAmounts(String year, double feeLunch, double feeTaste) {
-        List<Child> childrenByCurrentUser = (List<Child>) childService.getChildrenByUserEmail(currentUser);
+        List<Child> childrenByCurrentUser = (List<Child>) childService.getChildrenByUserEmail();
         List<Integer> listChildId = getListChildrenIdByCurrentUser(childrenByCurrentUser);
 
         double SumTaxReliefAllChildrenByCurrentUser = getSumTaxReliefAllChildrenByCurrentUser(year, listChildId);
@@ -70,7 +70,7 @@ public class TotalAnnualTaxReliefsService {
     }
 
     private double getSumFoodCompensationAllChildrenByCurrentUser(String year, double feeLunch, double feeTaste) {
-        List<Child> childrenByCurrentUser = (List<Child>) childService.getChildrenByUserEmail(currentUser);
+        List<Child> childrenByCurrentUser = (List<Child>) childService.getChildrenByUserEmail();
         double foodCompensationByYearAndByChildId = 0D;
         List<Monthly> monthliesByYear = (List<Monthly>) monthlyService.getAllMonthlyByYear(year);
 
