@@ -34,7 +34,7 @@ public class RateSmicProxy {
 
     public List<RateSmicApi> getRateSmicByInseeApi(String year, String monthValue) {
         if (Integer.parseInt(year) > LocalDate.now().getYear() || Integer.parseInt(year) <= 1951) {
-            log.error("RateSmicProxy: Invalid year for requête!");
+            log.error("Proxy: Invalid year for requête!");
             throw new IllegalYearException("L'année n'est pas valide");
         }
         monthValue = StringUtils.leftPad(monthValue, 2, "0");
@@ -52,21 +52,21 @@ public class RateSmicProxy {
                 entity,
                 String.class
         );
-        if (response.getBody().isEmpty()) {
-            log.error("RateSmicProxy: No result found for request at Insee Api!");
-            throw new ResponseNullException("La requête n'a reçu aucune réponse!");
-        }
         SeriesSmic seriesSmic = getMappedObjectFromJson(response);
         if (seriesSmic == null) {
-            log.error("RateSmicProxy: An Error occurred during the mapping of the object, the variable seriesSmic is null");
+            log.error("Proxy: An Error occurred during the mapping of the object, the variable seriesSmic is null");
             throw new NullPointerException("Erreur lors du mapping de l'objet");
         }
-        log.info("display Smic values for year: " + year);
+        log.info("Proxy: display Smic values for year: " + year);
         return seriesSmic.getObs();
     }
 
     private String conversionResponseApiXmlToJson(ResponseEntity<String> response) {
         //Conversion Xml en Json
+        if (response.getBody() == null) {
+            log.error("Proxy: No result found for request at Insee Api!");
+            throw new ResponseNullException("La requête n'a reçu aucune réponse!");
+        }
         JSONObject json = XML.toJSONObject(response.getBody());
         String jsonString = json.toString(4);
         //Découpage du json pour récupérer uniquement le tableau Obs avec les valeurs du smic
@@ -83,7 +83,6 @@ public class RateSmicProxy {
         } catch (JsonProcessingException e) {
             log.error("RateSmicProxy: error occurred during deserialization !");
         }
-
         return seriesSmic;
     }
 }

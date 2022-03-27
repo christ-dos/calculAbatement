@@ -33,7 +33,7 @@ public class ChildRepositoryTest {
         User userSylvie = new User("sylvie@email.fr", "pass", "Martines", "Sylvie");
         userRepositoryTest.save(userSylvie);
 
-        Child childToSave = new Child(1, "Benoit", "Evan", "14/12/2014", "15/03/2020", "sylvie@email.fr");
+        Child childToSave = new Child(1, "Riboulet", "Romy", "14/12/2020", "15/03/2020", "sylvie@email.fr");
         childRepositoryTest.save(childToSave);
 
     }

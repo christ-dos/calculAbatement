@@ -4,6 +4,7 @@ import com.myprojet.calculabatement.exceptions.ChildAlreadyExistException;
 import com.myprojet.calculabatement.exceptions.ChildNotFoundException;
 import com.myprojet.calculabatement.models.Child;
 import com.myprojet.calculabatement.repositories.ChildRepository;
+import com.myprojet.calculabatement.utils.SecurityUtilities;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,7 @@ import java.util.Optional;
 @Service
 public class ChildServiceImpl implements ChildService {
     private ChildRepository childRepository;
+    private final static String currentUser = "christine@email.fr";
 
     @Autowired
     public ChildServiceImpl(ChildRepository childRepository) {
@@ -55,8 +57,8 @@ public class ChildServiceImpl implements ChildService {
     }
 
     @Override
-    public Iterable<Child> getChildrenByUserEmail(String userEmail) {
-        return childRepository.findChildrenByUserEmail(userEmail);
+    public Iterable<Child> getChildrenByUserEmail() {
+        return childRepository.findChildrenByUserEmail(SecurityUtilities.getCurrentUser());
     }
 
     @Override
