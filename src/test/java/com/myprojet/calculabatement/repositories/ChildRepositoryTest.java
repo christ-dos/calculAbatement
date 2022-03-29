@@ -33,7 +33,7 @@ public class ChildRepositoryTest {
         User userSylvie = new User("sylvie@email.fr", "pass", "Martines", "Sylvie");
         userRepositoryTest.save(userSylvie);
 
-        Child childToSave = new Child(1, "Riboulet", "Romy", "14/12/2020", "15/03/2020", "sylvie@email.fr");
+        Child childToSave = new Child(1, "Riboulet", "Romy", "14/12/2020", "15/03/2020","http://image.jpeg", "sylvie@email.fr");
         childRepositoryTest.save(childToSave);
 
     }
@@ -41,9 +41,9 @@ public class ChildRepositoryTest {
     @Test
     public void findChildByUserEmailTest_ThenReturnListWithTwoChildren() {
         // GIVEN
-        List<Child> children = Arrays.asList(new Child(2, "Riboulet", "Manon", "30/11/2017", "01/03/2017", "christine@email.fr"),
-                new Child(3, "Thomaset", "Lubin", "14/12/2020", "15/03/2020", "christine@email.fr"),
-                new Child(4, "Babar", "Elephant", "12/05/2020", "02/05/2020", "sylvie@email.fr")
+        List<Child> children = Arrays.asList(new Child(2, "Riboulet", "Manon", "30/11/2017", "01/03/2017","http://image.jpeg", "christine@email.fr"),
+                new Child(3, "Thomaset", "Lubin", "14/12/2020", "15/03/2020","http://image.jpeg", "christine@email.fr"),
+                new Child(4, "Babar", "Elephant", "12/05/2020", "02/05/2020","http://image.jpeg", "sylvie@email.fr")
         );
         // WHEN
         childRepositoryTest.saveAll(children);
@@ -55,7 +55,7 @@ public class ChildRepositoryTest {
     @Test
     public void saveChildTest_thenReturnChildAdded() {
         //GIVEN
-        Child childToSave = new Child(2, "Benoit", "Evan", "14/12/2014", "15/03/2020", "christine@email.fr");
+        Child childToSave = new Child(2, "Benoit", "Evan", "14/12/2014", "15/03/2020","http://image.jpeg", "christine@email.fr");
         //WHEN
         Child childResult = childRepositoryTest.save(childToSave);
         //THEN
@@ -76,7 +76,7 @@ public class ChildRepositoryTest {
     @Test
     public void existByIdTest_whenChildNotExist_thenReturnFalse() {
         //GIVEN
-        Child childTest = new Child(999, "Benoit", "Evan", "14/12/2014", "15/03/2020", "christine@email.fr");
+        Child childTest = new Child(999, "Benoit", "Evan", "14/12/2014", "15/03/2020","http://image.jpeg", "christine@email.fr");
         //WHEN
         boolean childNotExist = childRepositoryTest.existsById(999);
         //THEN
@@ -97,7 +97,7 @@ public class ChildRepositoryTest {
     @Test
     public void findByIdTest_whenChildNotExist_thenReturnEmptyOptional() {
         //GIVEN
-        Child childTest = new Child(999, "Benoit", "Evan", "14/12/2014", "15/03/2020", "christine@email.fr");
+        Child childTest = new Child(999, "Benoit", "Evan", "14/12/2014", "15/03/2020","http://image.jpeg", "christine@email.fr");
         //WHEN
         Optional<Child> childFind = childRepositoryTest.findById(999);
         //THEN

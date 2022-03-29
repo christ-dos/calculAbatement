@@ -36,7 +36,7 @@ public class MonthlyRepositoryTest {
         User userSaved = new User("christine@email.fr", "pass", "Duarte", "Christine");
         userRepositoryTest.save(userSaved);
 
-        Child childSaved = new Child(1, "Benoit", "Evan", "14/12/2014", "15/03/2020", "christine@email.fr");
+        Child childSaved = new Child(1, "Benoit", "Evan", "14/12/2014", "15/03/2020", "http://image.jpeg","christine@email.fr");
         childRepositoryTest.save(childSaved);
 
         Monthly monthlyTest = new Monthly(1, Month.JANUARY, "2022", 650D, 20, 20, 20, 0, 1);
@@ -97,7 +97,7 @@ public class MonthlyRepositoryTest {
                 new Monthly(2, Month.FEBRUARY, "2022", 650D, 20, 20, 20, 0, 1),
                 new Monthly(3, Month.MARCH, "2022", 650D, 20, 20, 20, 0, 2)
         );
-        Child childSavedIdTwo = new Child(2, "Benoit", "Evan", "14/12/2014", "15/03/2020", "christine@email.fr");
+        Child childSavedIdTwo = new Child(2, "Benoit", "Evan", "14/12/2014", "15/03/2020","http://image.jpeg", "christine@email.fr");
         //WHEN
         childRepositoryTest.save(childSavedIdTwo);
         monthlyRepositoryTest.saveAll(monthlies);
@@ -118,7 +118,7 @@ public class MonthlyRepositoryTest {
                 new Monthly(2, Month.FEBRUARY, "2022", 650D, 20, 20, 20, 0, 1),
                 new Monthly(3, Month.MARCH, "2022", 650D, 20, 20, 20, 0, 2)
         );
-        Child childSavedIdTwo = new Child(2, "Benoit", "Evan", "14/12/2014", "15/03/2020", "christine@email.fr");
+        Child childSavedIdTwo = new Child(2, "Benoit", "Evan", "14/12/2014", "15/03/2020","http://image.jpeg", "christine@email.fr");
         //WHEN
         childRepositoryTest.save(childSavedIdTwo);
         monthlyRepositoryTest.saveAll(monthlies);

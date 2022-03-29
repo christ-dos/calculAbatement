@@ -48,11 +48,11 @@ public class TotalAnnualTaxReliefsServiceTest {
     public void getTotalAnnualReportableAmountsTests_whenTotalTaxableSalaryEquals1500AndTotalFoodCompensationEquals45AndTotalTaxReliefEquals1000AndChildAgeGreaterThanOne_thenReturnTotalAnnualReportableAmountsEqual545() {
         //GIVEN
         childrenByCurrentUser = Arrays.asList(
-                new Child(1, "Riboulet", "Romy", "12/01/2019", "02/05/2021", "christine@email.fr", Arrays.asList(
+                new Child(1, "Riboulet", "Romy", "12/01/2019", "02/05/2021", "https://www.hdwallpaper.nu.jpg","christine@email.fr", Arrays.asList(
                         new Monthly(1, Month.JANUARY, "2022", 500D, 10, 10, 20, 0.0, 1),
                         new Monthly(2, Month.FEBRUARY, "2022", 500D, 10, 10, 20, 0.0, 1)
                 )),
-                new Child(2, "Cacahuette", "Manon", "10/03/2019", "01/03/2019", "christine@email.fr", Arrays.asList(
+                new Child(2, "Cacahuette", "Manon", "10/03/2019", "01/03/2019","https://www.hdwallpaper.nu.jpg", "christine@email.fr", Arrays.asList(
                         new Monthly(3, Month.MARCH, "2022", 500D, 10, 10, 20, 0.0, 2)
                 ))
         );
@@ -70,11 +70,11 @@ public class TotalAnnualTaxReliefsServiceTest {
     public void getTotalAnnualReportableAmountsTests_whenTotalTaxableSalaryEquals1500AndTotalFoodCompensationEquals30AndTotalTaxReliefEquals1000AndChildIsEqualsToOne_thenReturnTotalAnnualReportableAmountsEqual530() {
         //GIVEN
         childrenByCurrentUser = Arrays.asList(
-                new Child(1, "Riboulet", "Romy", "12/01/2021", "02/05/2021", "christine@email.fr", Arrays.asList(
+                new Child(1, "Riboulet", "Romy", "12/01/2021", "02/05/2021", "https://www.hdwallpaper.nu.jpg","christine@email.fr", Arrays.asList(
                         new Monthly(1, Month.JANUARY, "2022", 500D, 10, 10, 20, 0.0, 1),
                         new Monthly(2, Month.FEBRUARY, "2022", 500D, 10, 10, 20, 0.0, 1)
                 )),
-                new Child(2, "Cacahuette", "Manon", "10/03/2021", "01/03/2019", "christine@email.fr", Arrays.asList(
+                new Child(2, "Cacahuette", "Manon", "10/03/2021", "01/03/2019","https://www.hdwallpaper.nu.jpg", "christine@email.fr", Arrays.asList(
                         new Monthly(3, Month.MARCH, "2022", 500D, 10, 10, 20, 0.0, 2)
                 ))
         );
@@ -92,11 +92,11 @@ public class TotalAnnualTaxReliefsServiceTest {
     public void getTotalAnnualReportableAmountsTests_whenTotalTaxableSalaryEquals1500AndTotalFoodCompensationEqualsZeroAndTotalTaxReliefEquals1000AndChildIsLessThanOne_thenReturnTotalAnnualReportableAmountsEqual530() {
         //GIVEN
         childrenByCurrentUser = Arrays.asList(
-                new Child(1, "Riboulet", "Romy", "22/03/2022", "02/05/2021", "christine@email.fr", Arrays.asList(
+                new Child(1, "Riboulet", "Romy", "22/03/2022", "02/05/2021", "https://www.hdwallpaper.nu.jpg","christine@email.fr", Arrays.asList(
                         new Monthly(1, Month.JANUARY, "2022", 500D, 10, 10, 20, 0.0, 1),
                         new Monthly(2, Month.FEBRUARY, "2022", 500D, 10, 10, 20, 0.0, 1)
                 )),
-                new Child(2, "Cacahuette", "Manon", "10/03/2022", "01/03/2019", "christine@email.fr", Arrays.asList(
+                new Child(2, "Cacahuette", "Manon", "10/03/2022", "01/03/2019","https://www.hdwallpaper.nu.jpg", "christine@email.fr", Arrays.asList(
                         new Monthly(3, Month.MARCH, "2022", 500D, 10, 10, 20, 0.0, 2)
                 ))
         );
@@ -113,11 +113,11 @@ public class TotalAnnualTaxReliefsServiceTest {
     public void getTotalAnnualReportableAmountsTests_whenTotalTaxableSalaryEquals1500AndTotalFoodCompensationEquals30AndTotalTaxReliefEquals1000AndChildrenAreAgeDifferent_thenReturnTotalAnnualReportableAmountsEqual530() {
         //GIVEN
         childrenByCurrentUser = Arrays.asList(
-                new Child(1, "Riboulet", "Romy", "12/01/2021", "02/05/2021", "christine@email.fr", Arrays.asList(
+                new Child(1, "Riboulet", "Romy", "12/01/2021", "02/05/2021","https://www.hdwallpaper.nu.jpg", "christine@email.fr", Arrays.asList(
                         new Monthly(1, Month.JANUARY, "2022", 500D, 10, 10, 20, 0.0, 1),
                         new Monthly(2, Month.FEBRUARY, "2022", 500D, 10, 10, 20, 0.0, 1)
                 )),
-                new Child(2, "Cacahuette", "Manon", "10/03/2019", "01/03/2019", "christine@email.fr", Arrays.asList(
+                new Child(2, "Cacahuette", "Manon", "10/03/2019", "01/03/2019","https://www.hdwallpaper.nu.jpg", "christine@email.fr", Arrays.asList(
                         new Monthly(3, Month.MARCH, "2022", 500D, 10, 10, 20, 0.0, 2)
                 ))
         );
@@ -136,11 +136,11 @@ public class TotalAnnualTaxReliefsServiceTest {
     public void getTotalAnnualReportableAmountsTests_whenTotalAnnualReportableAmountsIsLessThanZero_thenReturnTotalAnnualReportableAmountsEqualZero() {
         //GIVEN
         childrenByCurrentUser = Arrays.asList(
-                new Child(1, "Riboulet", "Romy", "12/01/2021", "02/05/2021", "christine@email.fr", Arrays.asList(
+                new Child(1, "Riboulet", "Romy", "12/01/2021", "02/05/2021","https://www.hdwallpaper.nu.jpg", "christine@email.fr", Arrays.asList(
                         new Monthly(1, Month.JANUARY, "2022", 200D, 10, 10, 20, 0.0, 1),
                         new Monthly(2, Month.FEBRUARY, "2022", 200D, 10, 10, 20, 0.0, 1)
                 )),
-                new Child(2, "Cacahuette", "Manon", "10/03/2019", "01/03/2019", "christine@email.fr", Arrays.asList(
+                new Child(2, "Cacahuette", "Manon", "10/03/2019", "01/03/2019","https://www.hdwallpaper.nu.jpg", "christine@email.fr", Arrays.asList(
                         new Monthly(3, Month.MARCH, "2022", 200D, 10, 10, 20, 0.0, 2)
                 ))
         );
