@@ -7,11 +7,9 @@ import com.myprojet.calculabatement.models.RateSmicApi;
 import com.myprojet.calculabatement.proxies.RateSmicProxy;
 import com.myprojet.calculabatement.repositories.MonthlyRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.math3.util.Precision;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -34,7 +32,7 @@ public class CalculateTaxReliefService {
         double taxRelief = 0;
         //get smic values by insee Api
         List<RateSmicApi> smicValues = rateSmicProxy.getRateSmicByInseeApi(year, "12");
-        if(smicValues.isEmpty()){
+        if (smicValues.isEmpty()) {
             log.error("Service: Impossible obtain rate smic values via insee Api");
             throw new SmicValueByApiNotFoundException("Les valeurs du Smic n'ont pas été obtenus via Insee Api");
         }
@@ -49,7 +47,7 @@ public class CalculateTaxReliefService {
                 .filter(smicWithSameValue -> smicWithSameValue.size() >= 1)
                 .collect(Collectors.toList());
 
-        int monthOfIncrease = getMonthOfIncrease(listsRateSmicGroupByRateSmicValue );
+        int monthOfIncrease = getMonthOfIncrease(listsRateSmicGroupByRateSmicValue);
 
         //Si le tarif du Smic a changé une seule fois dans l'année, on calcul l'abatement pour l'année entière.
         if (listsRateSmicGroupByRateSmicValue.size() == 1) {
@@ -62,12 +60,12 @@ public class CalculateTaxReliefService {
             log.debug("Service: Calculation tax relief for two periods in month of increase: " + monthOfIncrease);
         }
         log.info("Service: Display the value of the tax relief by child id and by year");
-        return Precision.round(taxRelief, 2);
+        return taxRelief;
     }
 
-    private int convertHoursWorkedInDaysAndRoundedUpToNextInteger(double hoursWorked) {
+    private double convertHoursWorkedInDaysAndRoundedUpToNextInteger(double hoursWorked) {
         log.info("Service: Convert hours sum to days");
-        return (int) Math.ceil(hoursWorked / 8);
+        return  hoursWorked / 8;
     }
 
     private double getTaxReliefByChildForAFullYear(List<Monthly> monthliesByYear, int childId,
@@ -86,7 +84,7 @@ public class CalculateTaxReliefService {
                 .map(Monthly::getHoursWorked)
                 .mapToDouble(Double::doubleValue)
                 .sum();
-        int totalDaysWorked = sumDaysWorked + convertHoursWorkedInDaysAndRoundedUpToNextInteger(sumHoursWorked);
+        double totalDaysWorked = sumDaysWorked + convertHoursWorkedInDaysAndRoundedUpToNextInteger(sumHoursWorked);
         return totalDaysWorked * (rateSmic1 * 3);
     }
 
@@ -108,7 +106,7 @@ public class CalculateTaxReliefService {
                 .mapToDouble(Double::doubleValue)
                 .sum();
 
-        int totalDaysWorkedFirstPeriod = sumDaysWorkedFirstPeriod + convertHoursWorkedInDaysAndRoundedUpToNextInteger(sumHoursWorkedFirstPeriod);
+        double totalDaysWorkedFirstPeriod = sumDaysWorkedFirstPeriod + convertHoursWorkedInDaysAndRoundedUpToNextInteger(sumHoursWorkedFirstPeriod);
         double taxReliefFirstPeriod = totalDaysWorkedFirstPeriod * (rateSmic1 * 3);
 
         Integer sumDaysWorkedSecondPeriod = monthliesByYear.stream()
@@ -123,7 +121,7 @@ public class CalculateTaxReliefService {
                 .mapToDouble(Double::doubleValue)
                 .sum();
 
-        int totalDaysWorkedSecondPeriod = sumDaysWorkedSecondPeriod +
+        double totalDaysWorkedSecondPeriod = sumDaysWorkedSecondPeriod +
                 convertHoursWorkedInDaysAndRoundedUpToNextInteger(sumHoursWorkedSecondPeriod);
         double taxReliefSecondPeriod = totalDaysWorkedSecondPeriod * (rateSmic2 * 3);
 
@@ -150,7 +148,7 @@ public class CalculateTaxReliefService {
         return listSmicValues;
     }
 
-    private int getMonthOfIncrease(List<List<RateSmicApi>> listsRateSmicGroupByRateSmicValue ){
+    private int getMonthOfIncrease(List<List<RateSmicApi>> listsRateSmicGroupByRateSmicValue) {
         List<RateSmicApi> firstListGroupByRateSmicValue = listsRateSmicGroupByRateSmicValue
                 .get(0);
         //obtain last element of the group list and get timePeriod of increase

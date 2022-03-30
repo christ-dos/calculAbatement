@@ -76,7 +76,7 @@ public class CalculateTaxReliefServiceTest {
                 new RateSmicApi("2021-02", "10.00"),
                 new RateSmicApi("2021-01", "10.00")
         );
-        double calculateTaxRelief = Precision.round((0 + (Math.ceil(50D * 3 / 8))) * (10D * 3), 2);//570.0
+        double calculateTaxRelief = 0 + (50D * 3 / 8) * (10D * 3);//562.5
         //WHEN
         when(rateSmicProxyMock.getRateSmicByInseeApi(anyString(), anyString())).thenReturn(rateSmicApiList);
         when(monthlyRepositoryMock.findMonthlyByYear(anyString())).thenReturn(monthliesByYear);
@@ -100,7 +100,7 @@ public class CalculateTaxReliefServiceTest {
                 new RateSmicApi("2021-02", "10.00"),
                 new RateSmicApi("2021-01", "10.00")
         );
-        double calculateTaxRelief = Precision.round((20 * 3 + (Math.ceil(10D * 3 / 8))) * (10D * 3), 2);//1920.0
+        double calculateTaxRelief = (20 * 3 + 10D * 3 / 8) * (10D * 3);//1912.50
         //WHEN
         when(rateSmicProxyMock.getRateSmicByInseeApi(anyString(), anyString())).thenReturn(rateSmicApiList);
         when(monthlyRepositoryMock.findMonthlyByYear(anyString())).thenReturn(monthliesByYear);
@@ -122,7 +122,7 @@ public class CalculateTaxReliefServiceTest {
                 new RateSmicApi("2021-06", "10.48"),
                 new RateSmicApi("2021-02", "10.25")
         );
-        double calculateTaxReliefForTwoPeriod = Precision.round(20 * 2 * (10.25 * 3) + (20 * (10.48 * 3)), 2);//1845
+        double calculateTaxReliefForTwoPeriod = 20 * 2 * (10.25 * 3) + (20 * (10.48 * 3));//1845
         //WHEN
         when(rateSmicProxyMock.getRateSmicByInseeApi(anyString(), anyString())).thenReturn(rateSmicApiList);
         when(monthlyRepositoryMock.findMonthlyByYear(anyString())).thenReturn(monthliesByYear);
@@ -143,7 +143,7 @@ public class CalculateTaxReliefServiceTest {
                 new RateSmicApi("2021-06", "10.48"),
                 new RateSmicApi("2021-01", "10.25")
         );
-        double calculateTaxReliefForTwoPeriod = Precision.round((0 * 2 + (Math.ceil(50D * 2 / 8))) * (10.25 * 3) + (0 + (Math.ceil(50D / 8))) * (10.48 * 3), 2);//619.83
+        double calculateTaxReliefForTwoPeriod = (0 * 2 + 50D * 2 / 8) * (10.25 * 3) + (0 + 50D / 8) * (10.48 * 3);//580.875
         //WHEN
         when(monthlyRepositoryMock.findMonthlyByYear(anyString())).thenReturn(monthliesByYear);
         when(rateSmicProxyMock.getRateSmicByInseeApi(anyString(), anyString())).thenReturn(rateSmicApiList);
@@ -167,7 +167,7 @@ public class CalculateTaxReliefServiceTest {
                 new RateSmicApi("2021-02", "10.25"),
                 new RateSmicApi("2021-01", "10.25")
         );
-        double calculateTaxReliefForTwoPeriod = Precision.round((20 * 2 + (Math.ceil(10D * 2 / 8))) * (10.25 * 3) + (20 + (Math.ceil(10D / 8))) * (10.48 * 3), 2);//1968.0
+        double calculateTaxReliefForTwoPeriod = (20 * 2 + 10D * 2 / 8) * (10.25 * 3) + (20 + 10D / 8) * (10.48 * 3);//1974.975
         //WHEN
         when(monthlyRepositoryMock.findMonthlyByYear(anyString())).thenReturn(monthliesByYear);
         when(rateSmicProxyMock.getRateSmicByInseeApi(anyString(), anyString())).thenReturn(rateSmicApiList);
@@ -191,7 +191,7 @@ public class CalculateTaxReliefServiceTest {
                 new RateSmicApi("2021-01", "10.25")
         );
         //  0 car il n'y a rien avant Janvier
-        double calculateTaxReliefForTwoPeriod = Precision.round((20 * 2 + (Math.ceil(10.00 * 2 / 8))) * (10.25 * 3)  + (20 * 1 + (Math.ceil(10.00 * 1 / 8))) * (10.48 * 3), 2);//2013.93
+        double calculateTaxReliefForTwoPeriod = (20 * 2 + 10.00 * 2 / 8) * (10.25 * 3)  + (20 * 1 + 10.00 * 1 / 8) * (10.48 * 3);//1974.975
         //WHEN
         when(rateSmicProxyMock.getRateSmicByInseeApi(anyString(), anyString())).thenReturn(rateSmicApiList);
         when(monthlyRepositoryMock.findMonthlyByYear(anyString())).thenReturn(monthliesByYear);
@@ -215,7 +215,7 @@ public class CalculateTaxReliefServiceTest {
                 new RateSmicApi("2021-01", "10.25")
         );
         //  0 car il n'y a rien avant Janvier
-        double calculateTaxReliefForTwoPeriod = Precision.round((20 * 2 + (Math.ceil(10.00 * 2 / 8))) * (10.25 * 3) + (20 + (Math.ceil(10.00 / 8))) * (10.48 * 3), 2);//2013.93
+        double calculateTaxReliefForTwoPeriod = (20 * 2 + 10.00 * 2 / 8) * (10.25 * 3) + (20 + 10.00 / 8) * (10.48 * 3);//1974.975
         //WHEN
         when(rateSmicProxyMock.getRateSmicByInseeApi(anyString(), anyString())).thenReturn(rateSmicApiList);
         when(monthlyRepositoryMock.findMonthlyByYear(anyString())).thenReturn(monthliesByYear);
