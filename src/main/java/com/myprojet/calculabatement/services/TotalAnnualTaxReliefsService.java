@@ -34,21 +34,21 @@ public class TotalAnnualTaxReliefsService {
         this.monthlyService = monthlyService;
     }
 
-    public double getTotalAnnualReportableAmounts(String year, double feeLunch, double feeTaste) {
-        List<Child> childrenByCurrentUser = (List<Child>) childService.getChildrenByUserEmail();
-        List<Integer> listChildId = getListChildrenIdByCurrentUser(childrenByCurrentUser);
-
-        double SumTaxReliefAllChildrenByCurrentUser = getSumTaxReliefAllChildrenByCurrentUser(year, listChildId);
-        double SumFoodCompensationAllChildrenByCurrentUser = getSumFoodCompensationAllChildrenByCurrentUser(year, feeLunch, feeTaste);
-        double sumTaxableSalaryForAllChildrenByYear = getSumTaxableSalaryAllChildrenByCurrenUser(year, childrenByCurrentUser);
-
-        double reportableAmountsForAllChildren = sumTaxableSalaryForAllChildrenByYear - SumTaxReliefAllChildrenByCurrentUser + SumFoodCompensationAllChildrenByCurrentUser;
-        if (reportableAmountsForAllChildren < 0) {
-            reportableAmountsForAllChildren = 0D;
-        }
-        log.info("Service: get reportable amounts to declare for year: " + year);
-        return Precision.round(reportableAmountsForAllChildren, 2);
-    }
+//    public double getTotalAnnualReportableAmounts(String year, double feeLunch, double feeTaste) {
+//        List<Child> childrenByCurrentUser = (List<Child>) childService.getChildrenByUserEmail();
+//        List<Integer> listChildId = getListChildrenIdByCurrentUser(childrenByCurrentUser);
+//
+//        double SumTaxReliefAllChildrenByCurrentUser = getSumTaxReliefAllChildrenByCurrentUser(year, listChildId);
+//        double SumFoodCompensationAllChildrenByCurrentUser = getSumFoodCompensationAllChildrenByCurrentUser(year, feeLunch, feeTaste);
+//        double sumTaxableSalaryForAllChildrenByYear = getSumTaxableSalaryAllChildrenByCurrenUser(year, childrenByCurrentUser);
+//
+//        double reportableAmountsForAllChildren = sumTaxableSalaryForAllChildrenByYear - SumTaxReliefAllChildrenByCurrentUser + SumFoodCompensationAllChildrenByCurrentUser;
+//        if (reportableAmountsForAllChildren < 0) {
+//            reportableAmountsForAllChildren = 0D;
+//        }
+//        log.info("Service: get reportable amounts to declare for year: " + year);
+//        return Precision.round(reportableAmountsForAllChildren, 2);
+//    } //todo clean code
 
     public double getTotalAnnualReportableAmountsForAllChildren(String year, double feeLunch, double feeTaste) {
         List<Child> childrenByCurrentUser = (List<Child>) childService.getChildrenByUserEmail();
@@ -64,7 +64,7 @@ public class TotalAnnualTaxReliefsService {
     public double getTotalAnnualReportableAmountsByChild(int childId, String year, double feeLunch, double feeTaste) {
         Child child = childService.getChildById(childId);
 
-        double taxRelief = calculateTaxReliefService.calculateTaxReliefByChild(year, child.getId());
+        double taxRelief = calculateTaxReliefService.calculateTaxReliefByChild(year, childId);
         double foodCompensation = calculateFoodCompensationService.calculateFoodCompensationByYearAndByChildId(year, feeLunch, feeTaste, child.getMonthlies(), child.getId());
         double taxableSalaryByYear = getSumTaxableSalaryByChildAndByYear(child, year);
 
