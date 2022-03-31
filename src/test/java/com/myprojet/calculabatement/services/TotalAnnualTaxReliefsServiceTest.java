@@ -2,7 +2,6 @@ package com.myprojet.calculabatement.services;
 
 import com.myprojet.calculabatement.models.Child;
 import com.myprojet.calculabatement.models.Monthly;
-import com.myprojet.calculabatement.repositories.MonthlyRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,10 +19,8 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class TotalAnnualTaxReliefsServiceTest {
-
     private TotalAnnualTaxReliefsService totalAnnualTaxReliefsServiceTest;
-    @Mock
-    MonthlyRepository monthlyRepository;
+
     @Mock
     private ChildServiceImpl childServiceMock;
     @Mock
@@ -32,11 +29,8 @@ public class TotalAnnualTaxReliefsServiceTest {
     private CalculateFoodCompensationService calculateFoodCompensationServiceMock;
     @Mock
     private MonthlyService monthlyServiceMock;
-    @Mock
-    private Child childMock;
-    List<Child> childrenByCurrentUser = new ArrayList<>();
 
-    List<Monthly> monthliesByYear = new ArrayList<>();
+    List<Child> childrenByCurrentUser = new ArrayList<>();
 
     @BeforeEach
     public void setPerTest() {
@@ -45,7 +39,7 @@ public class TotalAnnualTaxReliefsServiceTest {
     }
 
     @Test
-    public void getTotalAnnualReportableAmountsForAllChildrenTests_whenTotalTaxableSalaryEquals1500AndTotalFoodCompensationEquals45AndTotalTaxReliefEquals1000AndChildAgeGreaterThanOne_thenReturnTotalAnnualReportableAmountsEqual545() {
+    public void getTotalAnnualReportableAmountsForAllChildrenTests_whenChildAgeGreaterThanOne_thenReturnTotalAnnualReportableAmountsEqual545() {
         //GIVEN
         childrenByCurrentUser = Arrays.asList(
                 new Child(1, "Riboulet", "Romy", "12/01/2019", "02/05/2021", "https://www.hdwallpaper.nu.jpg", "christine@email.fr", Arrays.asList(
@@ -68,7 +62,7 @@ public class TotalAnnualTaxReliefsServiceTest {
     }
 
     @Test
-    public void getTotalAnnualReportableAmountsForAllChildrenTests_whenTotalTaxableSalaryEquals1500AndTotalFoodCompensationEquals30AndTotalTaxReliefEquals1000AndChildIsEqualsToOne_thenReturnTotalAnnualReportableAmountsEqual530() {
+    public void getTotalAnnualReportableAmountsForAllChildrenTests_whenChildAgeIsEqualsToOne_thenReturnTotalAnnualReportableAmountsEqual515() {
         //GIVEN
         childrenByCurrentUser = Arrays.asList(
                 new Child(1, "Riboulet", "Romy", "12/01/2021", "02/05/2021", "https://www.hdwallpaper.nu.jpg", "christine@email.fr", Arrays.asList(
@@ -91,7 +85,7 @@ public class TotalAnnualTaxReliefsServiceTest {
     }
 
     @Test
-    public void getTotalAnnualReportableAmountsForAllChildrenTests_whenTotalTaxableSalaryEquals1500AndTotalFoodCompensationEqualsZeroAndTotalTaxReliefEquals1000AndChildIsLessThanOne_thenReturnTotalAnnualReportableAmountsEqual530() {
+    public void getTotalAnnualReportableAmountsForAllChildrenTests_whenChildIsLessThanOne_thenReturnTotalAnnualReportableAmountsEqual500() {
         //GIVEN
         childrenByCurrentUser = Arrays.asList(
                 new Child(1, "Riboulet", "Romy", "22/03/2022", "02/05/2021", "https://www.hdwallpaper.nu.jpg", "christine@email.fr", Arrays.asList(
@@ -113,7 +107,7 @@ public class TotalAnnualTaxReliefsServiceTest {
     }
 
     @Test
-    public void getTotalAnnualReportableAmountsForAllChildrenTests_whenTotalTaxableSalaryEquals1500AndTotalFoodCompensationEquals30AndTotalTaxReliefEquals1000AndChildrenAreAgeDifferent_thenReturnTotalAnnualReportableAmountsEqual530() {
+    public void getTotalAnnualReportableAmountsForAllChildrenTests_whenChildrenAreAgeDifferent_thenReturnTotalAnnualReportableAmountsEqual530() {
         //GIVEN
         childrenByCurrentUser = Arrays.asList(
                 new Child(1, "Riboulet", "Romy", "12/01/2021", "02/05/2021", "https://www.hdwallpaper.nu.jpg", "christine@email.fr", Arrays.asList(
@@ -140,7 +134,7 @@ public class TotalAnnualTaxReliefsServiceTest {
     public void getTotalAnnualReportableAmountsForAllChildrenTests_whenTotalAnnualReportableAmountsIsLessThanZero_thenReturnTotalAnnualReportableAmountsEqualZero() {
         //GIVEN
         childrenByCurrentUser = Arrays.asList(
-                new Child(1, "Riboulet", "Romy", "12/01/2021", "02/05/2021", "https://www.hdwallpaper.nu.jpg", "christine@email.fr", Arrays.asList(
+                new Child(1, "Riboulet", "Romy", "12/04/2021", "02/05/2021", "https://www.hdwallpaper.nu.jpg", "christine@email.fr", Arrays.asList(
                         new Monthly(1, Month.JANUARY, "2022", 200D, 10, 10, 20, 0.0, 1),
                         new Monthly(2, Month.FEBRUARY, "2022", 200D, 10, 10, 20, 0.0, 1)
                 )),
@@ -153,13 +147,48 @@ public class TotalAnnualTaxReliefsServiceTest {
         when(childServiceMock.getChildById(anyInt())).thenReturn(childrenByCurrentUser.get(0), childrenByCurrentUser.get(1));
         when(calculateTaxReliefServiceMock.calculateTaxReliefByChild(anyString(), anyInt())).thenReturn(500D);
         when(calculateFoodCompensationServiceMock.calculateFoodCompensationByYearAndByChildId(anyString(), anyDouble(), anyDouble(), anyList(), anyInt())).thenReturn(15D, 15D);
-
         double totalAnnualReportableAmountsResult = totalAnnualTaxReliefsServiceTest.getTotalAnnualReportableAmountsForAllChildren("2022", 1.0, 0.5);
         //THEN
         //totalTaxableSalary = 600.0, totalFoodCompensation = 30.0, totalTaxRelief = 1000.0
         //one child is one year old and the other is over one year old
         //when totalTaxRelief is greater the totalTaxableSalary and totalAnnualReportableAmountsResult is
         //negative return 0.0
+        assertEquals(0D, totalAnnualReportableAmountsResult);
+    }
+
+    @Test
+    public void getTotalAnnualReportableAmountsByChildTest_whenYearIs2022AndChildIdIsOne_thenReturnTotalAnnualReportableForChildIdOneEquals250D() {
+        //GIVEN
+        Child childRomy = new Child(1, "Riboulet", "Romy", "12/01/2021", "02/05/2021", "https://www.hdwallpaper.nu.jpg", "christine@email.fr", Arrays.asList(
+                new Monthly(1, Month.JANUARY, "2022", 200D, 10, 10, 20, 0.0, 1),
+                new Monthly(2, Month.FEBRUARY, "2022", 200D, 10, 10, 20, 0.0, 1)
+        ));
+        double taxRelief = 200D;
+        double foodCompensation = 50D;
+        //WHEN
+        when(childServiceMock.getChildById(anyInt())).thenReturn(childRomy);
+        when(calculateTaxReliefServiceMock.calculateTaxReliefByChild(anyString(), anyInt())).thenReturn(taxRelief);
+        when(calculateFoodCompensationServiceMock.calculateFoodCompensationByYearAndByChildId(anyString(), anyDouble(), anyDouble(), anyList(), anyInt())).thenReturn(foodCompensation);
+        double totalAnnualReportableAmountsResult = totalAnnualTaxReliefsServiceTest.getTotalAnnualReportableAmountsByChild(childRomy.getId(), "2022", 1, 0.5);
+        //THEN
+        assertEquals(250D, totalAnnualReportableAmountsResult);
+    }
+
+    @Test
+    public void getTotalAnnualReportableAmountsByChildTest_whenYearIs2022ReportableAmountsIsNegative_thenReturnTotalAnnualReportableEqualToZero() {
+        //GIVEN
+        Child childRomy = new Child(1, "Riboulet", "Romy", "12/01/2021", "02/05/2021", "https://www.hdwallpaper.nu.jpg", "christine@email.fr", Arrays.asList(
+                new Monthly(1, Month.JANUARY, "2022", 200D, 10, 10, 20, 0.0, 1),
+                new Monthly(2, Month.FEBRUARY, "2022", 200D, 10, 10, 20, 0.0, 1)
+        ));
+        double taxRelief = 451D;
+        double foodCompensation = 50D;
+        //WHEN
+        when(childServiceMock.getChildById(anyInt())).thenReturn(childRomy);
+        when(calculateTaxReliefServiceMock.calculateTaxReliefByChild(anyString(), anyInt())).thenReturn(taxRelief);
+        double totalAnnualReportableAmountsResult = totalAnnualTaxReliefsServiceTest.getTotalAnnualReportableAmountsByChild(childRomy.getId(), "2022", 1, 0.5);
+        //THEN
+        //totalAnnualReportableAmountsResult is negative result is zero
         assertEquals(0D, totalAnnualReportableAmountsResult);
     }
 
