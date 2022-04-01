@@ -23,4 +23,6 @@ public class ChildRestController {
         Iterable<Child> children = childService.getChildrenByUserEmail();
         return new ResponseEntity<>(children, HttpStatus.OK);
     }
+
+
 }

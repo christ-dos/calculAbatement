@@ -41,7 +41,7 @@ public class CalculAbatementApplication implements CommandLineRunner {
     private RateSmicProxy rateSmicProxy;
 
     @Autowired
-    private TotalAnnualTaxReliefsService totalAnnualTaxReliefsService;
+    private TotalAnnualTaxReliefsServiceImpl totalAnnualTaxReliefsServiceImpl;
 
     @Autowired
     private ChildService childService;
@@ -92,7 +92,7 @@ public class CalculAbatementApplication implements CommandLineRunner {
 //       System.out.println(results);
         //results.forEach(x-> System.out.println(x));
         //double total = totalAnnualTaxReliefsService.getTotalAnnualReportableAmountsByChild(1, "2022", 1.00, 0.50);
-        double totalAnnual = totalAnnualTaxReliefsService.getTotalAnnualReportableAmountsForAllChildren("2022", 1.00, 0.50);
+        double totalAnnual = totalAnnualTaxReliefsServiceImpl.getTotalAnnualReportableAmountsForAllChildren("2022", 1.00, 0.50);
        // System.out.println("total " + total);
         System.out.println("totalAnnual " + totalAnnual);
         //User user = userService.getUserById("christine@email.fr");
