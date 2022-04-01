@@ -1,7 +1,6 @@
 package com.myprojet.calculabatement;
 
 import com.myprojet.calculabatement.configuration.CustomProperties;
-import com.myprojet.calculabatement.models.Monthly;
 import com.myprojet.calculabatement.proxies.RateSmicProxy;
 import com.myprojet.calculabatement.repositories.ChildRepository;
 import com.myprojet.calculabatement.repositories.MonthlyRepository;
@@ -11,8 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-
-import java.time.Month;
 
 @SpringBootApplication
 public class CalculAbatementApplication implements CommandLineRunner {
@@ -35,7 +32,7 @@ public class CalculAbatementApplication implements CommandLineRunner {
     private CalculateFoodCompensationService calculateFoodCompensationService;
 
     @Autowired
-    private TaxableSalarySiblingService taxableSalarySiblingService;
+    private TaxableSalaryService taxableSalaryService;
 
     @Autowired
     private CustomProperties customProperties;

@@ -145,19 +145,20 @@ public class CalculateTaxReliefService {
             listSmicValues.add(rateSmic1);
             listSmicValues.add(rateSmic2);
         }
+        log.info("Service: Return list rate smic values");
         return listSmicValues;
     }
 
     private int getMonthOfIncrease(List<List<RateSmicApi>> listsRateSmicGroupByRateSmicValue) {
         List<RateSmicApi> firstListGroupByRateSmicValue = listsRateSmicGroupByRateSmicValue
                 .get(0);
-        //obtain last element of the group list and get timePeriod of increase
+        //Obtain last element of the group list and get timePeriod of increase
         String timePeriodLastRateSmicApi = firstListGroupByRateSmicValue.get(firstListGroupByRateSmicValue.size() - 1)
                 .getTimePeriod();
         List<String> listStringTimePeriod = Arrays.asList(timePeriodLastRateSmicApi.split("-"));
         int monthOfIncrease = Integer.parseInt(listStringTimePeriod.get(1));
 
-        log.info("Service : get the month of increase");
+        log.info("Service : Get the month of increase" + monthOfIncrease);
         return monthOfIncrease;
     }
 }

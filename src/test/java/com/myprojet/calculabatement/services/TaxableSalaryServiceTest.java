@@ -11,13 +11,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
-public class TaxableSalarySiblingServiceTest {
+public class TaxableSalaryServiceTest {
 
-    private TaxableSalarySiblingService taxableSalarySiblingServiceTest;
+    private TaxableSalaryService taxableSalaryServiceTest;
 
     @BeforeEach
     public void setPerTest() {
-        taxableSalarySiblingServiceTest = new TaxableSalarySiblingService();
+        taxableSalaryServiceTest = new TaxableSalaryService();
     }
 
     @Test
@@ -30,7 +30,7 @@ public class TaxableSalarySiblingServiceTest {
         double basisCalculation = brutSalary * 0.9825;
         double taxableSalaryExpected = Precision.round(basisCalculation * 0.029 + netSalary + maintenanceCost, 2);//681.91
         //WHEN
-        double taxableSalaryResult = taxableSalarySiblingServiceTest.calculateTaxableSalarySibling(netSalary, netBrutCoefficient, maintenanceCost);
+        double taxableSalaryResult = taxableSalaryServiceTest.calculateTaxableSalarySiblingByMonth(netSalary, netBrutCoefficient, maintenanceCost);
         //THEN
         assertEquals(taxableSalaryExpected, taxableSalaryResult);
     }
@@ -45,7 +45,7 @@ public class TaxableSalarySiblingServiceTest {
         double basisCalculation = brutSalary * 0.9825;
         double taxableSalaryExpected = Precision.round(basisCalculation * 0.029 + netSalary + maintenanceCost, 2);//0.00
         //WHEN
-        double taxableSalaryResult = taxableSalarySiblingServiceTest.calculateTaxableSalarySibling(netSalary, netBrutCoefficient, maintenanceCost);
+        double taxableSalaryResult = taxableSalaryServiceTest.calculateTaxableSalarySiblingByMonth(netSalary, netBrutCoefficient, maintenanceCost);
         //THEN
         assertEquals(taxableSalaryExpected, taxableSalaryResult);
     }
@@ -59,6 +59,6 @@ public class TaxableSalarySiblingServiceTest {
         //WHEN
         //THEN
         assertThrows(NetBrutCoefficientNotNullException.class, () ->
-                taxableSalarySiblingServiceTest.calculateTaxableSalarySibling(netSalary, netBrutCoefficient, maintenanceCost));
+                taxableSalaryServiceTest.calculateTaxableSalarySiblingByMonth(netSalary, netBrutCoefficient, maintenanceCost));
     }
 }

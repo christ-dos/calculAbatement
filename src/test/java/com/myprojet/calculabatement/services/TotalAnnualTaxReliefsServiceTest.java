@@ -28,14 +28,14 @@ public class TotalAnnualTaxReliefsServiceTest {
     @Mock
     private CalculateFoodCompensationService calculateFoodCompensationServiceMock;
     @Mock
-    private MonthlyService monthlyServiceMock;
+    private TaxableSalaryService taxableSalaryServiceMock;
 
     List<Child> childrenByCurrentUser = new ArrayList<>();
 
     @BeforeEach
     public void setPerTest() {
         totalAnnualTaxReliefsServiceTest = new TotalAnnualTaxReliefsService(childServiceMock,
-                calculateTaxReliefServiceMock, calculateFoodCompensationServiceMock, monthlyServiceMock);
+                calculateTaxReliefServiceMock, calculateFoodCompensationServiceMock, taxableSalaryServiceMock);
     }
 
     @Test
@@ -52,13 +52,14 @@ public class TotalAnnualTaxReliefsServiceTest {
         );
         //WHEN
         when(childServiceMock.getChildById(anyInt())).thenReturn(childrenByCurrentUser.get(0), childrenByCurrentUser.get(1));
-        when(calculateTaxReliefServiceMock.calculateTaxReliefByChild(anyString(), anyInt())).thenReturn(500D);
+        when(calculateTaxReliefServiceMock.calculateTaxReliefByChild(anyString(), anyInt())).thenReturn(1000D, 500D);
+        when(taxableSalaryServiceMock.getSumTaxableSalaryByChildAndByYear(any(Child.class), anyString())).thenReturn(1000D, 500D);
         when(calculateFoodCompensationServiceMock.calculateFoodCompensationByYearAndByChildId(anyString(), anyDouble(), anyDouble(), anyList(), anyInt())).thenReturn(30D, 15D);
         when(childServiceMock.getChildrenByUserEmail()).thenReturn(childrenByCurrentUser);
         double totalAnnualReportableAmountsResult = totalAnnualTaxReliefsServiceTest.getTotalAnnualReportableAmountsForAllChildren("2022", 1.0, 0.5);
         //THEN
-        //totalTaxableSalary = 1500.0, totalFoodCompensation = 45.0, totalTaxRelief = 1000.0
-        assertEquals(545D, totalAnnualReportableAmountsResult);
+        //totalTaxableSalary = 1500.0, totalFoodCompensation = 45.0, totalTaxRelief = 1500.0
+        assertEquals(45D, totalAnnualReportableAmountsResult);
     }
 
     @Test
@@ -75,13 +76,14 @@ public class TotalAnnualTaxReliefsServiceTest {
         );
         //WHEN
         when(childServiceMock.getChildById(anyInt())).thenReturn(childrenByCurrentUser.get(0), childrenByCurrentUser.get(1));
-        when(calculateTaxReliefServiceMock.calculateTaxReliefByChild(anyString(), anyInt())).thenReturn(500D);
+        when(calculateTaxReliefServiceMock.calculateTaxReliefByChild(anyString(), anyInt())).thenReturn(1000D, 500D);
+        when(taxableSalaryServiceMock.getSumTaxableSalaryByChildAndByYear(any(Child.class), anyString())).thenReturn(1000D, 500D);
         when(calculateFoodCompensationServiceMock.calculateFoodCompensationByYearAndByChildId(anyString(), anyDouble(), anyDouble(), anyList(), anyInt())).thenReturn(15D, 0D);
         when(childServiceMock.getChildrenByUserEmail()).thenReturn(childrenByCurrentUser);
         double totalAnnualReportableAmountsResult = totalAnnualTaxReliefsServiceTest.getTotalAnnualReportableAmountsForAllChildren("2022", 1.0, 0.5);
         //THEN
-        //totalTaxableSalary = 1500.0, totalFoodCompensation = 15.0, totalTaxRelief = 1000.0
-        assertEquals(515D, totalAnnualReportableAmountsResult);
+        //totalTaxableSalary = 1500.0, totalFoodCompensation = 15.0, totalTaxRelief = 1500.0
+        assertEquals(15D, totalAnnualReportableAmountsResult);
     }
 
     @Test
@@ -89,21 +91,22 @@ public class TotalAnnualTaxReliefsServiceTest {
         //GIVEN
         childrenByCurrentUser = Arrays.asList(
                 new Child(1, "Riboulet", "Romy", "22/03/2022", "02/05/2021", "https://www.hdwallpaper.nu.jpg", "christine@email.fr", Arrays.asList(
-                        new Monthly(1, Month.JANUARY, "2022", 500D, 10, 10, 20, 0.0, 1),
-                        new Monthly(2, Month.FEBRUARY, "2022", 500D, 10, 10, 20, 0.0, 1)
+                        new Monthly(1, Month.JANUARY, "2022", 600D, 10, 10, 20, 0.0, 1),
+                        new Monthly(2, Month.FEBRUARY, "2022", 600D, 10, 10, 20, 0.0, 1)
                 )),
                 new Child(2, "Cacahuette", "Manon", "10/03/2022", "01/03/2019", "https://www.hdwallpaper.nu.jpg", "christine@email.fr", Arrays.asList(
-                        new Monthly(3, Month.MARCH, "2022", 500D, 10, 10, 20, 0.0, 2)
+                        new Monthly(3, Month.MARCH, "2022", 600D, 10, 10, 20, 0.0, 2)
                 ))
         );
         //WHEN
         when(childServiceMock.getChildById(anyInt())).thenReturn(childrenByCurrentUser.get(0), childrenByCurrentUser.get(1));
-        when(calculateTaxReliefServiceMock.calculateTaxReliefByChild(anyString(), anyInt())).thenReturn(500D);
+        when(calculateTaxReliefServiceMock.calculateTaxReliefByChild(anyString(), anyInt())).thenReturn(1000D, 500D);
+        when(taxableSalaryServiceMock.getSumTaxableSalaryByChildAndByYear(any(Child.class), anyString())).thenReturn(1200D, 600D);
         when(childServiceMock.getChildrenByUserEmail()).thenReturn(childrenByCurrentUser);
         double totalAnnualReportableAmountsResult = totalAnnualTaxReliefsServiceTest.getTotalAnnualReportableAmountsForAllChildren("2022", 1.0, 0.5);
         //THEN
-        //totalTaxableSalary = 1500.0, totalFoodCompensation = 0.0, totalTaxRelief = 1000.0
-        assertEquals(500D, totalAnnualReportableAmountsResult);
+        //totalTaxableSalary = 1800.0, totalFoodCompensation = 0.0, totalTaxRelief = 1500.0
+        assertEquals(300D, totalAnnualReportableAmountsResult);
     }
 
     @Test
@@ -120,14 +123,15 @@ public class TotalAnnualTaxReliefsServiceTest {
         );
         //WHEN
         when(childServiceMock.getChildById(anyInt())).thenReturn(childrenByCurrentUser.get(0), childrenByCurrentUser.get(1));
-        when(calculateTaxReliefServiceMock.calculateTaxReliefByChild(anyString(), anyInt())).thenReturn(500D);
+        when(calculateTaxReliefServiceMock.calculateTaxReliefByChild(anyString(), anyInt())).thenReturn(1000D, 500D);
+        when(taxableSalaryServiceMock.getSumTaxableSalaryByChildAndByYear(any(Child.class), anyString())).thenReturn(1000D, 500D);
         when(calculateFoodCompensationServiceMock.calculateFoodCompensationByYearAndByChildId(anyString(), anyDouble(), anyDouble(), anyList(), anyInt())).thenReturn(15D, 15D);
         when(childServiceMock.getChildrenByUserEmail()).thenReturn(childrenByCurrentUser);
         double totalAnnualReportableAmountsResult = totalAnnualTaxReliefsServiceTest.getTotalAnnualReportableAmountsForAllChildren("2022", 1.0, 0.5);
         //THEN
-        //totalTaxableSalary = 1500.0, totalFoodCompensation = 30.0, totalTaxRelief = 1000.0
+        //totalTaxableSalary = 1500.0, totalFoodCompensation = 30.0, totalTaxRelief = 1500.0
         //one child is one year old and the other is over one year old
-        assertEquals(530D, totalAnnualReportableAmountsResult);
+        assertEquals(30D, totalAnnualReportableAmountsResult);
     }
 
     @Test
@@ -165,8 +169,10 @@ public class TotalAnnualTaxReliefsServiceTest {
         ));
         double taxRelief = 200D;
         double foodCompensation = 50D;
+        double taxableSalary = 400D;
         //WHEN
         when(childServiceMock.getChildById(anyInt())).thenReturn(childRomy);
+        when(taxableSalaryServiceMock.getSumTaxableSalaryByChildAndByYear(any(Child.class), anyString())).thenReturn(taxableSalary);
         when(calculateTaxReliefServiceMock.calculateTaxReliefByChild(anyString(), anyInt())).thenReturn(taxRelief);
         when(calculateFoodCompensationServiceMock.calculateFoodCompensationByYearAndByChildId(anyString(), anyDouble(), anyDouble(), anyList(), anyInt())).thenReturn(foodCompensation);
         double totalAnnualReportableAmountsResult = totalAnnualTaxReliefsServiceTest.getTotalAnnualReportableAmountsByChild(childRomy.getId(), "2022", 1, 0.5);

@@ -1,15 +1,26 @@
 package com.myprojet.calculabatement.services;
 
 import com.myprojet.calculabatement.exceptions.NetBrutCoefficientNotNullException;
+import com.myprojet.calculabatement.models.Child;
+import com.myprojet.calculabatement.models.Monthly;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.math3.util.Precision;
 import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
-public class TaxableSalarySiblingService {
+public class TaxableSalaryService {
 
-    public double calculateTaxableSalarySibling(double netSalary, double netBrutCoefficient, double maintenanceCost) {
+    public double getSumTaxableSalaryByChildAndByYear(Child child, String year) {
+        double sumTaxableSalaryByChildAndByYear = child.getMonthlies().stream()
+                .filter(monthly -> monthly.getYear().equals(year))
+                .mapToDouble(Monthly::getTaxableSalary).sum();
+
+        log.info("Service: Calculate taxable salary by child ID: " + child.getId() + " for year: " + year + ", Value: " + sumTaxableSalaryByChildAndByYear);
+        return sumTaxableSalaryByChildAndByYear;
+    }
+
+    public double calculateTaxableSalarySiblingByMonth(double netSalary, double netBrutCoefficient, double maintenanceCost) {
         double csgRdsCoefficient = 0.029;
         double brutSalary = netSalary / netBrutCoefficient;
         double basisCalculation = brutSalary * 0.9825;
