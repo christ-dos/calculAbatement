@@ -48,7 +48,7 @@ public class TotalAnnualTaxReliefsServiceImpl implements TotalAnnualTaxReliefsSe
 
         double taxRelief = calculateTaxReliefService.calculateTaxReliefByChild(year, childId);
         double foodCompensation = getSumFoodCompensationByYearAndByChild(child, year, feeLunch, feeTaste);
-        double taxableSalaryByYear = taxableSalaryService.getSumTaxableSalaryByChildAndByYear(child, year);
+        double taxableSalaryByYear = taxableSalaryService.getSumTaxableSalaryByChildAndByYear(year,childId );
 
         double reportableAmountsByChild = taxableSalaryByYear - taxRelief + foodCompensation;
         if (reportableAmountsByChild < 0) {

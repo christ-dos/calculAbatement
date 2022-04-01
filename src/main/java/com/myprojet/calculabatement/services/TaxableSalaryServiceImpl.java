@@ -10,9 +10,15 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 public class TaxableSalaryServiceImpl implements TaxableSalaryService {
+    private ChildService childService;
+
+    public TaxableSalaryServiceImpl(ChildService childService) {
+        this.childService = childService;
+    }
 
     @Override
-    public double getSumTaxableSalaryByChildAndByYear(Child child, String year) {
+    public double getSumTaxableSalaryByChildAndByYear(String year, int childId) {
+        Child child = childService.getChildById(childId);
         double sumTaxableSalaryByChildAndByYear = child.getMonthlies().stream()
                 .filter(monthly -> monthly.getYear().equals(year))
                 .mapToDouble(Monthly::getTaxableSalary).sum();

@@ -7,6 +7,7 @@ import org.apache.commons.math3.util.Precision;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.Month;
@@ -14,15 +15,19 @@ import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class TaxableSalaryServiceImplTest {
 
     private TaxableSalaryServiceImpl taxableSalaryServiceImplTest;
+    @Mock
+    private ChildServiceImpl childServiceImplMock;
 
     @BeforeEach
     public void setPerTest() {
-        taxableSalaryServiceImplTest = new TaxableSalaryServiceImpl();
+        taxableSalaryServiceImplTest = new TaxableSalaryServiceImpl(childServiceImplMock);
     }
 
     @Test
@@ -37,7 +42,8 @@ public class TaxableSalaryServiceImplTest {
                         )
                 );
         //WHEN
-        double sumTaxableSalaryResult = taxableSalaryServiceImplTest.getSumTaxableSalaryByChildAndByYear(child, "2022");
+        when(childServiceImplMock.getChildById(anyInt())).thenReturn(child);
+        double sumTaxableSalaryResult = taxableSalaryServiceImplTest.getSumTaxableSalaryByChildAndByYear("2022", 1);
         //THEN
         assertEquals(1500D, sumTaxableSalaryResult);
     }
@@ -54,7 +60,8 @@ public class TaxableSalaryServiceImplTest {
                         )
                 );
         //WHEN
-        double sumTaxableSalaryResult = taxableSalaryServiceImplTest.getSumTaxableSalaryByChildAndByYear(child, "2022");
+        when(childServiceImplMock.getChildById(anyInt())).thenReturn(child);
+        double sumTaxableSalaryResult = taxableSalaryServiceImplTest.getSumTaxableSalaryByChildAndByYear("2022",1 );
         //THEN
         assertEquals(1000D, sumTaxableSalaryResult);
     }
@@ -71,7 +78,8 @@ public class TaxableSalaryServiceImplTest {
                         )
                 );
         //WHEN
-        double sumTaxableSalaryResult = taxableSalaryServiceImplTest.getSumTaxableSalaryByChildAndByYear(child, "2022");
+        when(childServiceImplMock.getChildById(anyInt())).thenReturn(child);
+        double sumTaxableSalaryResult = taxableSalaryServiceImplTest.getSumTaxableSalaryByChildAndByYear("2022", 1);
         //THEN
         assertEquals(0D, sumTaxableSalaryResult);
     }
@@ -84,7 +92,8 @@ public class TaxableSalaryServiceImplTest {
                         Arrays.asList()
                 );
         //WHEN
-        double sumTaxableSalaryResult = taxableSalaryServiceImplTest.getSumTaxableSalaryByChildAndByYear(child, "2022");
+        when(childServiceImplMock.getChildById(anyInt())).thenReturn(child);
+        double sumTaxableSalaryResult = taxableSalaryServiceImplTest.getSumTaxableSalaryByChildAndByYear("2022", 1);
         //THEN
         assertEquals(0D, sumTaxableSalaryResult);
     }
