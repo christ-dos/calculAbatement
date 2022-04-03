@@ -1,8 +1,10 @@
 package com.myprojet.calculabatement.restControllers;
 
+import com.myprojet.calculabatement.exceptions.ChildAlreadyExistException;
 import com.myprojet.calculabatement.models.Child;
 import com.myprojet.calculabatement.services.ChildService;
 import com.myprojet.calculabatement.services.TaxableSalaryService;
+import com.myprojet.calculabatement.utils.SecurityUtilities;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,12 +37,18 @@ public class ChildRestController {
 
     @PostMapping("/add")
     public ResponseEntity<Child> addChild(@RequestBody Child child){
-        Child newChild = childService.addChild(child);
+        Child newChild = null;
+        try {
+            newChild = childService.addChild(child);
+        } catch (ChildAlreadyExistException e) {
+            e.getMessage();
+        }
         return new ResponseEntity<>(newChild, HttpStatus.CREATED);
     }
 
     @PutMapping("/update")
     public ResponseEntity<Child> updateChild(@RequestBody Child child){
+        child.setUserEmail(SecurityUtilities.getCurrentUser());
         Child updateChild = childService.updateChild(child);
         return new ResponseEntity<>(updateChild, HttpStatus.OK);
     }

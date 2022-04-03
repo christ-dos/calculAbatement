@@ -29,6 +29,7 @@ public class ChildServiceImpl implements ChildService {
             log.error("Service: Child with ID: "+ child.getId() + " already exists!");
             throw new ChildAlreadyExistException("L'enfant que vous essayez d'ajouter existe déja!");
         }
+        child.setUserEmail(SecurityUtilities.getCurrentUser());
         log.debug("Service: Child added with email: " + child.getId());
         return childRepository.save(child);
     }
