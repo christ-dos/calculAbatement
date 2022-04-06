@@ -30,7 +30,7 @@ public class ChildServiceImpl implements ChildService {
             throw new ChildAlreadyExistException("L'enfant que vous essayez d'ajouter existe déja!");
         }
         child.setUserEmail(SecurityUtilities.getCurrentUser());
-        log.debug("Service: Child added with email: " + child.getId());
+        log.debug("Service: Child added for user email: " + child.getId());
         return childRepository.save(child);
     }
 
@@ -45,6 +45,7 @@ public class ChildServiceImpl implements ChildService {
         childToUpdate.get().setLastname(child.getLastname());
         childToUpdate.get().setBeginContract(child.getBeginContract());
         childToUpdate.get().setBirthDate(child.getBirthDate());
+        childToUpdate.get().setImageUrl(child.getImageUrl());
 
         log.debug("Service: Child updated with ID: " + child.getId());
         return childRepository.save(childToUpdate.get());
@@ -69,7 +70,7 @@ public class ChildServiceImpl implements ChildService {
             log.error("Service: Child not found with ID: " + childId);
             throw new ChildNotFoundException("Service: L'enfant n'a pas été trouvé!");
         }
-        log.debug("Service: Child found with: " + childId);
+        log.debug("Service: Child found with ID: " + childId);
         return childFound.get();
     }
 }

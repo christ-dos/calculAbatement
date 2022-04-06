@@ -59,13 +59,13 @@ public class CalculateTaxReliefService {
                     monthliesByYear, childId, monthOfIncrease, listsRateSmicGroupByRateSmicValue);
             log.debug("Service: Calculation tax relief for two periods in month of increase: " + monthOfIncrease);
         }
-        log.info("Service: Display the value of the tax relief by child id and by year");
+        log.debug("Service: The tax relief value: " + taxRelief + " for child ID: " + childId + " and by year: " + year);
         return taxRelief;
     }
 
     private double convertHoursWorkedInDaysAndRoundedUpToNextInteger(double hoursWorked) {
         log.info("Service: Convert hours sum to days");
-        return  hoursWorked / 8;
+        return hoursWorked / 8;
     }
 
     private double getTaxReliefByChildForAFullYear(List<Monthly> monthliesByYear, int childId,

@@ -27,12 +27,14 @@ public class ChildRestController {
     @GetMapping("/all")
     public ResponseEntity<Iterable<Child>> getAllChildren() {
         Iterable<Child> children = childService.getChildrenByUserEmail();
+        log.info("Controller: Display list of Children");
         return new ResponseEntity<>(children, HttpStatus.OK);
     }
 
     @GetMapping("/find/{id}")
     public ResponseEntity<Child> getChildById(@PathVariable("id") int childId) {
         Child child = childService.getChildById(childId);
+        log.debug("Controller: Find child by ID: " + childId);
         return new ResponseEntity<>(child, HttpStatus.OK);
     }
 
@@ -47,7 +49,6 @@ public class ChildRestController {
     public ResponseEntity<Double> getAnnualReportableAmountsByChild(@RequestParam int childId, @RequestParam String year,
                                                                     @RequestParam double feeLunch, @RequestParam double feeTaste) {
         double reportableAmounts = totalAnnualTaxReliefsService.getTotalAnnualReportableAmountsByChild(childId, year, feeLunch, feeTaste);
-        System.out.println(reportableAmounts);
         log.info("Controller: Reportable amounts got for child ID: " + childId);
         return new ResponseEntity<>(reportableAmounts, HttpStatus.OK);
     }
@@ -60,6 +61,7 @@ public class ChildRestController {
         } catch (ChildAlreadyExistException e) {
             e.getMessage();
         }
+        log.info("Controller: Child added");
         return new ResponseEntity<>(newChild, HttpStatus.CREATED);
     }
 
@@ -67,14 +69,14 @@ public class ChildRestController {
     public ResponseEntity<Child> updateChild(@RequestBody Child child) {
         child.setUserEmail(SecurityUtilities.getCurrentUser());
         Child updateChild = childService.updateChild(child);
+        log.debug("Controller: Child updated with ID: " + updateChild.getId());
         return new ResponseEntity<>(updateChild, HttpStatus.OK);
     }
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteChild(@PathVariable("id") int childId) {
         childService.deleteChildById(childId);
+        log.debug("Controller: Child deleted with ID: " + childId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
-
 }

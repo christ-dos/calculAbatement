@@ -58,8 +58,6 @@ public class TotalAnnualTaxReliefsServiceImpl implements TotalAnnualTaxReliefsSe
         return reportableAmountsByChild;
     }
 
-
-
     private double getSumFoodCompensationByYearAndByChild(Child child, String year, double feeLunch, double feeTaste) {
         double foodCompensationByYearAndByChildId = 0D;
         int childAge = CalculateAge.getAge(child.getBirthDate());
