@@ -27,7 +27,7 @@ public class ChildRestController {
     @GetMapping("/all")
     public ResponseEntity<Iterable<Child>> getAllChildren() {
         Iterable<Child> children = childService.getChildrenByUserEmail();
-        log.info("Controller: Display list of Children");
+        log.info("Controller: Display list of children");
         return new ResponseEntity<>(children, HttpStatus.OK);
     }
 

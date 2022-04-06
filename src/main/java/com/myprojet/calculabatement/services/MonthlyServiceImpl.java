@@ -27,7 +27,7 @@ public class MonthlyServiceImpl implements MonthlyService {
             log.error("Service: monthly added with ID: " + monthly.getMonthlyId() + " already exists!");
             throw new MonthlyAlreadyExistException("La déclaration mensuelle que vous essayez d'ajouter existe déja");
         }
-        log.debug("Service: Monthly added with ID: " + monthly.getMonthlyId());
+        log.info("Service: Monthly added");
         return monthlyRepository.save(monthly);
     }
 
