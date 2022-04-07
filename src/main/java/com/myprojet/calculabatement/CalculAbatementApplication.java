@@ -1,6 +1,10 @@
 package com.myprojet.calculabatement;
 
 import com.myprojet.calculabatement.configuration.CustomProperties;
+import com.myprojet.calculabatement.models.Child;
+
+
+import com.myprojet.calculabatement.models.Month;
 import com.myprojet.calculabatement.models.Monthly;
 import com.myprojet.calculabatement.proxies.RateSmicProxy;
 import com.myprojet.calculabatement.repositories.ChildRepository;
@@ -12,7 +16,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import java.time.Month;
+
 
 @SpringBootApplication
 public class CalculAbatementApplication implements CommandLineRunner {
@@ -64,12 +68,12 @@ public class CalculAbatementApplication implements CommandLineRunner {
 //        childRepository.save(new Child(2, "Bernard", "Alice", "20/02/2021", "24/03/2020", "https://www.hdwallpaper.nu/wp-content/uploads/2015/03/Cute-Babies-HD-Wallpapers.jpg", "christine@email.fr"));
 //        childRepository.save(new Child(3, "Dupuis", "Romane", "24/05/2019", "01/09/2020", "https://www.hdwallpaper.nu/wp-content/uploads/2015/03/Cute-Babies_Hd-Wallpapers.jpg", "christine@email.fr"));
 //////
-//        monthlyRepository.save(new Monthly(1, Month.JANUARY, "2022", 500D, 1, 1, 10, 10.0, 1));
-//        monthlyRepository.save(new Monthly(2, Month.AUGUST, "2022", 500D, 1, 1, 10, 10.0, 1));
-//        monthlyRepository.save(new Monthly(3, Month.FEBRUARY, "2022", 500D, 1, 1, 10, 10.00, 2));
-//        monthlyRepository.save(new Monthly(4, Month.MARCH, "2022", 500D, 1, 1, 10, 10D, 2));
-//        monthlyRepository.save(new Monthly(5, Month.DECEMBER, "2022", 500D, 1, 1, 10, 10.0, 3));
-//        monthlyRepository.save(new Monthly(6, Month.MAY, "2022", 500D, 1, 1, 10, 10.0, 3));
+//        monthlyRepository.save(new Monthly(1, Month.JANVIER, "2022", 500D, 1, 1, 10, 10.0, 1));
+//        monthlyRepository.save(new Monthly(2, Month.AOUT, "2022", 500D, 1, 1, 10, 10.0, 1));
+//        monthlyRepository.save(new Monthly(3, Month.FEVRIER, "2022", 500D, 1, 1, 10, 10.00, 2));
+//        monthlyRepository.save(new Monthly(4, Month.MARS, "2022", 500D, 1, 1, 10, 10D, 2));
+//        monthlyRepository.save(new Monthly(5, Month.DECEMBRE, "2022", 500D, 1, 1, 10, 10.0, 3));
+//        monthlyRepository.save(new Monthly(6, Month.MAI, "2022", 500D, 1, 1, 10, 10.0, 3));
 //////       // monthly.forEach(x-> System.out.println(x));
         //LocalDateTime date  = LocalDateTime.now();
         //  System.out.println("le mois: " + date.getMonthValue());

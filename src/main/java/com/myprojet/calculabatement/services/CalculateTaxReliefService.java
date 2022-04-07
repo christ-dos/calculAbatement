@@ -59,7 +59,7 @@ public class CalculateTaxReliefService {
                     monthliesByYear, childId, monthOfIncrease, listsRateSmicGroupByRateSmicValue);
             log.debug("Service: Calculation tax relief for two periods in month of increase: " + monthOfIncrease);
         }
-        log.debug("Service: The tax relief value: " + taxRelief + " for child ID: " + childId + " and by year: " + year);
+        log.debug("Service: The tax relief value: " + taxRelief + " child ID: " + childId + " and by year: " + year);
         return taxRelief;
     }
 

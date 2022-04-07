@@ -3,9 +3,6 @@ package com.myprojet.calculabatement.models;
 import lombok.*;
 
 import javax.persistence.*;
-import java.time.LocalDate;
-import java.time.Month;
-import java.util.Date;
 
 @Entity
 @Getter

@@ -1,6 +1,7 @@
 package com.myprojet.calculabatement.services;
 
 import com.myprojet.calculabatement.models.Child;
+import com.myprojet.calculabatement.models.Month;
 import com.myprojet.calculabatement.models.Monthly;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -8,7 +9,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.Month;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -42,11 +43,11 @@ public class TotalAnnualTaxReliefsServiceImplTest {
         //GIVEN
         childrenByCurrentUser = Arrays.asList(
                 new Child(1, "Riboulet", "Romy", "12/01/2019", "02/05/2021", "https://www.hdwallpaper.nu.jpg", "christine@email.fr", Arrays.asList(
-                        new Monthly(1, Month.JANUARY, "2022", 500D, 10, 10, 20, 0.0, 1),
-                        new Monthly(2, Month.FEBRUARY, "2022", 500D, 10, 10, 20, 0.0, 1)
+                        new Monthly(1, Month.JANVIER, "2022", 500D, 10, 10, 20, 0.0, 1),
+                        new Monthly(2, Month.FEVRIER, "2022", 500D, 10, 10, 20, 0.0, 1)
                 )),
                 new Child(2, "Cacahuette", "Manon", "10/03/2019", "01/03/2019", "https://www.hdwallpaper.nu.jpg", "christine@email.fr", Arrays.asList(
-                        new Monthly(3, Month.MARCH, "2022", 500D, 10, 10, 20, 0.0, 2)
+                        new Monthly(3, Month.MARS, "2022", 500D, 10, 10, 20, 0.0, 2)
                 ))
         );
         //WHEN
@@ -66,11 +67,11 @@ public class TotalAnnualTaxReliefsServiceImplTest {
         //GIVEN
         childrenByCurrentUser = Arrays.asList(
                 new Child(1, "Riboulet", "Romy", "12/01/2021", "02/05/2021", "https://www.hdwallpaper.nu.jpg", "christine@email.fr", Arrays.asList(
-                        new Monthly(1, Month.JANUARY, "2022", 500D, 10, 10, 20, 0.0, 1),
-                        new Monthly(2, Month.FEBRUARY, "2022", 500D, 10, 10, 20, 0.0, 1)
+                        new Monthly(1, Month.JANVIER, "2022", 500D, 10, 10, 20, 0.0, 1),
+                        new Monthly(2, Month.FEVRIER, "2022", 500D, 10, 10, 20, 0.0, 1)
                 )),
                 new Child(2, "Cacahuette", "Manon", "10/03/2021", "01/03/2019", "https://www.hdwallpaper.nu.jpg", "christine@email.fr", Arrays.asList(
-                        new Monthly(3, Month.MARCH, "2022", 500D, 10, 10, 20, 0.0, 2)
+                        new Monthly(3, Month.MARS, "2022", 500D, 10, 10, 20, 0.0, 2)
                 ))
         );
         //WHEN
@@ -90,11 +91,11 @@ public class TotalAnnualTaxReliefsServiceImplTest {
         //GIVEN
         childrenByCurrentUser = Arrays.asList(
                 new Child(1, "Riboulet", "Romy", "22/03/2022", "02/05/2021", "https://www.hdwallpaper.nu.jpg", "christine@email.fr", Arrays.asList(
-                        new Monthly(1, Month.JANUARY, "2022", 600D, 10, 10, 20, 0.0, 1),
-                        new Monthly(2, Month.FEBRUARY, "2022", 600D, 10, 10, 20, 0.0, 1)
+                        new Monthly(1, Month.JANVIER, "2022", 600D, 10, 10, 20, 0.0, 1),
+                        new Monthly(2, Month.FEVRIER, "2022", 600D, 10, 10, 20, 0.0, 1)
                 )),
                 new Child(2, "Cacahuette", "Manon", "10/03/2022", "01/03/2019", "https://www.hdwallpaper.nu.jpg", "christine@email.fr", Arrays.asList(
-                        new Monthly(3, Month.MARCH, "2022", 600D, 10, 10, 20, 0.0, 2)
+                        new Monthly(3, Month.MARS, "2022", 600D, 10, 10, 20, 0.0, 2)
                 ))
         );
         //WHEN
@@ -113,11 +114,11 @@ public class TotalAnnualTaxReliefsServiceImplTest {
         //GIVEN
         childrenByCurrentUser = Arrays.asList(
                 new Child(1, "Riboulet", "Romy", "12/01/2021", "02/05/2021", "https://www.hdwallpaper.nu.jpg", "christine@email.fr", Arrays.asList(
-                        new Monthly(1, Month.JANUARY, "2022", 500D, 10, 10, 20, 0.0, 1),
-                        new Monthly(2, Month.FEBRUARY, "2022", 500D, 10, 10, 20, 0.0, 1)
+                        new Monthly(1, Month.JANVIER, "2022", 500D, 10, 10, 20, 0.0, 1),
+                        new Monthly(2, Month.FEVRIER, "2022", 500D, 10, 10, 20, 0.0, 1)
                 )),
                 new Child(2, "Cacahuette", "Manon", "10/03/2019", "01/03/2019", "https://www.hdwallpaper.nu.jpg", "christine@email.fr", Arrays.asList(
-                        new Monthly(3, Month.MARCH, "2022", 500D, 10, 10, 20, 0.0, 2)
+                        new Monthly(3, Month.MARS, "2022", 500D, 10, 10, 20, 0.0, 2)
                 ))
         );
         //WHEN
@@ -138,11 +139,11 @@ public class TotalAnnualTaxReliefsServiceImplTest {
         //GIVEN
         childrenByCurrentUser = Arrays.asList(
                 new Child(1, "Riboulet", "Romy", "12/04/2021", "02/05/2021", "https://www.hdwallpaper.nu.jpg", "christine@email.fr", Arrays.asList(
-                        new Monthly(1, Month.JANUARY, "2022", 200D, 10, 10, 20, 0.0, 1),
-                        new Monthly(2, Month.FEBRUARY, "2022", 200D, 10, 10, 20, 0.0, 1)
+                        new Monthly(1, Month.JANVIER, "2022", 200D, 10, 10, 20, 0.0, 1),
+                        new Monthly(2, Month.FEVRIER, "2022", 200D, 10, 10, 20, 0.0, 1)
                 )),
                 new Child(2, "Cacahuette", "Manon", "10/03/2019", "01/03/2019", "https://www.hdwallpaper.nu.jpg", "christine@email.fr", Arrays.asList(
-                        new Monthly(3, Month.MARCH, "2022", 200D, 10, 10, 20, 0.0, 2)
+                        new Monthly(3, Month.MARS, "2022", 200D, 10, 10, 20, 0.0, 2)
                 ))
         );
         //WHEN
@@ -163,8 +164,8 @@ public class TotalAnnualTaxReliefsServiceImplTest {
     public void getTotalAnnualReportableAmountsByChildTest_whenYearIs2022AndChildIdIsOne_thenReturnTotalAnnualReportableForChildIdOneEquals250D() {
         //GIVEN
         Child childRomy = new Child(1, "Riboulet", "Romy", "12/01/2021", "02/05/2021", "https://www.hdwallpaper.nu.jpg", "christine@email.fr", Arrays.asList(
-                new Monthly(1, Month.JANUARY, "2022", 200D, 10, 10, 20, 0.0, 1),
-                new Monthly(2, Month.FEBRUARY, "2022", 200D, 10, 10, 20, 0.0, 1)
+                new Monthly(1, Month.JANVIER, "2022", 200D, 10, 10, 20, 0.0, 1),
+                new Monthly(2, Month.FEVRIER, "2022", 200D, 10, 10, 20, 0.0, 1)
         ));
         double taxRelief = 200D;
         double foodCompensation = 50D;
@@ -183,8 +184,8 @@ public class TotalAnnualTaxReliefsServiceImplTest {
     public void getTotalAnnualReportableAmountsByChildTest_whenYearIs2022ReportableAmountsIsNegative_thenReturnTotalAnnualReportableEqualToZero() {
         //GIVEN
         Child childRomy = new Child(1, "Riboulet", "Romy", "12/01/2021", "02/05/2021", "https://www.hdwallpaper.nu.jpg", "christine@email.fr", Arrays.asList(
-                new Monthly(1, Month.JANUARY, "2022", 200D, 10, 10, 20, 0.0, 1),
-                new Monthly(2, Month.FEBRUARY, "2022", 200D, 10, 10, 20, 0.0, 1)
+                new Monthly(1, Month.JANVIER, "2022", 200D, 10, 10, 20, 0.0, 1),
+                new Monthly(2, Month.FEVRIER, "2022", 200D, 10, 10, 20, 0.0, 1)
         ));
         double taxRelief = 451D;
         double foodCompensation = 50D;

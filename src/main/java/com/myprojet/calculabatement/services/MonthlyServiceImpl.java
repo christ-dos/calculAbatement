@@ -2,11 +2,13 @@ package com.myprojet.calculabatement.services;
 
 import com.myprojet.calculabatement.exceptions.MonthlyAlreadyExistException;
 import com.myprojet.calculabatement.exceptions.MonthlyNotFoundException;
+import com.myprojet.calculabatement.models.Month;
 import com.myprojet.calculabatement.models.Monthly;
 import com.myprojet.calculabatement.repositories.MonthlyRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 
 import java.util.Optional;
 
@@ -22,6 +24,7 @@ public class MonthlyServiceImpl implements MonthlyService {
 
     @Override
     public Monthly addMonthly(Monthly monthly) {
+        Month mois = monthly.getMonth();
         boolean monthlyExists = monthlyRepository.existsById(monthly.getMonthlyId());
         if (monthlyExists) {
             log.error("Service: monthly added with ID: " + monthly.getMonthlyId() + " already exists!");

@@ -10,7 +10,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.Month;
+
+import com.myprojet.calculabatement.models.Month;
 import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -36,9 +37,9 @@ public class TaxableSalaryServiceImplTest {
         Child child =
                 new Child(1, "Riboulet", "Romy", "12/01/2019", "02/05/2021", "https://www.hdwallpaper.nu.jpg", "christine@email.fr",
                         Arrays.asList(
-                                new Monthly(1, Month.JANUARY, "2022", 500D, 10, 10, 20, 0.0, 1),
-                                new Monthly(2, Month.FEBRUARY, "2022", 500D, 10, 10, 20, 0.0, 1),
-                                new Monthly(3, Month.MARCH, "2022", 500D, 10, 10, 20, 0.0, 2)
+                                new Monthly(1, Month.JANVIER, "2022", 500D, 10, 10, 20, 0.0, 1),
+                                new Monthly(2, Month.FEVRIER, "2022", 500D, 10, 10, 20, 0.0, 1),
+                                new Monthly(3, Month.MARS, "2022", 500D, 10, 10, 20, 0.0, 2)
                         )
                 );
         //WHEN
@@ -54,9 +55,9 @@ public class TaxableSalaryServiceImplTest {
         Child child =
                 new Child(1, "Riboulet", "Romy", "12/01/2019", "02/05/2021", "https://www.hdwallpaper.nu.jpg", "christine@email.fr",
                         Arrays.asList(
-                                new Monthly(1, Month.JANUARY, "2021", 500D, 10, 10, 20, 0.0, 1),
-                                new Monthly(2, Month.FEBRUARY, "2022", 500D, 10, 10, 20, 0.0, 1),
-                                new Monthly(3, Month.MARCH, "2022", 500D, 10, 10, 20, 0.0, 2)
+                                new Monthly(1, Month.JANVIER, "2021", 500D, 10, 10, 20, 0.0, 1),
+                                new Monthly(2, Month.FEVRIER, "2022", 500D, 10, 10, 20, 0.0, 1),
+                                new Monthly(3, Month.MARS, "2022", 500D, 10, 10, 20, 0.0, 2)
                         )
                 );
         //WHEN
@@ -72,9 +73,9 @@ public class TaxableSalaryServiceImplTest {
         Child child =
                 new Child(1, "Riboulet", "Romy", "12/01/2019", "02/05/2021", "https://www.hdwallpaper.nu.jpg", "christine@email.fr",
                         Arrays.asList(
-                                new Monthly(1, Month.JANUARY, "2021", 500D, 10, 10, 20, 0.0, 1),
-                                new Monthly(2, Month.FEBRUARY, "2021", 500D, 10, 10, 20, 0.0, 1),
-                                new Monthly(3, Month.MARCH, "2021", 500D, 10, 10, 20, 0.0, 2)
+                                new Monthly(1, Month.JANVIER, "2021", 500D, 10, 10, 20, 0.0, 1),
+                                new Monthly(2, Month.FEVRIER, "2021", 500D, 10, 10, 20, 0.0, 1),
+                                new Monthly(3, Month.MARS, "2021", 500D, 10, 10, 20, 0.0, 2)
                         )
                 );
         //WHEN

@@ -1,6 +1,7 @@
 package com.myprojet.calculabatement.services;
 
 import com.myprojet.calculabatement.exceptions.MonthlyNotFoundException;
+import com.myprojet.calculabatement.models.Month;
 import com.myprojet.calculabatement.models.Monthly;
 import com.myprojet.calculabatement.models.RateSmicApi;
 import com.myprojet.calculabatement.proxies.RateSmicProxy;
@@ -12,7 +13,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.Month;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -42,9 +43,9 @@ public class CalculateTaxReliefServiceTest {
     public void calculateTaxReliefByChildTest_whenRateSmicUpWareOneTimeAndRateSmic2IsEqualZeroAndWithoutHoursWorked_thenReturnTaxReliefForCompleteYear() {
         //GIVEN
         List<Monthly> monthliesByYear = Arrays.asList(
-                new Monthly(1, Month.JANUARY, "2021", 650D, 20, 20, 20, 0D, 1),
-                new Monthly(2, Month.FEBRUARY, "2021", 650D, 20, 20, 20, 0D, 1),
-                new Monthly(3, Month.MARCH, "2021", 650D, 20, 20, 20, 0D, 1)
+                new Monthly(1, Month.JANVIER, "2021", 650D, 20, 20, 20, 0D, 1),
+                new Monthly(2, Month.FEVRIER, "2021", 650D, 20, 20, 20, 0D, 1),
+                new Monthly(3, Month.MARS, "2021", 650D, 20, 20, 20, 0D, 1)
         );
         List<RateSmicApi> rateSmicApiList = Arrays.asList(
                 new RateSmicApi("2021-07", "10.00"),
@@ -66,9 +67,9 @@ public class CalculateTaxReliefServiceTest {
     public void calculateTaxReliefByChildTest_whenRateSmicUpWareOneTimeAndRateSmic2IsEqualZeroWithoutDaysWorked_thenReturnTaxReliefForCompleteYear() {
         //GIVEN
         List<Monthly> monthliesByYear = Arrays.asList(
-                new Monthly(1, Month.JANUARY, "2021", 650D, 20, 20, 0, 50.0, 1),
-                new Monthly(2, Month.FEBRUARY, "2021", 650D, 20, 20, 0, 50.0, 1),
-                new Monthly(3, Month.MARCH, "2021", 650D, 20, 20, 0, 50.0, 1)
+                new Monthly(1, Month.JANVIER, "2021", 650D, 20, 20, 0, 50.0, 1),
+                new Monthly(2, Month.FEVRIER, "2021", 650D, 20, 20, 0, 50.0, 1),
+                new Monthly(3, Month.MARS, "2021", 650D, 20, 20, 0, 50.0, 1)
         );
         List<RateSmicApi> rateSmicApiList = Arrays.asList(
                 new RateSmicApi("2021-07", "10.00"),
@@ -90,9 +91,9 @@ public class CalculateTaxReliefServiceTest {
     public void calculateTaxReliefByChildTest_whenRateSmicUpWareOneTimeAndRateSmic2IsEqualZero_thenReturnTaxReliefForCompleteYear() {
         //GIVEN
         List<Monthly> monthliesByYear = Arrays.asList(
-                new Monthly(1, Month.JANUARY, "2021", 650D, 20, 20, 20, 10.0, 1),
-                new Monthly(2, Month.FEBRUARY, "2021", 650D, 20, 20, 20, 10.0, 1),
-                new Monthly(3, Month.MARCH, "2021", 650D, 20, 20, 20, 10.0, 1)
+                new Monthly(1, Month.JANVIER, "2021", 650D, 20, 20, 20, 10.0, 1),
+                new Monthly(2, Month.FEVRIER, "2021", 650D, 20, 20, 20, 10.0, 1),
+                new Monthly(3, Month.MARS, "2021", 650D, 20, 20, 20, 10.0, 1)
         );
         List<RateSmicApi> rateSmicApiList = Arrays.asList(
                 new RateSmicApi("2021-07", "10.00"),
@@ -113,9 +114,9 @@ public class CalculateTaxReliefServiceTest {
     @Test
     public void calculateTaxReliefByChildTest_whenRateSmicUpWareTwoTimesAndWithoutHoursWorked_thenReturnTaxReliefCalculatedForTwoDifferentPeriods() {
         List<Monthly> monthliesByYear = Arrays.asList(
-                new Monthly(1, Month.JANUARY, "2021", 650D, 20, 20, 20, 0D, 1),
-                new Monthly(2, Month.FEBRUARY, "2021", 650D, 20, 20, 20, 0D, 1),
-                new Monthly(3, Month.JUNE, "2021", 650D, 20, 20, 20, 0D, 1)
+                new Monthly(1, Month.JANVIER, "2021", 650D, 20, 20, 20, 0D, 1),
+                new Monthly(2, Month.FEVRIER, "2021", 650D, 20, 20, 20, 0D, 1),
+                new Monthly(3, Month.JUIN, "2021", 650D, 20, 20, 20, 0D, 1)
         );
         List<RateSmicApi> rateSmicApiList = Arrays.asList(
                 new RateSmicApi("2021-07", "10.48"),
@@ -135,9 +136,9 @@ public class CalculateTaxReliefServiceTest {
     @Test
     public void calculateTaxReliefByChildTest_whenRateSmicUpWareTwoTimesAndWithDaysWorked_thenReturnTaxReliefCalculatedForTwoDifferentPeriods() {
         List<Monthly> monthliesByYear = Arrays.asList(
-                new Monthly(1, Month.JANUARY, "2021", 650D, 20, 20, 0, 50.0, 1),
-                new Monthly(2, Month.FEBRUARY, "2021", 650D, 20, 20, 0, 50.0, 1),
-                new Monthly(3, Month.JUNE, "2021", 650D, 20, 20, 0, 50.0, 1)
+                new Monthly(1, Month.JANVIER, "2021", 650D, 20, 20, 0, 50.0, 1),
+                new Monthly(2, Month.FEVRIER, "2021", 650D, 20, 20, 0, 50.0, 1),
+                new Monthly(3, Month.JUIN, "2021", 650D, 20, 20, 0, 50.0, 1)
         );
         List<RateSmicApi> rateSmicApiList = Arrays.asList(
                 new RateSmicApi("2021-06", "10.48"),
@@ -157,9 +158,9 @@ public class CalculateTaxReliefServiceTest {
     @Test
     public void calculateTaxReliefByChildTest_whenRateSmicUpWareTwoTimesAndWithHoursWorked_thenReturnTaxReliefCalculatedForTwoDifferentPeriods() {
         List<Monthly> monthliesByYear = Arrays.asList(
-                new Monthly(1, Month.JANUARY, "2021", 650D, 20, 20, 20, 10.0, 1),
-                new Monthly(2, Month.FEBRUARY, "2021", 650D, 20, 20, 20, 10.0, 1),
-                new Monthly(3, Month.JUNE, "2021", 650D, 20, 20, 20, 10.0, 1)
+                new Monthly(1, Month.JANVIER, "2021", 650D, 20, 20, 20, 10.0, 1),
+                new Monthly(2, Month.FEVRIER, "2021", 650D, 20, 20, 20, 10.0, 1),
+                new Monthly(3, Month.JUIN, "2021", 650D, 20, 20, 20, 10.0, 1)
         );
         List<RateSmicApi> rateSmicApiList = Arrays.asList(
                 new RateSmicApi("2021-07", "10.48"),
@@ -180,9 +181,9 @@ public class CalculateTaxReliefServiceTest {
     @Test
     public void calculateTaxReliefByChildTest_whenRateSmicUpWareTwoTimesAndWithHoursWorkedAndUpWareInJune_thenReturnTaxReliefCalculatedForTwoDifferentPeriods() {
         List<Monthly> monthliesByYear = Arrays.asList(
-                new Monthly(1, Month.JANUARY, "2021", 650D, 20, 20, 20, 10.0, 1),
-                new Monthly(2, Month.FEBRUARY, "2021", 650D, 20, 20, 20, 10.0, 1),
-                new Monthly(3, Month.DECEMBER, "2021", 650D, 20, 20, 20, 10.0, 1)
+                new Monthly(1, Month.JANVIER, "2021", 650D, 20, 20, 20, 10.0, 1),
+                new Monthly(2, Month.FEVRIER, "2021", 650D, 20, 20, 20, 10.0, 1),
+                new Monthly(3, Month.DECEMBRE, "2021", 650D, 20, 20, 20, 10.0, 1)
         );
         List<RateSmicApi> rateSmicApiList = Arrays.asList(
                 new RateSmicApi("2021-07", "10.48"),
@@ -204,9 +205,9 @@ public class CalculateTaxReliefServiceTest {
     @Test
     public void calculateTaxReliefByChildTest_whenRateSmicUpWareTwoTimesAndWithHoursWorkedAndUpWareInDecember_thenReturnTaxReliefCalculatedForTwoDifferentPeriods() {
         List<Monthly> monthliesByYear = Arrays.asList(
-                new Monthly(1, Month.JANUARY, "2021", 650D, 20, 20, 20, 10.0, 1),
-                new Monthly(2, Month.FEBRUARY, "2021", 650D, 20, 20, 20, 10.0, 1),
-                new Monthly(3, Month.DECEMBER, "2021", 650D, 20, 20, 20, 10.0, 1)
+                new Monthly(1, Month.JANVIER, "2021", 650D, 20, 20, 20, 10.0, 1),
+                new Monthly(2, Month.FEVRIER, "2021", 650D, 20, 20, 20, 10.0, 1),
+                new Monthly(3, Month.DECEMBRE, "2021", 650D, 20, 20, 20, 10.0, 1)
         );
         List<RateSmicApi> rateSmicApiList = Arrays.asList(
                 new RateSmicApi("2021-07", "10.48"),
