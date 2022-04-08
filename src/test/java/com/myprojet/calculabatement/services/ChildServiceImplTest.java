@@ -108,13 +108,13 @@ public class ChildServiceImplTest {
                 new Child(3, "Charton", "Nathan", "14/05/2021", "24/08/2021","http://image.jpeg", "christine@email.fr")
         );
         //WHEN
-        when(childRepositoryMock.findChildrenByUserEmail(isA(String.class))).thenReturn(children);
+        when(childRepositoryMock.findChildrenByUserEmailOrderByBeginContract(isA(String.class))).thenReturn(children);
         List<Child> childrenResult = (List<Child>) childServiceTest.getChildrenByUserEmail();
         //THEN
         assertEquals(3, childrenResult.size());
         assertEquals(1, childrenResult.get(0).getId());
         assertEquals(3, childrenResult.get(2).getId());
-        verify(childRepositoryMock, times(1)).findChildrenByUserEmail(anyString());
+        verify(childRepositoryMock, times(1)).findChildrenByUserEmailOrderByBeginContract(anyString());
     }
 
     @Test

@@ -47,7 +47,7 @@ public class ChildRepositoryTest {
         );
         // WHEN
         childRepositoryTest.saveAll(children);
-        List<Child> childrenByUserEmail = (List<Child>) childRepositoryTest.findChildrenByUserEmail("christine@email.fr");
+        List<Child> childrenByUserEmail = (List<Child>) childRepositoryTest.findChildrenByUserEmailOrderByBeginContract("christine@email.fr");
         // THEN
         assertEquals(2, childrenByUserEmail.size());
     }

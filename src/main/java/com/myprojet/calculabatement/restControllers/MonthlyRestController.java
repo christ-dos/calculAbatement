@@ -5,6 +5,7 @@ import com.myprojet.calculabatement.exceptions.MonthlyAlreadyExistException;
 import com.myprojet.calculabatement.models.Child;
 import com.myprojet.calculabatement.models.Monthly;
 import com.myprojet.calculabatement.services.MonthlyService;
+import com.myprojet.calculabatement.services.TaxableSalaryService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,8 @@ import org.springframework.web.bind.annotation.*;
 public class MonthlyRestController {
     @Autowired
     private MonthlyService monthlyService;
+    @Autowired
+    private TaxableSalaryService taxableSalaryService;
 
     @PostMapping("/add")
     public ResponseEntity<Monthly> addMonthly(@RequestBody Monthly monthly) {
@@ -36,5 +39,12 @@ public class MonthlyRestController {
         Iterable<Monthly> monthlies = monthlyService.getAllMonthly();
         log.info("Controller: Display list of monthlies");
         return new ResponseEntity<>(monthlies, HttpStatus.OK);
+    }
+
+    @GetMapping("/taxablesalarysibling")
+    public ResponseEntity<Double> getTaxableSalarySibling(double netSalary, double netBrutCoefficient, double maintenanceCost){
+        double taxableSalarySibling = taxableSalaryService.calculateTaxableSalarySiblingByMonth(netSalary, netBrutCoefficient, maintenanceCost);
+        log.info("Controller: Display taxable salary sibling");
+        return new ResponseEntity<>(taxableSalarySibling, HttpStatus.OK);
     }
 }
