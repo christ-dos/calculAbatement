@@ -152,6 +152,27 @@ public class MonthlyRepositoryTest {
     }
 
     @Test
+    public void findMonthlyByYearOrderByMonthDescTest_whenMonthliesContainThreeElements_thenReturnIterableWithTwoElementsWithYear2022AndOrderedByMonthDesc() {
+        //GIVEN
+        List<Monthly> monthlies = Arrays.asList(
+                new Monthly(1, Month.JANVIER, "2021", 650D, 20, 20, 20, 10.0, 1),
+                new Monthly(2, Month.FEVRIER, "2022", 650D, 20, 20, 20, 10.5, 1),
+                new Monthly(3, Month.DECEMBRE, "2022", 650D, 20, 20, 20, 15, 1)
+        );
+        //WHEN
+        monthlyRepositoryTest.saveAll(monthlies);
+        List<Monthly> monthliesResult = (List<Monthly>) monthlyRepositoryTest.findMonthlyByYearOrderByMonthDesc("2022");
+        //THEN
+        assertEquals(2, monthliesResult.size());
+        //Ordered by Month desc DECEMBRE is after FEVRIER
+        assertEquals(3, monthliesResult.get(0).getMonthlyId());
+        assertEquals(2, monthliesResult.get(1).getMonthlyId());
+        assertEquals("2022", monthliesResult.get(0).getYear());
+        assertEquals("2022", monthliesResult.get(1).getYear());
+    }
+
+
+    @Test
     public void findByIdTest_whenMonthlyExist_thenReturnMonthlyFound() {
         //GIVEN
         //WHEN

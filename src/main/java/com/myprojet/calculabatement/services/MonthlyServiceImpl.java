@@ -73,8 +73,9 @@ public class MonthlyServiceImpl implements MonthlyService {
     }
 
     @Override
-    public Iterable<Monthly> getAllMonthlyByYear(String year){
-        return monthlyRepository.findMonthlyByYear(year);
+    public Iterable<Monthly> getAllMonthlyByYearOrderByMonthDesc(String year){
+
+        return monthlyRepository.findMonthlyByYearOrderByMonthDesc(year);
     }
 
     @Override

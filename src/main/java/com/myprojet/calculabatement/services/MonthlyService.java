@@ -13,7 +13,7 @@ public interface MonthlyService {
 
     Iterable<Monthly> getAllMonthlyByChildId(int childId);
 
-    Iterable<Monthly> getAllMonthlyByYear(String year);
+    Iterable<Monthly> getAllMonthlyByYearOrderByMonthDesc(String year);
 
     Monthly getMonthlyById(int monthlyId);
 }

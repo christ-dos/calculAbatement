@@ -12,8 +12,7 @@ public interface MonthlyRepository extends CrudRepository<Monthly, Integer> {
 
     Iterable<Monthly> findMonthlyByChildId(int childId);
 
-    //Iterable<Monthly> findMonthlyByChildI(int childId);
-
     Iterable<Monthly> findMonthlyByYear(String year);
 
+    Iterable<Monthly> findMonthlyByYearOrderByMonthDesc(String year);
 }
