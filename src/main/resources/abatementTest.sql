@@ -21,13 +21,14 @@ VALUES ('christine@email.fr', 'pass', 'Duarte', 'Christine'),
 
 CREATE TABLE child
 (
-    id              TINYINT AUTO_INCREMENT NOT NULL,
-    child_lastname  VARCHAR(100)           NOT NULL,
-    child_firstname VARCHAR(100)           NOT NULL,
+    id              TINYINT AUTO_INCREMENT  NOT NULL,
+    child_lastname  VARCHAR(100)            NOT NULL,
+    child_firstname VARCHAR(100)            NOT NULL,
     birth_date      VARCHAR(10),
-    begin_contract  VARCHAR(10)            NOT NULL,
+    begin_contract  VARCHAR(10)             NOT NULL,
+    date_added      TIMESTAMP  NOT NULL DEFAULT NOW(),
     image_url       VARCHAR(200),
-    user_email      VARCHAR(100)           NOT NULL,
+    user_email      VARCHAR(100)            NOT NULL,
     PRIMARY KEY (id)
 )
     ENGINE = innoDB;
@@ -38,15 +39,15 @@ CREATE TABLE child
 
 CREATE TABLE monthly
 (
-    monthly_id     TINYINT AUTO_INCREMENT                                                                                                NOT NULL,
+    monthly_id     TINYINT AUTO_INCREMENT                                                                                               NOT NULL,
     month          ENUM ('JANVIER','FEVRIER','MARS', 'AVRIL','MAI','JUIN','JUILLET','AOUT','SEPTEMBRE','OCTOBRE','NOVEMBRE','DECEMBRE') NOT NULL,
-    year           VARCHAR(4)                                                                                                            NOT NULL,
+    year           VARCHAR(4)                                                                                                           NOT NULL,
     taxable_salary DECIMAL(8, 2),
     lunch          TINYINT,
     taste          TINYINT,
     day_worked     TINYINT,
     hours_worked   DECIMAL(4, 2),
-    child_id       TINYINT                                                                                                               NOT NULL,
+    child_id       TINYINT                                                                                                              NOT NULL,
     PRIMARY KEY (monthly_id)
 )
     ENGINE = innoDB;

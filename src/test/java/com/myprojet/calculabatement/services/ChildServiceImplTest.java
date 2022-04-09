@@ -34,7 +34,7 @@ public class ChildServiceImplTest {
     @Test
     public void addChildTest_whenChildNotExist_thenReturnChildAdded() {
         //GIVEN
-        Child childNotExist = new Child(550, "Riza", "Lazar", "19/08/2020", "02/05/2020","http://image.jpeg", "christine@email.fr");
+        Child childNotExist = new Child(550, "Riza", "Lazar", "19/08/2020", "02/05/2020", "http://image.jpeg", "christine@email.fr");
         //WHEN
         when(childRepositoryMock.existsById(anyInt())).thenReturn(false);
         when(childRepositoryMock.save(isA(Child.class))).thenReturn(childNotExist);
@@ -48,7 +48,7 @@ public class ChildServiceImplTest {
 
     @Test
     public void addChildTest_whenChildAlreadyExist_thenThrowChildAlreadyExistException() {
-        Child childAlreadyExist = new Child(1, "Riboulet", "Romy", "12/05/2020", "02/05/2020","http://image.jpeg", "christine@email.fr");
+        Child childAlreadyExist = new Child(1, "Riboulet", "Romy", "12/05/2020", "02/05/2020",  "http://image.jpeg", "christine@email.fr");
         //WHEN
         when(childRepositoryMock.existsById(anyInt())).thenReturn(true);
         //THEN
@@ -60,7 +60,7 @@ public class ChildServiceImplTest {
     @Test
     public void updateChildTest_whenChildNotExist_thenThrowChildNotFoundException() {
         //GIVEN
-        Child childNotExist = new Child(990, "Martin", "Paul", "12/09/2020", "02/05/2020","http://image.jpeg", "christine@email.fr");
+        Child childNotExist = new Child(990, "Martin", "Paul", "12/09/2020", "02/05/2020", "http://image.jpeg", "christine@email.fr");
         //WHEN
         when(childRepositoryMock.findById(anyInt())).thenReturn(Optional.empty());
         //THEN
@@ -72,8 +72,8 @@ public class ChildServiceImplTest {
     @Test
     public void updateChildTest_whenChildExist_thenReturnChildUpdated() {
         //GIVEN
-        Child childExist = new Child(1, "Riboulet", "Romy", "12/05/2020", "02/05/2020","http://image.jpeg", "christine@email.fr");
-        Child childExistUpdated = new Child(1, "RibouletUpdated", "Romy", "12/05/2020", "02/05/2020","http://image.jpeg", "christine@email.fr");
+        Child childExist = new Child(1, "Riboulet", "Romy", "12/05/2020", "02/05/2020",  "http://image.jpeg", "christine@email.fr");
+        Child childExistUpdated = new Child(1, "RibouletUpdated", "Romy", "12/05/2020", "02/05/2020", "http://image.jpeg", "christine@email.fr");
         //WHEN
         when(childRepositoryMock.findById(anyInt())).thenReturn(Optional.of(childExist));
         when(childRepositoryMock.save(isA(Child.class))).thenReturn(childExistUpdated);
@@ -100,27 +100,27 @@ public class ChildServiceImplTest {
     }
 
     @Test
-    public void getChildrenByUserEmailTest_whenListContainThreeElements_thenReturnThreeElements() {
+    public void getChildrenByUserEmailOrderByDateAddedDescTest_whenListContainThreeElements_thenReturnThreeElements() {
         //GIVEN
         List<Child> children = Arrays.asList(
-                new Child(1, "Riboulet", "Romy", "12/01/2020", "02/05/2020","http://image.jpeg", "christine@email.fr"),
+                new Child(1, "Riboulet", "Romy", "12/01/2020", "02/05/2020",  "http://image.jpeg", "christine@email.fr"),
                 new Child(2, "Cacahuette", "Manon", "30/11/2017", "01/03/2020","http://image.jpeg", "christine@email.fr"),
                 new Child(3, "Charton", "Nathan", "14/05/2021", "24/08/2021","http://image.jpeg", "christine@email.fr")
         );
         //WHEN
-        when(childRepositoryMock.findChildrenByUserEmailOrderByBeginContract(isA(String.class))).thenReturn(children);
-        List<Child> childrenResult = (List<Child>) childServiceTest.getChildrenByUserEmail();
+        when(childRepositoryMock.findChildrenByUserEmailOrderByDateAddedDesc(isA(String.class))).thenReturn(children);
+        List<Child> childrenResult = (List<Child>) childServiceTest.getChildrenByUserEmailOrderByBeginContractDesc();
         //THEN
         assertEquals(3, childrenResult.size());
         assertEquals(1, childrenResult.get(0).getId());
         assertEquals(3, childrenResult.get(2).getId());
-        verify(childRepositoryMock, times(1)).findChildrenByUserEmailOrderByBeginContract(anyString());
+        verify(childRepositoryMock, times(1)).findChildrenByUserEmailOrderByDateAddedDesc(anyString());
     }
 
     @Test
     public void getChildByIdTest_whenChildExist_thenReturnChildFound() {
         //GIVEN
-        Child childExist = new Child(1, "Riboulet", "Romy", "12/05/2020", "02/05/2020","http://image.jpeg", "christine@email.fr");
+        Child childExist = new Child(1, "Riboulet", "Romy", "12/05/2020", "02/05/2020",  "http://image.jpeg", "christine@email.fr");
         //WHEN
         when(childRepositoryMock.findById(anyInt())).thenReturn(Optional.of(childExist));
         Child childFound = childServiceTest.getChildById(anyInt());
@@ -134,7 +134,7 @@ public class ChildServiceImplTest {
     @Test
     public void getChildByIdTest_whenChildNotExists_thenThrowChildNotFoundException() {
         //GIVEN
-        Child childNotExist = new Child(1, "Riboulet", "Romy", "12/05/2020", "02/05/2020","http://image.jpeg", "christine@email.fr");
+        Child childNotExist = new Child(1, "Riboulet", "Romy", "12/05/2020", "02/05/2020", "http://image.jpeg", "christine@email.fr");
         //WHEN
         when(childRepositoryMock.findById(anyInt())).thenReturn(Optional.empty());
         //THEN

@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ChildRepository extends CrudRepository<Child, Integer> {
 
-    Iterable<Child> findChildrenByUserEmailOrderByBeginContract(String userEmail);
+    Iterable<Child> findChildrenByUserEmailOrderByDateAddedDesc(String userEmail);
 
 }

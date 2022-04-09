@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Slf4j
@@ -30,6 +31,7 @@ public class ChildServiceImpl implements ChildService {
             throw new ChildAlreadyExistException("L'enfant que vous essayez d'ajouter existe déja!");
         }
         child.setUserEmail(SecurityUtilities.getCurrentUser());
+        child.setDateAdded(LocalDateTime.now());
         log.debug("Service: Child added for user email: " + child.getId());
         return childRepository.save(child);
     }
@@ -44,6 +46,7 @@ public class ChildServiceImpl implements ChildService {
         childToUpdate.get().setFirstname(child.getFirstname());
         childToUpdate.get().setLastname(child.getLastname());
         childToUpdate.get().setBeginContract(child.getBeginContract());
+        childToUpdate.get().setDateAdded(LocalDateTime.now());
         childToUpdate.get().setBirthDate(child.getBirthDate());
         childToUpdate.get().setImageUrl(child.getImageUrl());
 
@@ -59,8 +62,8 @@ public class ChildServiceImpl implements ChildService {
     }
 
     @Override
-    public Iterable<Child> getChildrenByUserEmail() {
-        return childRepository.findChildrenByUserEmailOrderByBeginContract(SecurityUtilities.getCurrentUser());
+    public Iterable<Child> getChildrenByUserEmailOrderByBeginContractDesc() {
+        return childRepository.findChildrenByUserEmailOrderByDateAddedDesc(SecurityUtilities.getCurrentUser());
     }
 
     @Override

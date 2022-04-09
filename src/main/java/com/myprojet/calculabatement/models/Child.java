@@ -3,14 +3,15 @@ package com.myprojet.calculabatement.models;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @ToString
 public class Child {
     @Id
@@ -24,6 +25,8 @@ public class Child {
     private String birthDate;
     @Column(name = "begin_contract")
     private String beginContract;
+    @Column(name="date_added")
+    private LocalDateTime dateAdded;
     @Column(name = "image_url")
     private String imageUrl;
     @Column(name = "user_email")
@@ -35,6 +38,17 @@ public class Child {
     @JoinColumn(name = "child_id")
     private List<Monthly> monthlies = new ArrayList<>();
 
+    public Child(int id, String lastname, String firstname, String birthDate, String beginContract,LocalDateTime dateAdded, String imageUrl, String userEmail) {
+        this.id = id;
+        this.lastname = lastname;
+        this.firstname = firstname;
+        this.birthDate = birthDate;
+        this.beginContract = beginContract;
+        this.dateAdded = dateAdded;
+        this.imageUrl = imageUrl;
+        this.userEmail = userEmail;
+    }
+
     public Child(int id, String lastname, String firstname, String birthDate, String beginContract, String imageUrl, String userEmail) {
         this.id = id;
         this.lastname = lastname;
@@ -43,5 +57,16 @@ public class Child {
         this.beginContract = beginContract;
         this.imageUrl = imageUrl;
         this.userEmail = userEmail;
+    }
+
+    public Child(int id, String lastname, String firstname, String birthDate, String beginContract, String imageUrl, String userEmail, List<Monthly> monthlies) {
+        this.id = id;
+        this.lastname = lastname;
+        this.firstname = firstname;
+        this.birthDate = birthDate;
+        this.beginContract = beginContract;
+        this.imageUrl = imageUrl;
+        this.userEmail = userEmail;
+        this.monthlies = monthlies;
     }
 }
