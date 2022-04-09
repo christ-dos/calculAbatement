@@ -62,7 +62,7 @@ public class ChildServiceImpl implements ChildService {
     }
 
     @Override
-    public Iterable<Child> getChildrenByUserEmailOrderByBeginContractDesc() {
+    public Iterable<Child> getChildrenByUserEmailOrderByDateAddedDesc() {
         return childRepository.findChildrenByUserEmailOrderByDateAddedDesc(SecurityUtilities.getCurrentUser());
     }
 

@@ -34,7 +34,7 @@ public class TotalAnnualTaxReliefsServiceImpl implements TotalAnnualTaxReliefsSe
 
     @Override
     public double getTotalAnnualReportableAmountsForAllChildren(String year, double feeLunch, double feeTaste) {
-        List<Child> childrenByCurrentUser = (List<Child>) childService.getChildrenByUserEmailOrderByBeginContractDesc();
+        List<Child> childrenByCurrentUser = (List<Child>) childService.getChildrenByUserEmailOrderByDateAddedDesc();
         double TotalAnnualReportableAmounts = childrenByCurrentUser.stream()
                 .map(child -> getTotalAnnualReportableAmountsByChild(child.getId(), year, feeLunch, feeTaste))
                 .mapToDouble(Double::doubleValue).sum();

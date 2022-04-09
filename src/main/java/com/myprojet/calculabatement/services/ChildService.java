@@ -9,7 +9,7 @@ public interface ChildService {
 
     String deleteChildById(int childId);
 
-    Iterable<Child> getChildrenByUserEmailOrderByBeginContractDesc();
+    Iterable<Child> getChildrenByUserEmailOrderByDateAddedDesc();
 
     Child getChildById(int childId);
 }

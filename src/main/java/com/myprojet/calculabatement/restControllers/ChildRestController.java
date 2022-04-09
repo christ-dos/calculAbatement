@@ -1,6 +1,7 @@
 package com.myprojet.calculabatement.restControllers;
 
 import com.myprojet.calculabatement.exceptions.ChildAlreadyExistException;
+import com.myprojet.calculabatement.exceptions.MonthlyNotFoundException;
 import com.myprojet.calculabatement.models.Child;
 import com.myprojet.calculabatement.services.ChildService;
 import com.myprojet.calculabatement.services.TaxableSalaryService;
@@ -26,7 +27,7 @@ public class ChildRestController {
 
     @GetMapping("/all")
     public ResponseEntity<Iterable<Child>> getAllChildren() {
-        Iterable<Child> children = childService.getChildrenByUserEmailOrderByBeginContractDesc();
+        Iterable<Child> children = childService.getChildrenByUserEmailOrderByDateAddedDesc();
         log.info("Controller: Display list of children");
         return new ResponseEntity<>(children, HttpStatus.OK);
     }
@@ -41,15 +42,20 @@ public class ChildRestController {
     @GetMapping("/taxablesalary")
     public ResponseEntity<Double> getAnnualTaxableSalaryByChild(@RequestParam int childId, @RequestParam String year) {
         double taxableSalary = taxableSalaryService.getSumTaxableSalaryByChildAndByYear(year, childId);
-        log.info("Controller: Taxable salary got for child ID: " + childId);
+        log.info("Controller: Taxable salary got for child ID: " + childId + " Value: " + taxableSalary);
         return new ResponseEntity<>(taxableSalary, HttpStatus.OK);
     }
 
     @GetMapping("/reportableamounts")
     public ResponseEntity<Double> getAnnualReportableAmountsByChild(@RequestParam int childId, @RequestParam String year,
                                                                     @RequestParam double feeLunch, @RequestParam double feeTaste) {
-        double reportableAmounts = totalAnnualTaxReliefsService.getTotalAnnualReportableAmountsByChild(childId, year, feeLunch, feeTaste);
-        log.info("Controller: Reportable amounts got for child ID: " + childId);
+        double reportableAmounts = 0;
+        try {
+            reportableAmounts = totalAnnualTaxReliefsService.getTotalAnnualReportableAmountsByChild(childId, year, feeLunch, feeTaste);
+        } catch (MonthlyNotFoundException e) {
+            e.getMessage();
+        }
+        log.info("Controller: Reportable amounts got for child ID: " + childId + " Value: " + reportableAmounts);
         return new ResponseEntity<>(reportableAmounts, HttpStatus.OK);
     }
 
@@ -60,6 +66,7 @@ public class ChildRestController {
             newChild = childService.addChild(child);
         } catch (ChildAlreadyExistException e) {
             e.getMessage();
+
         }
         log.info("Controller: Child added");
         return new ResponseEntity<>(newChild, HttpStatus.CREATED);

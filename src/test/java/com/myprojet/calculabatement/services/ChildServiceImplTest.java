@@ -109,7 +109,7 @@ public class ChildServiceImplTest {
         );
         //WHEN
         when(childRepositoryMock.findChildrenByUserEmailOrderByDateAddedDesc(isA(String.class))).thenReturn(children);
-        List<Child> childrenResult = (List<Child>) childServiceTest.getChildrenByUserEmailOrderByBeginContractDesc();
+        List<Child> childrenResult = (List<Child>) childServiceTest.getChildrenByUserEmailOrderByDateAddedDesc();
         //THEN
         assertEquals(3, childrenResult.size());
         assertEquals(1, childrenResult.get(0).getId());
