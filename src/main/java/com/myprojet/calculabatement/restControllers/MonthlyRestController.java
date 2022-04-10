@@ -34,10 +34,10 @@ public class MonthlyRestController {
         return new ResponseEntity<>(newMonthly, HttpStatus.CREATED);
     }
 
-    @GetMapping("/all")
-    public ResponseEntity<Iterable<Monthly>> getAllMonthlies() {
-        Iterable<Monthly> monthlies = monthlyService.getAllMonthly();
-        log.info("Controller: Display list of monthlies");
+    @GetMapping("/all/year/childid")
+    public ResponseEntity<Iterable<Monthly>> getAllMonthliesByYearAndChildIdOrderByMonthDesc(String year, int childId) {
+        Iterable<Monthly> monthlies = monthlyService.getAllMonthlyByYearAndChildIdOrderByMonthDesc(year, childId);
+        log.info("Controller: Display list of monthlies by year order by desc");
         return new ResponseEntity<>(monthlies, HttpStatus.OK);
     }
 

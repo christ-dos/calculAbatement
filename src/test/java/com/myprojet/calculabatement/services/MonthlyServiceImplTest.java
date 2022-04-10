@@ -140,21 +140,21 @@ public class MonthlyServiceImplTest {
     }
 
     @Test
-    public void getAllMonthlyByYearOrderByMonthDescTest_whenListContainThreeElements_thenReturnTheeElementsOfMonthlyOrderedByMonthDesc() {
+    public void getMonthlyByYearAndChildIdOrderByMonthDescTest_whenListContainThreeElements_thenReturnTheeElementsOfMonthlyOrderedByMonthDesc() {
         //GIVEN
         List<Monthly> MonthliesByYear = Arrays.asList(
                 new Monthly(1, Month.DECEMBRE, "2021", 620D, 18, 18, 20, 8, 1),
                 new Monthly(2, Month.JANVIER, "2022", 620D, 18, 18, 20, 8, 1),
                 new Monthly(3, Month.DECEMBRE, "2022", 620D, 18, 18, 20, 8, 1)
         );
-        when(monthlyRepositoryMock.findMonthlyByYearOrderByMonthDesc(anyString())).thenReturn(MonthliesByYear);
-        List<Monthly> monthliesByYearResult = (List<Monthly>) monthlyServiceTest.getAllMonthlyByYearOrderByMonthDesc("2022");
+        when(monthlyRepositoryMock.findMonthlyByYearAndChildIdOrderByMonthDesc(anyString(), anyInt())).thenReturn(MonthliesByYear);
+        List<Monthly> monthliesByYearResult = (List<Monthly>) monthlyServiceTest.getAllMonthlyByYearAndChildIdOrderByMonthDesc("2022", 1);
         //THEN
         assertEquals(3, monthliesByYearResult.size());
         //ordered by Month desc DECEMBRE is after JANVIER
         assertEquals(Month.DECEMBRE, monthliesByYearResult.get(0).getMonth());
         assertEquals(Month.JANVIER, monthliesByYearResult.get(1).getMonth());
-        verify(monthlyRepositoryMock, times(1)).findMonthlyByYearOrderByMonthDesc(anyString());
+        verify(monthlyRepositoryMock, times(1)).findMonthlyByYearAndChildIdOrderByMonthDesc(anyString(), anyInt());
     }
 
     @Test

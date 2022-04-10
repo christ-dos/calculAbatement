@@ -62,7 +62,7 @@ public class MonthlyServiceImpl implements MonthlyService {
 
     @Override
     public Iterable<Monthly> getAllMonthly() {
-        log.info("Service: List of all Monthly is displayed!");
+        log.info("Service: List of all Monthlies is displayed!");
         return monthlyRepository.findAll();
     }
 
@@ -73,13 +73,13 @@ public class MonthlyServiceImpl implements MonthlyService {
     }
 
     @Override
-    public Iterable<Monthly> getAllMonthlyByYearOrderByMonthDesc(String year){
-
-        return monthlyRepository.findMonthlyByYearOrderByMonthDesc(year);
+    public Iterable<Monthly> getAllMonthlyByYearAndChildIdOrderByMonthDesc(String year, int childId){
+        return monthlyRepository.findMonthlyByYearAndChildIdOrderByMonthDesc(year, childId);
     }
 
     @Override
     public Monthly getMonthlyById(int monthlyId) {
+
         Optional<Monthly> monthlyFound = monthlyRepository.findById(monthlyId);
         if (!monthlyFound.isPresent()) {
             log.error("Service: Monthly not found with ID: " + monthlyId);

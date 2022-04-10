@@ -37,8 +37,11 @@ public class MonthlyRepositoryTest {
         User userSaved = new User("christine@email.fr", "pass", "Duarte", "Christine");
         userRepositoryTest.save(userSaved);
 
-        Child childSaved = new Child(1, "Benoit", "Evan", "14/12/2014", "15/03/2020", LocalDateTime.now(), "http://image.jpeg","christine@email.fr");
-        childRepositoryTest.save(childSaved);
+        Child childSavedOne = new Child(1, "Benoit", "Evan", "14/12/2014", "15/03/2020", LocalDateTime.now(), "http://image.jpeg","christine@email.fr");
+        childRepositoryTest.save(childSavedOne);
+        Child childSavedTwo = new Child(2, "Bernard", "Jean", "14/12/2014", "15/03/2020", LocalDateTime.now(), "http://image.jpeg","christine@email.fr");
+        childRepositoryTest.save(childSavedTwo);
+
 
         Monthly monthlyTest = new Monthly(1, Month.JANVIER, "2022", 650D, 20, 20, 20, 0, 1);
         monthlyRepositoryTest.save(monthlyTest);
@@ -152,23 +155,27 @@ public class MonthlyRepositoryTest {
     }
 
     @Test
-    public void findMonthlyByYearOrderByMonthDescTest_whenMonthliesContainThreeElements_thenReturnIterableWithTwoElementsWithYear2022AndOrderedByMonthDesc() {
+    public void findMonthlyByYearAndChildIdOrderByMonthDescTest_whenMonthliesContainFourElements_thenReturnIterableWithTwoElementsForYear2022AndForChildIdOneAndOrderedByMonthDesc() {
         //GIVEN
         List<Monthly> monthlies = Arrays.asList(
                 new Monthly(1, Month.JANVIER, "2021", 650D, 20, 20, 20, 10.0, 1),
                 new Monthly(2, Month.FEVRIER, "2022", 650D, 20, 20, 20, 10.5, 1),
-                new Monthly(3, Month.DECEMBRE, "2022", 650D, 20, 20, 20, 15, 1)
+                new Monthly(3, Month.DECEMBRE, "2022", 650D, 20, 20, 20, 15, 1),
+                new Monthly(4, Month.AVRIL, "2022", 650D, 20, 20, 20, 15, 2)
         );
         //WHEN
         monthlyRepositoryTest.saveAll(monthlies);
-        List<Monthly> monthliesResult = (List<Monthly>) monthlyRepositoryTest.findMonthlyByYearOrderByMonthDesc("2022");
+        List<Monthly> monthliesResult = (List<Monthly>) monthlyRepositoryTest.findMonthlyByYearAndChildIdOrderByMonthDesc("2022", 1);
         //THEN
         assertEquals(2, monthliesResult.size());
         //Ordered by Month desc DECEMBRE is after FEVRIER
-        assertEquals(3, monthliesResult.get(0).getMonthlyId());
-        assertEquals(2, monthliesResult.get(1).getMonthlyId());
+        assertEquals(Month.DECEMBRE, monthliesResult.get(0).getMonth());
+        assertEquals(Month.FEVRIER, monthliesResult.get(1).getMonth());
         assertEquals("2022", monthliesResult.get(0).getYear());
         assertEquals("2022", monthliesResult.get(1).getYear());
+        //verify that no monthly got for child id 2
+        assertNotEquals(2,monthliesResult.get(0).getChildId());
+        assertNotEquals(2, monthliesResult.get(1).getChildId());
     }
 
 
