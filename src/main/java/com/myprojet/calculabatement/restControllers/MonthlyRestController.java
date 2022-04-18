@@ -30,7 +30,7 @@ public class MonthlyRestController {
         } catch (MonthlyAlreadyExistException e) {
             e.getMessage();
         }
-        log.info("Controller: Monthly added");
+        log.debug("Controller: Monthly added with child ID: " +monthly.getChildId());
         return new ResponseEntity<>(newMonthly, HttpStatus.CREATED);
     }
 
