@@ -6,6 +6,7 @@ import com.myprojet.calculabatement.models.Child;
 import com.myprojet.calculabatement.models.Monthly;
 import com.myprojet.calculabatement.services.MonthlyService;
 import com.myprojet.calculabatement.services.TaxableSalaryService;
+import com.myprojet.calculabatement.utils.SecurityUtilities;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -46,5 +47,19 @@ public class MonthlyRestController {
         double taxableSalarySibling = taxableSalaryService.calculateTaxableSalarySiblingByMonth(netSalary, netBrutCoefficient, maintenanceCost);
         log.info("Controller: Display taxable salary sibling");
         return new ResponseEntity<>(taxableSalarySibling, HttpStatus.OK);
+    }
+
+    @PutMapping("/update")
+    public ResponseEntity<Monthly> updateMonthly(@RequestBody Monthly monthly) {
+        Monthly updateMonthly = monthlyService.updateMonthly(monthly);
+        log.debug("Controller: Monthly updated with ID: " + updateMonthly.getMonthlyId());
+        return new ResponseEntity<>(updateMonthly, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> deleteMonthlyById(@PathVariable("id") int monthlyId) {
+        monthlyService.deleteMonthlyById(monthlyId);
+        log.debug("Controller: monthly deleted with ID: " + monthlyId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
