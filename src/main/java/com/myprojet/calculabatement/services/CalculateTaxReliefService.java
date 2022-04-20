@@ -30,7 +30,7 @@ public class CalculateTaxReliefService {
 
     public double calculateTaxReliefByChild(String year, int childId) {
         double taxRelief = 0;
-        //get smic values by insee Api
+        //get smic values by Insee Api
         List<RateSmicApi> smicValues = rateSmicProxy.getRateSmicByInseeApi(year, "12");
         if (smicValues.isEmpty()) {
             log.error("Service: Impossible obtain rate smic values via insee Api");

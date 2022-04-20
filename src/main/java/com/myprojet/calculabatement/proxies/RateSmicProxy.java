@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.myprojet.calculabatement.configuration.CustomProperties;
 import com.myprojet.calculabatement.exceptions.IllegalYearException;
-import com.myprojet.calculabatement.exceptions.ResponseNullException;
+import com.myprojet.calculabatement.exceptions.ConversionResponseApiXmlToJsonNullException;
 import com.myprojet.calculabatement.models.RateSmicApi;
 import com.myprojet.calculabatement.models.SeriesSmic;
 import lombok.extern.slf4j.Slf4j;
@@ -65,7 +65,7 @@ public class RateSmicProxy {
         //Conversion Xml en Json
         if (response.getBody() == null) {
             log.error("Proxy: No result found for request at Insee Api!");
-            throw new ResponseNullException("La requête n'a reçu aucune réponse!");
+            throw new ConversionResponseApiXmlToJsonNullException("La requête n'a reçu aucune réponse!");
         }
         JSONObject json = XML.toJSONObject(response.getBody());
         String jsonString = json.toString(4);

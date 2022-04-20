@@ -1,6 +1,6 @@
 package com.myprojet.calculabatement.utils;
 
-import com.myprojet.calculabatement.exceptions.NotBirthdateNotValidException;
+import com.myprojet.calculabatement.exceptions.BirthdateNotValidException;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.LocalDateTime;
 import org.joda.time.Months;
@@ -28,6 +28,6 @@ public class CalculateAge {
             }
         }
         log.error("DateUtils: The birthdate is not valid");
-        throw  new NotBirthdateNotValidException("La date d'anniversaire n'est pas valide");
+        throw  new BirthdateNotValidException("La date d'anniversaire n'est pas valide");
     }
 }

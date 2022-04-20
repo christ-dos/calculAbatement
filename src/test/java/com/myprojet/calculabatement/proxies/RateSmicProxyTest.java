@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.myprojet.calculabatement.configuration.BeansConfiguration;
 import com.myprojet.calculabatement.configuration.CustomProperties;
 import com.myprojet.calculabatement.exceptions.IllegalYearException;
-import com.myprojet.calculabatement.exceptions.ResponseNullException;
+import com.myprojet.calculabatement.exceptions.ConversionResponseApiXmlToJsonNullException;
 import com.myprojet.calculabatement.models.RateSmicApi;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -132,7 +132,7 @@ public class RateSmicProxyTest {
                 any(Class.class)
         )).thenReturn(response);
         //THEN
-        assertThrows(ResponseNullException.class, () -> rateSmicProxyTest.getRateSmicByInseeApi(year, monthValue));
+        assertThrows(ConversionResponseApiXmlToJsonNullException.class, () -> rateSmicProxyTest.getRateSmicByInseeApi(year, monthValue));
     }
 
     @Test

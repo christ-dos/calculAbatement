@@ -33,6 +33,7 @@ public class TaxableSalaryServiceImpl implements TaxableSalaryService {
         double brutSalary = netSalary / netBrutCoefficient;
         double basisCalculation = brutSalary * 0.9825;
         if (netBrutCoefficient == 0) {
+            log.error("The coefficient of conversion net/brut of the salary can not be null");
             throw new NetBrutCoefficientNotNullException("Le coefficient de conversion de net en brut ne peut pas être equal à 0!");
         }
         double TaxableSalary = (basisCalculation * csgRdsCoefficient) + netSalary + maintenanceCost;
