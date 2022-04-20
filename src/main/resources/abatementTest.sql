@@ -26,6 +26,7 @@ CREATE TABLE child
     child_firstname VARCHAR(100)            NOT NULL,
     birth_date      VARCHAR(10),
     begin_contract  VARCHAR(10)             NOT NULL,
+    end_contract    VARCHAR(10),
     date_added      TIMESTAMP  NOT NULL DEFAULT NOW(),
     image_url       VARCHAR(200),
     user_email      VARCHAR(100)            NOT NULL,

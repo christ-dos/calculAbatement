@@ -25,6 +25,8 @@ public class Child {
     private String birthDate;
     @Column(name = "begin_contract")
     private String beginContract;
+    @Column(name = "end_contract")
+    private String endContract;
     @Column(name="date_added")
     private LocalDateTime dateAdded;
     @Column(name = "image_url")

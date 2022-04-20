@@ -66,9 +66,9 @@ public class CalculAbatementApplication implements CommandLineRunner {
         // List<String> months = Arrays.asList("janvier", "septembre", "juin");
         // List<Monthly> monthly= (List<Monthly>) monthlyRepository.findAllByMonth("janvier");
 //        userRepository.save(new User("sylvie@email.fr", "pass", "Fernandes", "Sylvie"));
-//        childRepository.save(new Child(1, "Benoit", "Evan", "24/05/2021", "01/05/2021",LocalDateTime.now().minusMinutes(30),"https://www.hdwallpaper.nu/wp-content/uploads/2015/03/New-Baby-Photos-Hd.jpg", "christine@email.fr"));
-//        childRepository.save(new Child(2, "Bernard", "Alice", "20/02/2021", "24/03/2020", LocalDateTime.now().minusMinutes(15), "https://www.hdwallpaper.nu/wp-content/uploads/2015/03/Cute-Babies-HD-Wallpapers.jpg", "christine@email.fr"));
-//        childRepository.save(new Child(3, "Dupuis", "Romane", "24/05/2019", "01/09/2020", LocalDateTime.now(), "https://www.hdwallpaper.nu/wp-content/uploads/2015/03/Cute-Babies_Hd-Wallpapers.jpg", "christine@email.fr"));
+        childRepository.save(new Child(1, "Benoit", "Evan", "24/05/2021", "01/05/2021",LocalDateTime.now().minusMinutes(30),"https://www.hdwallpaper.nu/wp-content/uploads/2015/03/New-Baby-Photos-Hd.jpg", "christine@email.fr"));
+        childRepository.save(new Child(2, "Bernard", "Alice", "20/02/2021", "24/03/2020", LocalDateTime.now().minusMinutes(15), "https://www.hdwallpaper.nu/wp-content/uploads/2015/03/Cute-Babies-HD-Wallpapers.jpg", "christine@email.fr"));
+        childRepository.save(new Child(3, "Dupuis", "Romane", "24/05/2019", "01/09/2020", LocalDateTime.now(), "https://www.hdwallpaper.nu/wp-content/uploads/2015/03/Cute-Babies_Hd-Wallpapers.jpg", "christine@email.fr"));
 //////
 //        monthlyRepository.save(new Monthly(1, Month.JANVIER, "2022", 500D, 1, 1, 10, 10.0, 1));
 //        monthlyRepository.save(new Monthly(2, Month.AOUT, "2022", 500D, 1, 1, 10, 10.0, 1));
@@ -108,7 +108,7 @@ public class CalculAbatementApplication implements CommandLineRunner {
         // System.out.println("age: " + CalculateAge.getAge("20/03/2021"));
         // result.forEach(x -> System.out.println(x));
         //  System.out.println(result);
-        List<Child> children = (List<Child>) childService.getChildrenByUserEmailOrderByDateAddedDesc();
-        children.forEach(x->System.out.println(x));
+//        List<Child> children = (List<Child>) childService.getChildrenByUserEmailOrderByDateAddedDesc();
+//        children.forEach(x->System.out.println(x));
     }
 }
