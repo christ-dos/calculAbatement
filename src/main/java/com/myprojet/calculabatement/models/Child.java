@@ -27,6 +27,10 @@ public class Child {
     private String beginContract;
     @Column(name = "end_contract")
     private String endContract;
+    @Column(name = "fees_lunch")
+    private double feesLunch;
+    @Column(name = "fees_taste")
+    private double feesTaste;
     @Column(name="date_added")
     private LocalDateTime dateAdded;
     @Column(name = "image_url")

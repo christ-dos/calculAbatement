@@ -1,7 +1,5 @@
 package com.myprojet.calculabatement.restControllers;
 
-import com.myprojet.calculabatement.exceptions.ChildAlreadyExistException;
-import com.myprojet.calculabatement.exceptions.MonthlyNotFoundException;
 import com.myprojet.calculabatement.models.Child;
 import com.myprojet.calculabatement.services.ChildService;
 import com.myprojet.calculabatement.services.TaxableSalaryService;
@@ -47,27 +45,19 @@ public class ChildRestController {
     }
 
     @GetMapping("/reportableamounts")
-    public ResponseEntity<Double> getAnnualReportableAmountsByChild(@RequestParam int childId, @RequestParam String year,
-                                                                    @RequestParam double feeLunch, @RequestParam double feeTaste) {
+    public ResponseEntity<Double> getAnnualReportableAmountsByChild(@RequestParam Child child, @RequestParam String year) {
         double reportableAmounts = 0;
-        try {
-            reportableAmounts = totalAnnualTaxReliefsService.getTotalAnnualReportableAmountsByChild(childId, year, feeLunch, feeTaste);
-        } catch (MonthlyNotFoundException e) {
-            e.getMessage();
-        }
-        log.info("Controller: Reportable amounts got for child ID: " + childId + " Value: " + reportableAmounts);
+        reportableAmounts = totalAnnualTaxReliefsService.getTotalAnnualReportableAmountsByChild(child, year);
+
+        log.info("Controller: Reportable amounts got for child ID: " + child.getId() + " Value: " + reportableAmounts);
         return new ResponseEntity<>(reportableAmounts, HttpStatus.OK);
     }
 
     @PostMapping("/add")
     public ResponseEntity<Child> addChild(@RequestBody Child child) {
         Child newChild = null;
-        try {
-            newChild = childService.addChild(child);
-        } catch (ChildAlreadyExistException e) {
-            e.getMessage();
+        newChild = childService.addChild(child);
 
-        }
         log.info("Controller: Child added");
         return new ResponseEntity<>(newChild, HttpStatus.CREATED);
     }

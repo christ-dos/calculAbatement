@@ -27,6 +27,8 @@ CREATE TABLE child
     birth_date      VARCHAR(10),
     begin_contract  VARCHAR(10)             NOT NULL,
     end_contract    VARCHAR(10),
+    fees_lunch      DECIMAL(4, 2),
+    fees_taste      DECIMAL(4, 2),
     date_added      TIMESTAMP  NOT NULL DEFAULT NOW(),
     image_url       VARCHAR(200),
     user_email      VARCHAR(100)            NOT NULL,

@@ -33,22 +33,21 @@ public class TotalAnnualTaxReliefsServiceImpl implements TotalAnnualTaxReliefsSe
     }
 
     @Override
-    public double getTotalAnnualReportableAmountsForAllChildren(String year, double feeLunch, double feeTaste) {
+    public double getTotalAnnualReportableAmountsForAllChildren(String year) {
         List<Child> childrenByCurrentUser = (List<Child>) childService.getChildrenByUserEmailOrderByDateAddedDesc();
         double TotalAnnualReportableAmounts = childrenByCurrentUser.stream()
-                .map(child -> getTotalAnnualReportableAmountsByChild(child.getId(), year, feeLunch, feeTaste))
+                .map(child -> getTotalAnnualReportableAmountsByChild(child, year))
                 .mapToDouble(Double::doubleValue).sum();
         log.info("Service: Get reportable amounts for all children to declare in year: " + year + ", Value: " + TotalAnnualReportableAmounts);
         return Precision.round(TotalAnnualReportableAmounts, 2);
     }
 
     @Override
-    public double getTotalAnnualReportableAmountsByChild(int childId, String year, double feeLunch, double feeTaste) {
-        Child child = childService.getChildById(childId);
+    public double getTotalAnnualReportableAmountsByChild(Child child, String year) {
 
-        double taxRelief = calculateTaxReliefService.calculateTaxReliefByChild(year, childId);
-        double foodCompensation = getSumFoodCompensationByYearAndByChild(child, year, feeLunch, feeTaste);
-        double taxableSalaryByYear = taxableSalaryService.getSumTaxableSalaryByChildAndByYear(year,childId );
+        double taxRelief = calculateTaxReliefService.calculateTaxReliefByChild(year, child.getId());
+        double foodCompensation = getSumFoodCompensationByYearAndByChild(child, year);
+        double taxableSalaryByYear = taxableSalaryService.getSumTaxableSalaryByChildAndByYear(year, child.getId());
 
         double reportableAmountsByChild = taxableSalaryByYear - taxRelief + foodCompensation;
         if (reportableAmountsByChild < 0) {
@@ -58,26 +57,26 @@ public class TotalAnnualTaxReliefsServiceImpl implements TotalAnnualTaxReliefsSe
         return reportableAmountsByChild;
     }
 
-    private double getSumFoodCompensationByYearAndByChild(Child child, String year, double feeLunch, double feeTaste) {
-        double foodCompensationByYearAndByChildId = 0D;
+    private double getSumFoodCompensationByYearAndByChild(Child child, String year) {
+        double foodCompensationByYearAndByChildId;
         int childAge = CalculateAge.getAge(child.getBirthDate());
 
         if (childAge == 1) {
-            foodCompensationByYearAndByChildId = getSumFoodCompensationWhenChildIsOneYearOld(child, year, feeLunch, feeTaste);
+            foodCompensationByYearAndByChildId = getSumFoodCompensationWhenChildIsOneYearOld(child, year);
             log.info("Service: The child is one year old");
         } else if (childAge < 1) {
             log.info("Service: The child is less than one year old");
             foodCompensationByYearAndByChildId = 0D;
         } else {
             log.info("Service: The child is over 1 years old");
-            foodCompensationByYearAndByChildId = calculateFoodCompensationService.calculateFoodCompensationByYearAndByChildId(
-                    year, feeLunch, feeTaste, child.getMonthlies(), child.getId());
+            foodCompensationByYearAndByChildId = calculateFoodCompensationService.calculateFoodCompensationByYearAndByChild(
+                    year, child);
         }
         log.info("Service: Get total food compensation by child Id : " + child.getId() + " for year: " + year);
         return foodCompensationByYearAndByChildId;
     }
 
-    private double getSumFoodCompensationWhenChildIsOneYearOld(Child child, String year, double feeLunch, double feeTaste) {
+    private double getSumFoodCompensationWhenChildIsOneYearOld(Child child, String year) {
         double foodCompensationByYearAndByChildId;
 
         String birthDate = child.getBirthDate();
@@ -91,8 +90,8 @@ public class TotalAnnualTaxReliefsServiceImpl implements TotalAnnualTaxReliefsSe
             }
         }
         if (!monthliesAfterBirthDateMonth.isEmpty()) {
-            foodCompensationByYearAndByChildId = calculateFoodCompensationService.calculateFoodCompensationByYearAndByChildId(
-                    year, feeLunch, feeTaste, monthliesAfterBirthDateMonth, child.getId());
+            foodCompensationByYearAndByChildId = calculateFoodCompensationService.calculateFoodCompensationByYearAndByChild(
+                    year, child);
         } else {
             foodCompensationByYearAndByChildId = 0D;
         }
