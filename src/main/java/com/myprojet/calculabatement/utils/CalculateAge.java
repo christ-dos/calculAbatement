@@ -19,11 +19,10 @@ public class CalculateAge {
 
             if (currentDate.isAfter(birthDateParse)) {
                 Years age = Years.yearsBetween(birthDateParse, currentDate);
-                Months monthOfBirthDate = Months.monthsBetween(birthDateParse, currentDate);
+                Months monthOfBirthDate = Months.monthsBetween(birthDateParse, currentDate);// todo verifier si cette variable est utiliser
 
                 log.debug("DateUtils: Age calculated for birthDate: " + birthDate);
                 return age.getYears();
-                //return monthOfBirthDate.getMonths();
 
             }
         }

@@ -75,4 +75,18 @@ public class Child {
         this.userEmail = userEmail;
         this.monthlies = monthlies;
     }
+
+    public Child(int id, String lastname, String firstname, String birthDate, String beginContract, String endContract, double feesLunch, double feesTaste, LocalDateTime dateAdded, String imageUrl, String userEmail) {
+        this.id = id;
+        this.lastname = lastname;
+        this.firstname = firstname;
+        this.birthDate = birthDate;
+        this.beginContract = beginContract;
+        this.endContract = endContract;
+        this.feesLunch = feesLunch;
+        this.feesTaste = feesTaste;
+        this.dateAdded = dateAdded;
+        this.imageUrl = imageUrl;
+        this.userEmail = userEmail;
+    }
 }

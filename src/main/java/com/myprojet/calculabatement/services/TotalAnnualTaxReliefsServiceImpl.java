@@ -8,6 +8,7 @@ import org.apache.commons.math3.util.Precision;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -36,9 +37,11 @@ public class TotalAnnualTaxReliefsServiceImpl implements TotalAnnualTaxReliefsSe
     public double getTotalAnnualReportableAmountsForAllChildren(String year) {
         List<Child> childrenByCurrentUser = (List<Child>) childService.getChildrenByUserEmailOrderByDateAddedDesc();
         double TotalAnnualReportableAmounts = childrenByCurrentUser.stream()
+                .filter(child -> child.getEndContract() == null || getYearEndContract(child.getEndContract()) == LocalDateTime.now().getYear() - 1)
                 .map(child -> getTotalAnnualReportableAmountsByChild(child, year))
                 .mapToDouble(Double::doubleValue).sum();
         log.info("Service: Get reportable amounts for all children to declare in year: " + year + ", Value: " + TotalAnnualReportableAmounts);
+
         return Precision.round(TotalAnnualReportableAmounts, 2);
     }
 
@@ -55,6 +58,11 @@ public class TotalAnnualTaxReliefsServiceImpl implements TotalAnnualTaxReliefsSe
         }
         log.info("Service: Calculate reportable amounts by child ID: " + child.getId() + ", for year: " + year + ", Value: " + reportableAmountsByChild);
         return reportableAmountsByChild;
+    }
+
+    private int getYearEndContract(String endContract){
+        List<String> endContractArray = Arrays.asList(endContract.split("/"));
+        return Integer.parseInt(endContractArray.get(2));
     }
 
     private double getSumFoodCompensationByYearAndByChild(Child child, String year) {

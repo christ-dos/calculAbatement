@@ -46,6 +46,9 @@ public class ChildServiceImpl implements ChildService {
         childToUpdate.get().setFirstname(child.getFirstname());
         childToUpdate.get().setLastname(child.getLastname());
         childToUpdate.get().setBeginContract(child.getBeginContract());
+        childToUpdate.get().setEndContract(child.getEndContract());
+        childToUpdate.get().setFeesLunch(child.getFeesLunch());
+        childToUpdate.get().setFeesTaste(child.getFeesTaste());
         childToUpdate.get().setDateAdded(LocalDateTime.now());
         childToUpdate.get().setBirthDate(child.getBirthDate());
         childToUpdate.get().setImageUrl(child.getImageUrl());

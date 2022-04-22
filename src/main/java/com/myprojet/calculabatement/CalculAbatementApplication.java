@@ -2,10 +2,6 @@ package com.myprojet.calculabatement;
 
 import com.myprojet.calculabatement.configuration.CustomProperties;
 import com.myprojet.calculabatement.models.Child;
-
-
-import com.myprojet.calculabatement.models.Month;
-import com.myprojet.calculabatement.models.Monthly;
 import com.myprojet.calculabatement.proxies.RateSmicProxy;
 import com.myprojet.calculabatement.repositories.ChildRepository;
 import com.myprojet.calculabatement.repositories.MonthlyRepository;
@@ -17,7 +13,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 
 @SpringBootApplication
@@ -66,9 +61,9 @@ public class CalculAbatementApplication implements CommandLineRunner {
         // List<String> months = Arrays.asList("janvier", "septembre", "juin");
         // List<Monthly> monthly= (List<Monthly>) monthlyRepository.findAllByMonth("janvier");
 //        userRepository.save(new User("sylvie@email.fr", "pass", "Fernandes", "Sylvie"));
-//        childRepository.save(new Child(1, "Benoit", "Evan", "24/05/2021", "01/05/2021",LocalDateTime.now().minusMinutes(30),"https://www.hdwallpaper.nu/wp-content/uploads/2015/03/New-Baby-Photos-Hd.jpg", "christine@email.fr"));
-//        childRepository.save(new Child(2, "Bernard", "Alice", "20/02/2021", "24/03/2020", LocalDateTime.now().minusMinutes(15), "https://www.hdwallpaper.nu/wp-content/uploads/2015/03/Cute-Babies-HD-Wallpapers.jpg", "christine@email.fr"));
-//        childRepository.save(new Child(3, "Dupuis", "Romane", "24/05/2019", "01/09/2020", LocalDateTime.now(), "https://www.hdwallpaper.nu/wp-content/uploads/2015/03/Cute-Babies_Hd-Wallpapers.jpg", "christine@email.fr"));
+//        childRepository.save(new Child(1, "Benoit", "Evan", "24/05/2021", "01/05/2021", null, 1D, 0.5, LocalDateTime.now().minusMinutes(30), "https://www.hdwallpaper.nu/wp-content/uploads/2015/03/New-Baby-Photos-Hd.jpg", "christine@email.fr"));
+//        childRepository.save(new Child(2, "Bernard", "Alice", "20/02/2021", "24/03/2020", null, 1D, 0.5, LocalDateTime.now().minusMinutes(15), "https://www.hdwallpaper.nu/wp-content/uploads/2015/03/Cute-Babies-HD-Wallpapers.jpg", "christine@email.fr"));
+//        childRepository.save(new Child(3, "Dupuis", "Romane", "24/05/2019", "01/09/2020", null, 1D, 0.5, LocalDateTime.now(), "https://www.hdwallpaper.nu/wp-content/uploads/2015/03/Cute-Babies_Hd-Wallpapers.jpg", "christine@email.fr"));
 //////
 //        monthlyRepository.save(new Monthly(1, Month.JANVIER, "2022", 500D, 1, 1, 10, 10.0, 1));
 //        monthlyRepository.save(new Monthly(2, Month.AOUT, "2022", 500D, 1, 1, 10, 10.0, 1));
@@ -101,14 +96,16 @@ public class CalculAbatementApplication implements CommandLineRunner {
 //       System.out.println(results);
         //results.forEach(x-> System.out.println(x));
         //double total = totalAnnualTaxReliefsService.getTotalAnnualReportableAmountsByChild(1, "2022", 1.00, 0.50);
-       // double totalAnnual = totalAnnualTaxReliefsServiceImpl.getTotalAnnualReportableAmountsForAllChildren("2022", 1.00, 0.50);
-       // System.out.println("total " + total);
-       // System.out.println("totalAnnual " + totalAnnual);
+        // double totalAnnual = totalAnnualTaxReliefsServiceImpl.getTotalAnnualReportableAmountsForAllChildren("2022", 1.00, 0.50);
+        // System.out.println("total " + total);
+        // System.out.println("totalAnnual " + totalAnnual);
         //User user = userService.getUserById("christine@email.fr");
         // System.out.println("age: " + CalculateAge.getAge("20/03/2021"));
         // result.forEach(x -> System.out.println(x));
         //  System.out.println(result);
 //        List<Child> children = (List<Child>) childService.getChildrenByUserEmailOrderByDateAddedDesc();
 //        children.forEach(x->System.out.println(x));
+        double total = totalAnnualTaxReliefsServiceImpl.getTotalAnnualReportableAmountsForAllChildren("2022");
+        System.out.println("total: " + total);
     }
 }

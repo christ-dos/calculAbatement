@@ -182,7 +182,6 @@ public class TotalAnnualTaxReliefsServiceImplTest {
                 new Monthly(2, Month.FEVRIER, "2022", 200D, 10, 10, 20, 0.0, 1)
         ));
         double taxRelief = 451D;
-        double foodCompensation = 50D;
         //WHEN
         when(calculateTaxReliefServiceMock.calculateTaxReliefByChild(anyString(), anyInt())).thenReturn(taxRelief);
         double totalAnnualReportableAmountsResult = totalAnnualTaxReliefsServiceImplTest.getTotalAnnualReportableAmountsByChild(childRomy, "2022");

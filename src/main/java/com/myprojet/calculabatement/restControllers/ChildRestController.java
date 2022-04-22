@@ -45,9 +45,9 @@ public class ChildRestController {
     }
 
     @GetMapping("/reportableamounts")
-    public ResponseEntity<Double> getAnnualReportableAmountsByChild(@RequestParam Child child, @RequestParam String year) {
-        double reportableAmounts = 0;
-        reportableAmounts = totalAnnualTaxReliefsService.getTotalAnnualReportableAmountsByChild(child, year);
+    public ResponseEntity<Double> getAnnualReportableAmountsByChild(@RequestParam int childId, @RequestParam String year) {
+        Child child = childService.getChildById(childId);
+        double reportableAmounts = totalAnnualTaxReliefsService.getTotalAnnualReportableAmountsByChild(child, year);
 
         log.info("Controller: Reportable amounts got for child ID: " + child.getId() + " Value: " + reportableAmounts);
         return new ResponseEntity<>(reportableAmounts, HttpStatus.OK);
@@ -55,9 +55,7 @@ public class ChildRestController {
 
     @PostMapping("/add")
     public ResponseEntity<Child> addChild(@RequestBody Child child) {
-        Child newChild = null;
-        newChild = childService.addChild(child);
-
+        Child newChild = childService.addChild(child);
         log.info("Controller: Child added");
         return new ResponseEntity<>(newChild, HttpStatus.CREATED);
     }

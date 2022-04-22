@@ -1,17 +1,18 @@
 package com.myprojet.calculabatement.restControllers;
 
-import com.myprojet.calculabatement.exceptions.ChildAlreadyExistException;
 import com.myprojet.calculabatement.exceptions.MonthlyAlreadyExistException;
-import com.myprojet.calculabatement.models.Child;
+import com.myprojet.calculabatement.models.Month;
 import com.myprojet.calculabatement.models.Monthly;
 import com.myprojet.calculabatement.services.MonthlyService;
 import com.myprojet.calculabatement.services.TaxableSalaryService;
-import com.myprojet.calculabatement.utils.SecurityUtilities;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Arrays;
+import java.util.List;
 
 @RestController
 @RequestMapping("/monthly")
@@ -31,7 +32,7 @@ public class MonthlyRestController {
         } catch (MonthlyAlreadyExistException e) {
             e.getMessage();
         }
-        log.debug("Controller: Monthly added with child ID: " +monthly.getChildId());
+        log.debug("Controller: Monthly added for child with ID: " + monthly.getChildId());
         return new ResponseEntity<>(newMonthly, HttpStatus.CREATED);
     }
 
@@ -42,8 +43,15 @@ public class MonthlyRestController {
         return new ResponseEntity<>(monthlies, HttpStatus.OK);
     }
 
+    @GetMapping("/months")
+    public ResponseEntity<List<Month>> getMonths(){
+        List<Month> monthsList = Arrays.asList(Month.values());
+        return new ResponseEntity<>(monthsList, HttpStatus.OK);
+
+    }
+
     @GetMapping("/taxablesalarysibling")
-    public ResponseEntity<Double> getTaxableSalarySibling(double netSalary, double netBrutCoefficient, double maintenanceCost){
+    public ResponseEntity<Double> getTaxableSalarySibling(double netSalary, double netBrutCoefficient, double maintenanceCost) {
         double taxableSalarySibling = taxableSalaryService.calculateTaxableSalarySiblingByMonth(netSalary, netBrutCoefficient, maintenanceCost);
         log.info("Controller: Display taxable salary sibling");
         return new ResponseEntity<>(taxableSalarySibling, HttpStatus.OK);
