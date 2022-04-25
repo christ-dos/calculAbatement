@@ -1,6 +1,7 @@
 package com.myprojet.calculabatement.restControllers;
 
 import com.myprojet.calculabatement.models.Child;
+import com.myprojet.calculabatement.services.CalculateTaxReliefService;
 import com.myprojet.calculabatement.services.ChildService;
 import com.myprojet.calculabatement.services.TaxableSalaryService;
 import com.myprojet.calculabatement.services.TotalAnnualTaxReliefsService;
@@ -22,6 +23,8 @@ public class ChildRestController {
     private TaxableSalaryService taxableSalaryService;
     @Autowired
     private TotalAnnualTaxReliefsService totalAnnualTaxReliefsService;
+    @Autowired
+    private CalculateTaxReliefService calculateTaxReliefService;
 
     @GetMapping("/all")
     public ResponseEntity<Iterable<Child>> getAllChildren() {
@@ -49,8 +52,15 @@ public class ChildRestController {
         Child child = childService.getChildById(childId);
         double reportableAmounts = totalAnnualTaxReliefsService.getTotalAnnualReportableAmountsByChild(child, year);
 
-        log.info("Controller: Reportable amounts got for child ID: " + child.getId() + " Value: " + reportableAmounts);
+        log.debug("Controller: Reportable amounts got for child ID: " + child.getId() + " Value: " + reportableAmounts);
         return new ResponseEntity<>(reportableAmounts, HttpStatus.OK);
+    }
+
+    @GetMapping("/taxrelief")
+    public ResponseEntity<Double> getTaxReliefByChild(@RequestParam int childId, @RequestParam String year) {
+        double taxRelief = calculateTaxReliefService.calculateTaxReliefByChild(year, childId);
+        log.debug("Controller: Tax Relief got for child ID: " + childId + " Value: " + taxRelief);
+        return new ResponseEntity<>(taxRelief, HttpStatus.OK);
     }
 
     @PostMapping("/add")
