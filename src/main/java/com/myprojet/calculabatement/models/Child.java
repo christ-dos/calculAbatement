@@ -29,9 +29,9 @@ public class Child {
     private String endContract;
     @Column(name = "fees_lunch")
     private double feesLunch;
-    @Column(name = "fees_taste")
-    private double feesTaste;
-    @Column(name="date_added")
+    @Column(name = "fees_snack")
+    private double feesSnacks;
+    @Column(name = "date_added")
     private LocalDateTime dateAdded;
     @Column(name = "image_url")
     private String imageUrl;
@@ -44,7 +44,7 @@ public class Child {
     @JoinColumn(name = "child_id")
     private List<Monthly> monthlies = new ArrayList<>();
 
-    public Child(int id, String lastname, String firstname, String birthDate, String beginContract,LocalDateTime dateAdded, String imageUrl, String userEmail) {
+    public Child(int id, String lastname, String firstname, String birthDate, String beginContract, LocalDateTime dateAdded, String imageUrl, String userEmail) {
         this.id = id;
         this.lastname = lastname;
         this.firstname = firstname;
@@ -76,7 +76,7 @@ public class Child {
         this.monthlies = monthlies;
     }
 
-    public Child(int id, String lastname, String firstname, String birthDate, String beginContract, String endContract, double feesLunch, double feesTaste, LocalDateTime dateAdded, String imageUrl, String userEmail) {
+    public Child(int id, String lastname, String firstname, String birthDate, String beginContract, String endContract, double feesLunch, double feesSnacks, LocalDateTime dateAdded, String imageUrl, String userEmail) {
         this.id = id;
         this.lastname = lastname;
         this.firstname = firstname;
@@ -84,7 +84,7 @@ public class Child {
         this.beginContract = beginContract;
         this.endContract = endContract;
         this.feesLunch = feesLunch;
-        this.feesTaste = feesTaste;
+        this.feesSnacks = feesSnacks;
         this.dateAdded = dateAdded;
         this.imageUrl = imageUrl;
         this.userEmail = userEmail;

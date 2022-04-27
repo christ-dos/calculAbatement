@@ -158,7 +158,7 @@ public class CalculateTaxReliefService {
         List<String> listStringTimePeriod = Arrays.asList(timePeriodLastRateSmicApi.split("-"));
         int monthOfIncrease = Integer.parseInt(listStringTimePeriod.get(1));
 
-        log.info("Service : Get the month of increase" + monthOfIncrease);
+        log.info("Service : Get the month of increase: " + monthOfIncrease);
         return monthOfIncrease;
     }
 }

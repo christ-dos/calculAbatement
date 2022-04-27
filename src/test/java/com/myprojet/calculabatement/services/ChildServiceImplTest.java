@@ -3,6 +3,8 @@ package com.myprojet.calculabatement.services;
 import com.myprojet.calculabatement.exceptions.ChildAlreadyExistException;
 import com.myprojet.calculabatement.exceptions.ChildNotFoundException;
 import com.myprojet.calculabatement.models.Child;
+import com.myprojet.calculabatement.models.Month;
+import com.myprojet.calculabatement.models.Monthly;
 import com.myprojet.calculabatement.repositories.ChildRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -90,10 +92,29 @@ public class ChildServiceImplTest {
     @Test
     public void deleteChildByIdTest_thenReturnMessageConfirmationOfDeletion() {
         //GIVEN
-        int childId = 1;
+        Child childExist = new Child(1, "Riboulet", "Romy", "12/05/2020", "02/05/2020",  "http://image.jpeg", "christine@email.fr");
         //WHEN
-        doNothing().when(childRepositoryMock).deleteById(childId);
-        String responseDeletionChild = childServiceTest.deleteChildById(childId);
+        childServiceTest.addChild(childExist);
+        doNothing().when(childRepositoryMock).deleteById(childExist.getId());
+        String responseDeletionChild = childServiceTest.deleteChildById(childExist.getId());
+        //THEN
+        assertEquals("L'enfant a été supprimé avec succes!", responseDeletionChild);
+        verify(childRepositoryMock, times(1)).deleteById(anyInt());
+    }
+
+    @Test
+    public void deleteChildByIdTest_whenChildHadMonthliesRecorded_thenReturnMessageConfirmationOfDeletion() {
+        //GIVEN
+        Child childExistWithMonthlies = new Child(1, "Riboulet", "Romy", "12/05/2020",
+                "02/05/2020", "http://image.jpeg", "christine@email.fr",
+                Arrays.asList(
+                new Monthly(1, Month.JANVIER, "2022", 650D, 20, 20, 20, 10.0, 1),
+                new Monthly(2, Month.FEVRIER, "2022", 650D, 20, 20, 20, 10.5, 1)
+                ));
+        //WHEN
+        childServiceTest.addChild(childExistWithMonthlies);
+        doNothing().when(childRepositoryMock).deleteById(childExistWithMonthlies.getId());
+        String responseDeletionChild = childServiceTest.deleteChildById(childExistWithMonthlies.getId());
         //THEN
         assertEquals("L'enfant a été supprimé avec succes!", responseDeletionChild);
         verify(childRepositoryMock, times(1)).deleteById(anyInt());

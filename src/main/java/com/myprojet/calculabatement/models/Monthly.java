@@ -21,7 +21,7 @@ public class Monthly {
     @Column(name = "taxable_salary")
     private Double taxableSalary;
     private int lunch;
-    private int taste;
+    private int snack;
     @Column(name = "day_worked")
     private int dayWorked;
     @Column(name = "hours_worked")
@@ -29,4 +29,19 @@ public class Monthly {
     @Column(name = "child_id")
     private int childId;
 
+//    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+//    @JoinColumn(name = "id")
+//    private Child child;
+
+//    public Monthly(int monthlyId, Month month, String year, Double taxableSalary, int lunch, int taste, int dayWorked, double hoursWorked, int childId) {
+//        this.monthlyId = monthlyId;
+//        this.month = month;
+//        this.year = year;
+//        this.taxableSalary = taxableSalary;
+//        this.lunch = lunch;
+//        this.taste = taste;
+//        this.dayWorked = dayWorked;
+//        this.hoursWorked = hoursWorked;
+//        this.childId = childId;
+//    } // todo clean code
 }

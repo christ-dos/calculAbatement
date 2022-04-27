@@ -9,11 +9,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Slf4j
 @Service
+@Transactional
 public class ChildServiceImpl implements ChildService {
     private ChildRepository childRepository;
     private final static String currentUser = "christine@email.fr";
@@ -48,7 +50,7 @@ public class ChildServiceImpl implements ChildService {
         childToUpdate.get().setBeginContract(child.getBeginContract());
         childToUpdate.get().setEndContract(child.getEndContract());
         childToUpdate.get().setFeesLunch(child.getFeesLunch());
-        childToUpdate.get().setFeesTaste(child.getFeesTaste());
+        childToUpdate.get().setFeesSnacks(child.getFeesSnacks());
         childToUpdate.get().setDateAdded(LocalDateTime.now());
         childToUpdate.get().setBirthDate(child.getBirthDate());
         childToUpdate.get().setImageUrl(child.getImageUrl());

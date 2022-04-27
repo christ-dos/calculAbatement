@@ -60,36 +60,33 @@ public class TotalAnnualTaxReliefsServiceImpl implements TotalAnnualTaxReliefsSe
         return reportableAmountsByChild;
     }
 
-    private int getYearEndContract(String endContract){
+    private int getYearEndContract(String endContract) {
         List<String> endContractArray = Arrays.asList(endContract.split("/"));
         return Integer.parseInt(endContractArray.get(2));
     }
 
     private double getSumFoodCompensationByYearAndByChild(Child child, String year) {
-        double foodCompensationByYearAndByChildId;
+        double foodCompensationByYearAndByChildId = 0;
         int childAge = CalculateAge.getAge(child.getBirthDate());
 
         if (childAge == 1) {
             foodCompensationByYearAndByChildId = getSumFoodCompensationWhenChildIsOneYearOld(child, year);
-            log.info("Service: The child is one year old");
+            log.info("Service: The child is one year old and food compensation equal: " + foodCompensationByYearAndByChildId);
         } else if (childAge < 1) {
-            log.info("Service: The child is less than one year old");
+            log.info("Service: The child is less than one year old and food compensation equal: " + foodCompensationByYearAndByChildId);
             foodCompensationByYearAndByChildId = 0D;
         } else {
-            log.info("Service: The child is over 1 years old");
+            log.info("Service: The child is over 1 years old and food compensation equal: " + foodCompensationByYearAndByChildId);
             foodCompensationByYearAndByChildId = calculateFoodCompensationService.calculateFoodCompensationByYearAndByChild(
-                    year, child);
+                    year, child.getMonthlies(), child.getFeesLunch(), child.getFeesSnacks());
         }
         log.info("Service: Get total food compensation by child Id : " + child.getId() + " for year: " + year);
         return foodCompensationByYearAndByChildId;
     }
 
     private double getSumFoodCompensationWhenChildIsOneYearOld(Child child, String year) {
-        double foodCompensationByYearAndByChildId;
-
-        String birthDate = child.getBirthDate();
-        List<String> birthDateSplit = Arrays.stream(birthDate.split("/")).collect(Collectors.toList());
-        int birthDateMonth = Integer.parseInt(birthDateSplit.get(1));
+        double foodCompensationByYearAndByChildId = 0;
+        int birthDateMonth = getBirthDateMonth(child.getBirthDate());
 
         List<Monthly> monthliesAfterBirthDateMonth = new ArrayList<>();
         for (Monthly monthly : child.getMonthlies()) {
@@ -99,11 +96,17 @@ public class TotalAnnualTaxReliefsServiceImpl implements TotalAnnualTaxReliefsSe
         }
         if (!monthliesAfterBirthDateMonth.isEmpty()) {
             foodCompensationByYearAndByChildId = calculateFoodCompensationService.calculateFoodCompensationByYearAndByChild(
-                    year, child);
+                    year, monthliesAfterBirthDateMonth, child.getFeesLunch(), child.getFeesSnacks());
         } else {
             foodCompensationByYearAndByChildId = 0D;
         }
-        log.info("Service: Get total food compensation if child is one year old");
+
+        log.info("Service: Get total food compensation if child: " + child.getId() + " is one year old");
         return foodCompensationByYearAndByChildId;
+    }
+
+    private int getBirthDateMonth(String birthDate) {
+        List<String> birthDateSplit = Arrays.stream(birthDate.split("/")).collect(Collectors.toList());
+        return Integer.parseInt(birthDateSplit.get(1));
     }
 }

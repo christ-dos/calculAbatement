@@ -80,7 +80,7 @@ public class ChildRestController {
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteChild(@PathVariable("id") int childId) {
-        childService.deleteChildById(childId);
+        String message = childService.deleteChildById(childId);
         log.debug("Controller: Child deleted with ID: " + childId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
