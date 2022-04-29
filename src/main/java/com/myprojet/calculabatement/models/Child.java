@@ -30,7 +30,7 @@ public class Child {
     @Column(name = "fees_lunch")
     private double feesLunch;
     @Column(name = "fees_snack")
-    private double feesSnacks;
+    private double feesSnack;
     @Column(name = "date_added")
     private LocalDateTime dateAdded;
     @Column(name = "image_url")
@@ -76,7 +76,7 @@ public class Child {
         this.monthlies = monthlies;
     }
 
-    public Child(int id, String lastname, String firstname, String birthDate, String beginContract, String endContract, double feesLunch, double feesSnacks, LocalDateTime dateAdded, String imageUrl, String userEmail) {
+    public Child(int id, String lastname, String firstname, String birthDate, String beginContract, String endContract, double feesLunch, double feesSnack, LocalDateTime dateAdded, String imageUrl, String userEmail) {
         this.id = id;
         this.lastname = lastname;
         this.firstname = firstname;
@@ -84,7 +84,7 @@ public class Child {
         this.beginContract = beginContract;
         this.endContract = endContract;
         this.feesLunch = feesLunch;
-        this.feesSnacks = feesSnacks;
+        this.feesSnack = feesSnack;
         this.dateAdded = dateAdded;
         this.imageUrl = imageUrl;
         this.userEmail = userEmail;

@@ -78,7 +78,7 @@ public class TotalAnnualTaxReliefsServiceImpl implements TotalAnnualTaxReliefsSe
         } else {
             log.info("Service: The child is over 1 years old and food compensation equal: " + foodCompensationByYearAndByChildId);
             foodCompensationByYearAndByChildId = calculateFoodCompensationService.calculateFoodCompensationByYearAndByChild(
-                    year, child.getMonthlies(), child.getFeesLunch(), child.getFeesSnacks());
+                    year, child.getMonthlies(), child.getFeesLunch(), child.getFeesSnack());
         }
         log.info("Service: Get total food compensation by child Id : " + child.getId() + " for year: " + year);
         return foodCompensationByYearAndByChildId;
@@ -96,7 +96,7 @@ public class TotalAnnualTaxReliefsServiceImpl implements TotalAnnualTaxReliefsSe
         }
         if (!monthliesAfterBirthDateMonth.isEmpty()) {
             foodCompensationByYearAndByChildId = calculateFoodCompensationService.calculateFoodCompensationByYearAndByChild(
-                    year, monthliesAfterBirthDateMonth, child.getFeesLunch(), child.getFeesSnacks());
+                    year, monthliesAfterBirthDateMonth, child.getFeesLunch(), child.getFeesSnack());
         } else {
             foodCompensationByYearAndByChildId = 0D;
         }

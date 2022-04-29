@@ -61,7 +61,7 @@ public class CalculateFoodCompensationServiceTest {
         double foodCompensationExpected = (0 * 3 * 1) + (10 * 3 * 0.5); //15.0
         //WHEN
         child.setMonthlies(monthliesByYear);
-        double foodCompensationResult = calculateFoodCompensationServiceTest.calculateFoodCompensationByYearAndByChild("2022", monthliesByYear, child.getFeesLunch(), child.getFeesSnacks());
+        double foodCompensationResult = calculateFoodCompensationServiceTest.calculateFoodCompensationByYearAndByChild("2022", monthliesByYear, child.getFeesLunch(), child.getFeesSnack());
         //THEN
         assertEquals(foodCompensationExpected, foodCompensationResult);
     }
@@ -76,7 +76,7 @@ public class CalculateFoodCompensationServiceTest {
         double foodCompensationExpected = (0 * 3 * 1) + (0 * 3 * 0.5); //0.00
         //WHEN
         child.setMonthlies(monthliesByYear);
-        double foodCompensationResult = calculateFoodCompensationServiceTest.calculateFoodCompensationByYearAndByChild("2022", monthliesByYear, child.getFeesLunch(), child.getFeesSnacks());
+        double foodCompensationResult = calculateFoodCompensationServiceTest.calculateFoodCompensationByYearAndByChild("2022", monthliesByYear, child.getFeesLunch(), child.getFeesSnack());
         //THEN
         assertEquals(foodCompensationExpected, foodCompensationResult);
     }
@@ -103,7 +103,7 @@ public class CalculateFoodCompensationServiceTest {
         );
         //WHEN
         child.setFeesLunch(0D);
-        child.setFeesSnacks(0D);
+        child.setFeesSnack(0D);
         //THEN
         assertThrows(FeesEqualZeroException.class, () ->
                 calculateFoodCompensationServiceTest.calculateFoodCompensationByYearAndByChild("2022", monthliesByYear, child.getFeesLunch(), child.getFeesLunch()));
@@ -120,8 +120,8 @@ public class CalculateFoodCompensationServiceTest {
         //WHEN
         child.setMonthlies(monthliesByYear);
         child.setFeesLunch(0D);
-        child.setFeesSnacks(0.5);
-        double foodCompensationResult = calculateFoodCompensationServiceTest.calculateFoodCompensationByYearAndByChild("2022", monthliesByYear, child.getFeesLunch(), child.getFeesSnacks());
+        child.setFeesSnack(0.5);
+        double foodCompensationResult = calculateFoodCompensationServiceTest.calculateFoodCompensationByYearAndByChild("2022", monthliesByYear, child.getFeesLunch(), child.getFeesSnack());
 
         //THEN
         assertEquals(foodCompensationExpected, foodCompensationResult);
@@ -137,7 +137,7 @@ public class CalculateFoodCompensationServiceTest {
         double foodCompensationExpected = (20 * 3 * 1) + (10 * 3 * 0.5); //75.0
         //WHEN
         child.setMonthlies(monthliesByYear);
-        double foodCompensationResult = calculateFoodCompensationServiceTest.calculateFoodCompensationByYearAndByChild("2022", monthliesByYear, child.getFeesLunch(), child.getFeesSnacks());
+        double foodCompensationResult = calculateFoodCompensationServiceTest.calculateFoodCompensationByYearAndByChild("2022", monthliesByYear, child.getFeesLunch(), child.getFeesSnack());
 
         //THEN
         assertEquals(foodCompensationExpected, foodCompensationResult);
@@ -150,6 +150,6 @@ public class CalculateFoodCompensationServiceTest {
         child.setMonthlies(monthliesByYear3026);
         //THEN
         assertThrows(MonthlyNotFoundException.class, () ->
-                calculateFoodCompensationServiceTest.calculateFoodCompensationByYearAndByChild("2022", monthliesByYear3026, child.getFeesLunch(), child.getFeesSnacks()));
+                calculateFoodCompensationServiceTest.calculateFoodCompensationByYearAndByChild("2022", monthliesByYear3026, child.getFeesLunch(), child.getFeesSnack()));
     }
 }

@@ -50,7 +50,7 @@ public class ChildServiceImpl implements ChildService {
         childToUpdate.get().setBeginContract(child.getBeginContract());
         childToUpdate.get().setEndContract(child.getEndContract());
         childToUpdate.get().setFeesLunch(child.getFeesLunch());
-        childToUpdate.get().setFeesSnacks(child.getFeesSnacks());
+        childToUpdate.get().setFeesSnack(child.getFeesSnack());
         childToUpdate.get().setDateAdded(LocalDateTime.now());
         childToUpdate.get().setBirthDate(child.getBirthDate());
         childToUpdate.get().setImageUrl(child.getImageUrl());
