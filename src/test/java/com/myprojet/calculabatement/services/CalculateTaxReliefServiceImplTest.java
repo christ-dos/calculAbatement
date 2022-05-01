@@ -26,8 +26,8 @@ import static org.mockito.Mockito.when;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 @ExtendWith(MockitoExtension.class)
-public class CalculateTaxReliefServiceTest {
-    private CalculateTaxReliefService calculateTaxReliefServiceTest;
+public class CalculateTaxReliefServiceImplTest {
+    private CalculateTaxReliefServiceImpl calculateTaxReliefServiceImplTest;
     @Mock
     private MonthlyRepository monthlyRepositoryMock;
 
@@ -36,7 +36,7 @@ public class CalculateTaxReliefServiceTest {
 
     @BeforeEach
     public void setPerTest() {
-        calculateTaxReliefServiceTest = new CalculateTaxReliefService(monthlyRepositoryMock, rateSmicProxyMock);
+        calculateTaxReliefServiceImplTest = new CalculateTaxReliefServiceImpl(monthlyRepositoryMock, rateSmicProxyMock);
     }
 
     @Test
@@ -57,7 +57,7 @@ public class CalculateTaxReliefServiceTest {
         //WHEN
         when(rateSmicProxyMock.getRateSmicByInseeApi(anyString(), anyString())).thenReturn(rateSmicApiList);
         when(monthlyRepositoryMock.findMonthlyByYear(anyString())).thenReturn(monthliesByYear);
-        Double taxReliefResult = calculateTaxReliefServiceTest.calculateTaxReliefByChild("2021", 1);
+        Double taxReliefResult = calculateTaxReliefServiceImplTest.calculateTaxReliefByChild("2021", 1);
         //THEN
         assertEquals(calculateTaxRelief, taxReliefResult);
         verify(monthlyRepositoryMock, times(1)).findMonthlyByYear(anyString());
@@ -81,7 +81,7 @@ public class CalculateTaxReliefServiceTest {
         //WHEN
         when(rateSmicProxyMock.getRateSmicByInseeApi(anyString(), anyString())).thenReturn(rateSmicApiList);
         when(monthlyRepositoryMock.findMonthlyByYear(anyString())).thenReturn(monthliesByYear);
-        Double taxReliefResult = calculateTaxReliefServiceTest.calculateTaxReliefByChild("2021", 1);
+        Double taxReliefResult = calculateTaxReliefServiceImplTest.calculateTaxReliefByChild("2021", 1);
         //THEN
         assertEquals(calculateTaxRelief, taxReliefResult);
         verify(monthlyRepositoryMock, times(1)).findMonthlyByYear(anyString());
@@ -105,7 +105,7 @@ public class CalculateTaxReliefServiceTest {
         //WHEN
         when(rateSmicProxyMock.getRateSmicByInseeApi(anyString(), anyString())).thenReturn(rateSmicApiList);
         when(monthlyRepositoryMock.findMonthlyByYear(anyString())).thenReturn(monthliesByYear);
-        Double taxReliefResult = calculateTaxReliefServiceTest.calculateTaxReliefByChild("2021", 1);
+        Double taxReliefResult = calculateTaxReliefServiceImplTest.calculateTaxReliefByChild("2021", 1);
         //THEN
         assertEquals(calculateTaxRelief, taxReliefResult);
         verify(monthlyRepositoryMock, times(1)).findMonthlyByYear(anyString());
@@ -127,7 +127,7 @@ public class CalculateTaxReliefServiceTest {
         //WHEN
         when(rateSmicProxyMock.getRateSmicByInseeApi(anyString(), anyString())).thenReturn(rateSmicApiList);
         when(monthlyRepositoryMock.findMonthlyByYear(anyString())).thenReturn(monthliesByYear);
-        Double taxReliefResult = calculateTaxReliefServiceTest.calculateTaxReliefByChild("2021", 1);
+        Double taxReliefResult = calculateTaxReliefServiceImplTest.calculateTaxReliefByChild("2021", 1);
         //THEN
         assertEquals(calculateTaxReliefForTwoPeriod, taxReliefResult);
         verify(monthlyRepositoryMock, times(1)).findMonthlyByYear(anyString());
@@ -148,7 +148,7 @@ public class CalculateTaxReliefServiceTest {
         //WHEN
         when(monthlyRepositoryMock.findMonthlyByYear(anyString())).thenReturn(monthliesByYear);
         when(rateSmicProxyMock.getRateSmicByInseeApi(anyString(), anyString())).thenReturn(rateSmicApiList);
-        Double taxReliefResult = calculateTaxReliefServiceTest.calculateTaxReliefByChild("2021", 1);
+        Double taxReliefResult = calculateTaxReliefServiceImplTest.calculateTaxReliefByChild("2021", 1);
         //THEN
         assertEquals(calculateTaxReliefForTwoPeriod, taxReliefResult);
         verify(monthlyRepositoryMock, times(1)).findMonthlyByYear(anyString());
@@ -172,7 +172,7 @@ public class CalculateTaxReliefServiceTest {
         //WHEN
         when(monthlyRepositoryMock.findMonthlyByYear(anyString())).thenReturn(monthliesByYear);
         when(rateSmicProxyMock.getRateSmicByInseeApi(anyString(), anyString())).thenReturn(rateSmicApiList);
-        Double taxReliefResult = calculateTaxReliefServiceTest.calculateTaxReliefByChild("2021", 1);
+        Double taxReliefResult = calculateTaxReliefServiceImplTest.calculateTaxReliefByChild("2021", 1);
         //THEN
         assertEquals(calculateTaxReliefForTwoPeriod, taxReliefResult);
         verify(monthlyRepositoryMock, times(1)).findMonthlyByYear(anyString());
@@ -196,7 +196,7 @@ public class CalculateTaxReliefServiceTest {
         //WHEN
         when(rateSmicProxyMock.getRateSmicByInseeApi(anyString(), anyString())).thenReturn(rateSmicApiList);
         when(monthlyRepositoryMock.findMonthlyByYear(anyString())).thenReturn(monthliesByYear);
-        Double taxReliefResult = calculateTaxReliefServiceTest.calculateTaxReliefByChild("2021", 1);
+        Double taxReliefResult = calculateTaxReliefServiceImplTest.calculateTaxReliefByChild("2021", 1);
         //THEN
         assertEquals(calculateTaxReliefForTwoPeriod, taxReliefResult);
         verify(monthlyRepositoryMock, times(1)).findMonthlyByYear(anyString());
@@ -220,7 +220,7 @@ public class CalculateTaxReliefServiceTest {
         //WHEN
         when(rateSmicProxyMock.getRateSmicByInseeApi(anyString(), anyString())).thenReturn(rateSmicApiList);
         when(monthlyRepositoryMock.findMonthlyByYear(anyString())).thenReturn(monthliesByYear);
-        Double taxReliefResult = calculateTaxReliefServiceTest.calculateTaxReliefByChild("2021", 1);
+        Double taxReliefResult = calculateTaxReliefServiceImplTest.calculateTaxReliefByChild("2021", 1);
         //THEN
         assertEquals(calculateTaxReliefForTwoPeriod, taxReliefResult);
         verify(monthlyRepositoryMock, times(1)).findMonthlyByYear(anyString());
@@ -240,7 +240,7 @@ public class CalculateTaxReliefServiceTest {
         when(monthlyRepositoryMock.findMonthlyByYear(anyString())).thenReturn(monthliesByYearEmpty);
         when(rateSmicProxyMock.getRateSmicByInseeApi(anyString(), anyString())).thenReturn(rateSmicApiList);
         //THEN
-        assertThrows(MonthlyNotFoundException.class, () -> calculateTaxReliefServiceTest.calculateTaxReliefByChild("2026", 1));
+        assertThrows(MonthlyNotFoundException.class, () -> calculateTaxReliefServiceImplTest.calculateTaxReliefByChild("2026", 1));
         verify(monthlyRepositoryMock, times(1)).findMonthlyByYear(anyString());
     }
 }

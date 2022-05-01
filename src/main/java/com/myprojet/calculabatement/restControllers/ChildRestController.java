@@ -1,10 +1,8 @@
 package com.myprojet.calculabatement.restControllers;
 
+import com.myprojet.calculabatement.exceptions.MonthlyNotFoundException;
 import com.myprojet.calculabatement.models.Child;
-import com.myprojet.calculabatement.services.CalculateTaxReliefService;
-import com.myprojet.calculabatement.services.ChildService;
-import com.myprojet.calculabatement.services.TaxableSalaryService;
-import com.myprojet.calculabatement.services.TotalAnnualTaxReliefsService;
+import com.myprojet.calculabatement.services.*;
 import com.myprojet.calculabatement.utils.SecurityUtilities;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,7 +56,13 @@ public class ChildRestController {
 
     @GetMapping("/taxrelief")
     public ResponseEntity<Double> getTaxReliefByChild(@RequestParam int childId, @RequestParam String year) {
-        double taxRelief = calculateTaxReliefService.calculateTaxReliefByChild(year, childId);
+        double taxRelief = 0;
+        try {
+            taxRelief = calculateTaxReliefService.calculateTaxReliefByChild(year, childId);
+        } catch (MonthlyNotFoundException e) {
+            new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+            System.out.println(e.getMessage());
+        }
         log.debug("Controller: Tax Relief got for child ID: " + childId + " Value: " + taxRelief);
         return new ResponseEntity<>(taxRelief, HttpStatus.OK);
     }

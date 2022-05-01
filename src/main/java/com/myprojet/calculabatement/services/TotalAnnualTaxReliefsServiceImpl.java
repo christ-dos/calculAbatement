@@ -18,13 +18,13 @@ import java.util.stream.Collectors;
 @Slf4j
 public class TotalAnnualTaxReliefsServiceImpl implements TotalAnnualTaxReliefsService {
     private final ChildService childService;
-    private final CalculateTaxReliefService calculateTaxReliefService;
+    private final CalculateTaxReliefServiceImpl calculateTaxReliefService;
     private final CalculateFoodCompensationService calculateFoodCompensationService;
     private TaxableSalaryService taxableSalaryService;
 
     @Autowired
     public TotalAnnualTaxReliefsServiceImpl(ChildService childService,
-                                            CalculateTaxReliefService calculateTaxReliefService,
+                                            CalculateTaxReliefServiceImpl calculateTaxReliefService,
                                             CalculateFoodCompensationService calculateFoodCompensationService,
                                             TaxableSalaryService taxableSalaryService) {
         this.childService = childService;

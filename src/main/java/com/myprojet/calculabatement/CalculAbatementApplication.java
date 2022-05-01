@@ -9,14 +9,12 @@ import com.myprojet.calculabatement.repositories.ChildRepository;
 import com.myprojet.calculabatement.repositories.MonthlyRepository;
 import com.myprojet.calculabatement.repositories.UserRepository;
 import com.myprojet.calculabatement.services.*;
-import com.myprojet.calculabatement.utils.CalculateAge;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 
 
 @SpringBootApplication
@@ -34,7 +32,7 @@ public class CalculAbatementApplication implements CommandLineRunner {
     private ChildRepository childRepository;
 
     @Autowired
-    private CalculateTaxReliefService calculateTaxReliefService;
+    private CalculateTaxReliefServiceImpl calculateTaxReliefService;
 
     @Autowired
     private CalculateFoodCompensationService calculateFoodCompensationService;
@@ -65,16 +63,16 @@ public class CalculAbatementApplication implements CommandLineRunner {
         // List<String> months = Arrays.asList("janvier", "septembre", "juin");
         // List<Monthly> monthly= (List<Monthly>) monthlyRepository.findAllByMonth("janvier");
 //        userRepository.save(new User("sylvie@email.fr", "pass", "Fernandes", "Sylvie"));
-        childRepository.save(new Child(1, "Benoit", "Evan", "24/12/2021", "01/05/2021", null, 1D, 0.5, LocalDateTime.now().minusMinutes(30), "https://www.hdwallpaper.nu/wp-content/uploads/2015/03/New-Baby-Photos-Hd.jpg", "christine@email.fr"));
-        childRepository.save(new Child(2, "Bernard", "Alice", "20/04/2021", "24/03/2020", null, 1D, 0.5, LocalDateTime.now().minusMinutes(15), "https://www.hdwallpaper.nu/wp-content/uploads/2015/03/Cute-Babies-HD-Wallpapers.jpg", "christine@email.fr"));
-        childRepository.save(new Child(3, "Dupuis", "Romane", "24/05/2019", "01/09/2020", null, 1D, 0.5, LocalDateTime.now(), "https://www.hdwallpaper.nu/wp-content/uploads/2015/03/Cute-Babies_Hd-Wallpapers.jpg", "christine@email.fr"));
-//////
-        monthlyRepository.save(new Monthly(1, Month.JANVIER, "2022", 500D, 1, 1, 10, 10.0, 1));
-        monthlyRepository.save(new Monthly(2, Month.AOUT, "2022", 500D, 1, 1, 10, 10.0, 1));
-        monthlyRepository.save(new Monthly(3, Month.FEVRIER, "2022", 500D, 1, 1, 10, 10.00, 2));
-        monthlyRepository.save(new Monthly(4, Month.MARS, "2022", 500D, 1, 1, 10, 10D, 2));
-        monthlyRepository.save(new Monthly(5, Month.DECEMBRE, "2022", 500D, 1, 1, 10, 10.0, 3));
-        monthlyRepository.save(new Monthly(6, Month.MAI, "2022", 500D, 1, 1, 10, 10.0, 3));
+//        childRepository.save(new Child(1, "Benoit", "Evan", "24/12/2021", "01/05/2021", null, 1D, 0.5, LocalDateTime.now().minusMinutes(30), "https://www.hdwallpaper.nu/wp-content/uploads/2015/03/New-Baby-Photos-Hd.jpg", "christine@email.fr"));
+//        childRepository.save(new Child(2, "Bernard", "Alice", "20/04/2021", "24/03/2020", null, 1D, 0.5, LocalDateTime.now().minusMinutes(15), "https://www.hdwallpaper.nu/wp-content/uploads/2015/03/Cute-Babies-HD-Wallpapers.jpg", "christine@email.fr"));
+//        childRepository.save(new Child(3, "Dupuis", "Romane", "24/05/2019", "01/09/2020", null, 1D, 0.5, LocalDateTime.now(), "https://www.hdwallpaper.nu/wp-content/uploads/2015/03/Cute-Babies_Hd-Wallpapers.jpg", "christine@email.fr"));
+////////
+//        monthlyRepository.save(new Monthly(1, Month.JANVIER, "2022", 500D, 1, 1, 10, 10.0, 1));
+//        monthlyRepository.save(new Monthly(2, Month.AOUT, "2022", 500D, 1, 1, 10, 10.0, 1));
+//        monthlyRepository.save(new Monthly(3, Month.FEVRIER, "2022", 500D, 1, 1, 10, 10.00, 2));
+//        monthlyRepository.save(new Monthly(4, Month.MARS, "2022", 500D, 1, 1, 10, 10D, 2));
+//        monthlyRepository.save(new Monthly(5, Month.DECEMBRE, "2022", 500D, 1, 1, 10, 10.0, 3));
+//        monthlyRepository.save(new Monthly(6, Month.MAI, "2022", 500D, 1, 1, 10, 10.0, 3));
 //////       // monthly.forEach(x-> System.out.println(x));
         //LocalDateTime date  = LocalDateTime.now();
         //  System.out.println("le mois: " + date.getMonthValue());

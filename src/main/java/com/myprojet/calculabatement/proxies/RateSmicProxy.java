@@ -37,6 +37,7 @@ public class RateSmicProxy {
             log.error("Proxy: Invalid year for requête!");
             throw new IllegalYearException("L'année n'est pas valide");
         }
+        //add a zero before number of the month to obtain 2 digits
         monthValue = StringUtils.leftPad(monthValue, 2, "0");
         String baseApiUrl = customProperties.getApiInseeBdmUrl();
         String getRateSmicUrl = baseApiUrl + "/data/SERIES_BDM/000822484?startPeriod=" + year + "-01" + "&endPeriod=" + year + "-" + monthValue;
@@ -57,7 +58,7 @@ public class RateSmicProxy {
             log.error("Proxy: An Error occurred during the mapping of the object, the variable seriesSmic is null");
             throw new NullPointerException("Erreur lors du mapping de l'objet");
         }
-        log.info("Proxy: display Smic values for year: " + year);
+        log.info("Proxy: display list of smic values for year: " + year);
         return seriesSmic.getObs();
     }
 
