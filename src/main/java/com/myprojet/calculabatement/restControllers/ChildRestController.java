@@ -1,5 +1,6 @@
 package com.myprojet.calculabatement.restControllers;
 
+import com.myprojet.calculabatement.exceptions.ChildNotFoundException;
 import com.myprojet.calculabatement.exceptions.MonthlyNotFoundException;
 import com.myprojet.calculabatement.models.Child;
 import com.myprojet.calculabatement.services.*;
@@ -32,8 +33,16 @@ public class ChildRestController {
     }
 
     @GetMapping("/find/{id}")
-    public ResponseEntity<Child> getChildById(@PathVariable("id") int childId) {
-        Child child = childService.getChildById(childId);
+    public ResponseEntity<?> getChildById(@PathVariable("id") int childId) {
+        Child child = null;
+        try {
+            child = childService.getChildById(childId);
+        } catch (ChildNotFoundException e) {
+            System.out.println("mon message d'erruer: " + e.getMessage()); //todo clean code
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+
+
+        }
         log.debug("Controller: Find child by ID: " + childId);
         return new ResponseEntity<>(child, HttpStatus.OK);
     }
@@ -48,8 +57,14 @@ public class ChildRestController {
     @GetMapping("/reportableamounts")
     public ResponseEntity<Double> getAnnualReportableAmountsByChild(@RequestParam int childId, @RequestParam String year) {
         Child child = childService.getChildById(childId);
-        double reportableAmounts = totalAnnualTaxReliefsService.getTotalAnnualReportableAmountsByChild(child, year);
-
+        double reportableAmounts = 0;
+        try {
+            reportableAmounts = totalAnnualTaxReliefsService.getTotalAnnualReportableAmountsByChild(child, year);
+        } catch (MonthlyNotFoundException e) {
+            String errorMessage = e.getMessage();
+           // return new ResponseEntity<>(errorMessage, HttpStatus.NOT_FOUND);
+            System.out.println(e.getMessage()); //todo clean code
+        }
         log.debug("Controller: Reportable amounts got for child ID: " + child.getId() + " Value: " + reportableAmounts);
         return new ResponseEntity<>(reportableAmounts, HttpStatus.OK);
     }
@@ -60,8 +75,8 @@ public class ChildRestController {
         try {
             taxRelief = calculateTaxReliefService.calculateTaxReliefByChild(year, childId);
         } catch (MonthlyNotFoundException e) {
-            new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
-            System.out.println(e.getMessage());
+            System.out.println(e.getMessage()); //todo clean code
+
         }
         log.debug("Controller: Tax Relief got for child ID: " + childId + " Value: " + taxRelief);
         return new ResponseEntity<>(taxRelief, HttpStatus.OK);
