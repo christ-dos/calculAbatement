@@ -18,17 +18,13 @@ public class CalculateAge {
         if (birthDate != null) {
             LocalDateTime birthDateParse = LocalDateTime.parse(birthDate, DateTimeFormat.forPattern("dd/MM/yyyy"));
            // LocalDateTime currentDate = LocalDateTime.now();
-            LocalDateTime currentDate = LocalDateTime.parse(dateToCompare, DateTimeFormat.forPattern("dd/MM/yyyy"));
-            System.out.println("birthDateParse: " + birthDateParse);
-            System.out.println("currentDate: " + currentDate);
-
-            if (currentDate.isAfter(birthDateParse)) {
-                Years age = Years.yearsBetween(birthDateParse, currentDate);
-                Months monthOfBirthDate = Months.monthsBetween(birthDateParse, currentDate);// todo verifier si cette variable est utiliser
+            LocalDateTime dateToCompareParse = LocalDateTime.parse(dateToCompare, DateTimeFormat.forPattern("dd/MM/yyyy")); //todo refactor test avec une date a compoarer et non plus
+                                                                                                                         // la date coureante
+            if (dateToCompareParse.isAfter(birthDateParse)) {
+                Years age = Years.yearsBetween(birthDateParse, dateToCompareParse);
 
                 log.debug("DateUtils: Age calculated for birthDate: " + birthDate);
                 return age.getYears();
-
             }
         }
         log.error("DateUtils: The birthdate is not valid");
