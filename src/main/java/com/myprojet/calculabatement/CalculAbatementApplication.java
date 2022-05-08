@@ -9,6 +9,7 @@ import com.myprojet.calculabatement.repositories.ChildRepository;
 import com.myprojet.calculabatement.repositories.MonthlyRepository;
 import com.myprojet.calculabatement.repositories.UserRepository;
 import com.myprojet.calculabatement.services.*;
+import com.myprojet.calculabatement.utils.CalculateAge;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -74,21 +75,9 @@ public class CalculAbatementApplication implements CommandLineRunner {
 //        monthlyRepository.save(new Monthly(5, Month.DECEMBRE, "2022", 500D, 1, 1, 10, 10.0, 3));
 //        monthlyRepository.save(new Monthly(6, Month.MAI, "2022", 500D, 1, 1, 10, 10.0, 3));
 //////       // monthly.forEach(x-> System.out.println(x));
-        //LocalDateTime date  = LocalDateTime.now();
-        //  System.out.println("le mois: " + date.getMonthValue());
-//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d-MMMM-yyyy");
+
 //
-//        String date = "16-janvier-2016";
-//
-//        LocalDate localDate = LocalDate.parse(date, formatter);
-//
-//        System.out.println(localDate.getMonth().getValue());  //default, print ISO_LOCAL_DATE
-//
-//        System.out.println(formatter.format(localDate)); // print formatter date
-        // List<Monthly> montglies = (List<Monthly>) monthlyRepository.findByMonthLessThan(Month.DECEMBER.getValue());
-        //Arrays.stream(Month.values()).forEach(x->System.out.println(x));
-        // double month = calculateTaxReliefService.calculateTaxReliefByChild(10.15, 10.20, Month.AUGUST, "2022", 1);
-        // month.forEach(x->System.out.println("les valeurs: " +x));
+
 //        Child childTest =  new Child(4, "Bernard", "Alice", "20/12/2021", "24/03/2020", null, 1D, 0.5, LocalDateTime.now().minusMinutes(15), "https://www.hdwallpaper.nu/wp-content/uploads/2015/03/Cute-Babies-HD-Wallpapers.jpg", "christine@email.fr");
 //        childRepository.save(childTest);
 //        monthlyRepository.save(new Monthly(103, Month.FEVRIER, "2022", 500D, 1, 1, 10, 10.00, 4));
@@ -123,5 +112,9 @@ public class CalculAbatementApplication implements CommandLineRunner {
 //        System.out.println("total: " + total);
        // String response = childService.deleteChildById(1);
        // childService.getChildById(1).getMonthlies().forEach(x->System.out.println("monthly: " + x));
+       // Child childId2 = childService.getChildById(2);
+//        int childAge = CalculateAge.getAge(childId2.getBirthDate() ,"2021", "12");
+//        System.out.println("childAge: " + childAge);
+       //totalAnnualTaxReliefsServiceImpl.getTotalAnnualReportableAmountsByChild(childId2, "2022");
     }
 }

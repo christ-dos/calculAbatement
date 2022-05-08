@@ -93,6 +93,7 @@ public class CalculateTaxReliefServiceImpl implements CalculateTaxReliefService 
     private double getTaxReliefByChildWhenUpwardOccurredTwoTimesInYear(List<Monthly> monthliesByYear, int childId, int monthOfIncrease, List<List<RateSmicApi>> listsSmicValuesGroupByRateSmicValue) {
         List<Double> listSmicValues = getRateSmicValue(listsSmicValuesGroupByRateSmicValue);
         double rateSmic1 = listSmicValues.get(0);
+        //Value of rateSmic after increase
         double rateSmic2 = listSmicValues.get(1);
 
         //Si le tarif du Smic a changé 2 fois dans l'année, on calcul l'abatement pour 2 périodes distinctes.

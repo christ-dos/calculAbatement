@@ -1,6 +1,8 @@
 package com.myprojet.calculabatement.services;
 
+import com.myprojet.calculabatement.exceptions.MonthlyNotFoundException;
 import com.myprojet.calculabatement.models.Child;
+import com.myprojet.calculabatement.models.Month;
 import com.myprojet.calculabatement.models.Monthly;
 import com.myprojet.calculabatement.utils.CalculateAge;
 import lombok.extern.slf4j.Slf4j;
@@ -47,7 +49,11 @@ public class TotalAnnualTaxReliefsServiceImpl implements TotalAnnualTaxReliefsSe
 
     @Override
     public double getTotalAnnualReportableAmountsByChild(Child child, String year) {
-
+        List<Monthly> monthliesByYear = child.getMonthlies().stream().filter(monthly -> monthly.getYear().equals(year)).collect(Collectors.toList());
+        if (monthliesByYear.isEmpty()) {
+            log.error("Service: Monthly not found for year: " + year + ", and for child ID: "+ child.getId()); //todo implement test pr ce if ajouter
+            throw new MonthlyNotFoundException("Il n'y a aucune entrée enregistré pour l'année: " + year);
+        }
         double taxRelief = calculateTaxReliefService.calculateTaxReliefByChild(year, child.getId());
         double foodCompensation = getSumFoodCompensationByYearAndByChild(child, year);
         double taxableSalaryByYear = taxableSalaryService.getSumTaxableSalaryByChildAndByYear(year, child.getId());
@@ -67,7 +73,16 @@ public class TotalAnnualTaxReliefsServiceImpl implements TotalAnnualTaxReliefsSe
 
     private double getSumFoodCompensationByYearAndByChild(Child child, String year) {
         double foodCompensationByYearAndByChildId = 0;
-        int childAge = CalculateAge.getAge(child.getBirthDate());
+
+        Integer intValueOfMaxMonthInMonthliesFilteredByYear = child.getMonthlies().stream()
+                .filter(monthly -> monthly.getYear().equals(year))
+                .map(monthly -> monthly.getMonth().getValue()).max(Integer::compare).get();
+       // Month stringValueOfMaxMonthInMonthliesFilteredByYear = Month.convertIntToStringOfMonth(intValueOfMaxMonthInMonthliesFilteredByYear);
+        System.out.println("result entier du mois: " + intValueOfMaxMonthInMonthliesFilteredByYear);
+       // System.out.println("monthResult: " + stringValueOfMaxMonthInMonthliesFilteredByYear); //todo clean code
+
+        int childAge = CalculateAge.getAge(child.getBirthDate(), year, Integer.toString(intValueOfMaxMonthInMonthliesFilteredByYear));
+        System.out.println("childAge: " + childAge);
 
         if (childAge == 1) {
             foodCompensationByYearAndByChildId = getSumFoodCompensationWhenChildIsOneYearOld(child, year);
