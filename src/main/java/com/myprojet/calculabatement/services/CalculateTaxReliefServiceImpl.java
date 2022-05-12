@@ -22,11 +22,14 @@ public class CalculateTaxReliefServiceImpl implements CalculateTaxReliefService 
 
     private RateSmicProxy rateSmicProxy;
 
+    private List<RateSmicApi> smicValues = new ArrayList<>();
+
     @Autowired
     public CalculateTaxReliefServiceImpl(MonthlyRepository monthlyRepository, RateSmicProxy rateSmicProxy) {
         this.monthlyRepository = monthlyRepository;
         this.rateSmicProxy = rateSmicProxy;
     }
+
 
     @Override
     public double calculateTaxReliefByChild(String year, int childId) {
@@ -37,12 +40,17 @@ public class CalculateTaxReliefServiceImpl implements CalculateTaxReliefService 
             throw new MonthlyNotFoundException("Il n'y a aucune entrée enregistré pour l'année: " + year);
         }
         //get smic values by Insee Api
-        List<RateSmicApi> smicValues = rateSmicProxy.getRateSmicByInseeApi(year, "12");
+        List<RateSmicApi> smicValues = new ArrayList<>();
+        try {
+            smicValues = rateSmicProxy.getRateSmicByInseeApi(year, "12");
+            System.out.println(smicValues);
+        } catch (Exception e) {
+            System.out.println("Cause: " + e.getCause());
+        }
         if (smicValues.isEmpty()) {
             log.error("Service: Impossible obtain rate smic values via insee Api");
             throw new SmicValueByApiNotFoundException("Les valeurs du Smic n'ont pas été obtenus via Insee Api");
         }
-
         //group rateSmic by values
         List<List<RateSmicApi>> listsRateSmicGroupByRateSmicValue = smicValues.stream()
                 .collect(Collectors.groupingBy(RateSmicApi::getSmicValue)).values().stream()
@@ -64,6 +72,7 @@ public class CalculateTaxReliefServiceImpl implements CalculateTaxReliefService 
         log.debug("Service: The tax relief value: " + taxRelief + " child ID: " + childId + " and by year: " + year);
         return taxRelief;
     }
+
 
     private double convertHoursWorkedInDaysAndRoundedUpToNextInteger(double hoursWorked) {
         log.info("Service: Convert hours sum to days");

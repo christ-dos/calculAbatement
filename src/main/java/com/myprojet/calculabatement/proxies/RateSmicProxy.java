@@ -15,7 +15,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.util.retry.Retry;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -42,23 +47,26 @@ public class RateSmicProxy {
         String baseApiUrl = customProperties.getApiInseeBdmUrl();
         String getRateSmicUrl = baseApiUrl + "/data/SERIES_BDM/000822484?startPeriod=" + year + "-01" + "&endPeriod=" + year + "-" + monthValue;
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_XML);
-        headers.set("Authorization", "Bearer 6bc53e08-2e61-3693-b166-19a02350b0c4");
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.setContentType(MediaType.APPLICATION_XML);
+//        headers.set("Authorization", "Bearer 6bc53e08-2e61-3693-b166-19a02350b0c4");
 
-        HttpEntity<String> entity = new HttpEntity<>(headers);
-        ResponseEntity<String> response = restTemplate.exchange(
-                getRateSmicUrl,
-                HttpMethod.GET,
-                entity,
-                String.class
-        );
-        SeriesSmic seriesSmic = getMappedObjectFromJson(response);
+        ResponseEntity<String> serieSmicResponse = WebClient.create()
+                .get()
+                .uri(getRateSmicUrl)
+                .header("Authorization", "Bearer 6bc53e08-2e61-3693-b166-19a02350b0c4")
+                .retrieve()
+                .toEntity(String.class)
+                .retryWhen(Retry.fixedDelay(3, Duration.ofMillis(100)))
+                .block();
+
+        SeriesSmic seriesSmic = getMappedObjectFromJson(serieSmicResponse);
         if (seriesSmic == null) {
             log.error("Proxy: An Error occurred during the mapping of the object, the variable seriesSmic is null");
             throw new NullPointerException("Erreur lors du mapping de l'objet");
         }
         log.info("Proxy: display list of smic values for year: " + year);
+      // return null;
         return seriesSmic.getObs();
     }
 
