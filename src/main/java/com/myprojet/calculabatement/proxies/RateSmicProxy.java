@@ -66,7 +66,6 @@ public class RateSmicProxy {
             throw new NullPointerException("Erreur lors du mapping de l'objet");
         }
         log.info("Proxy: display list of smic values for year: " + year);
-      // return null;
         return seriesSmic.getObs();
     }
 

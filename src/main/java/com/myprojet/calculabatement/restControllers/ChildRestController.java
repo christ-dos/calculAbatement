@@ -40,8 +40,6 @@ public class ChildRestController {
         } catch (ChildNotFoundException e) {
             System.out.println("mon message d'erruer: " + e.getMessage()); //todo clean code
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
-
-
         }
         log.debug("Controller: Find child by ID: " + childId);
         return new ResponseEntity<>(child, HttpStatus.OK);

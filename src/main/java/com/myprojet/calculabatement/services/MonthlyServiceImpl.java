@@ -48,7 +48,6 @@ public class MonthlyServiceImpl implements MonthlyService {
         monthlyToUpdate.get().setLunch(monthly.getLunch());
         monthlyToUpdate.get().setSnack(monthly.getSnack());
         monthlyToUpdate.get().setTaxableSalary(monthly.getTaxableSalary());
-      //  monthlyToUpdate.get().setChildId(monthly.getChildId());
 
         log.debug("Service: Monthly updated with ID: " + monthly.getMonthlyId());
         return monthlyRepository.save(monthlyToUpdate.get());
