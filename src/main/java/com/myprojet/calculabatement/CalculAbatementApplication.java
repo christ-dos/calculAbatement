@@ -117,6 +117,8 @@ public class CalculAbatementApplication implements CommandLineRunner {
 //        int childAge = CalculateAge.getAge(childId2.getBirthDate() ,"2021", "12");
 //        System.out.println("childAge: " + childAge);
        //totalAnnualTaxReliefsServiceImpl.getTotalAnnualReportableAmountsByChild(childId2, "2022");
+//        double result1 = calculateTaxReliefService.calculateTaxReliefByChild("2020", 3);
+//        double result2 = calculateTaxReliefService.calculateTaxReliefByChild("2020",2);
 
     }
 }

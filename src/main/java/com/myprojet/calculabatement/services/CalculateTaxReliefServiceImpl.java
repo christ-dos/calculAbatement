@@ -1,7 +1,6 @@
 package com.myprojet.calculabatement.services;
 
 import com.myprojet.calculabatement.exceptions.MonthlyNotFoundException;
-import com.myprojet.calculabatement.exceptions.SmicValueByApiNotFoundException;
 import com.myprojet.calculabatement.models.Monthly;
 import com.myprojet.calculabatement.models.RateSmicApi;
 import com.myprojet.calculabatement.proxies.RateSmicProxy;
@@ -39,17 +38,20 @@ public class CalculateTaxReliefServiceImpl implements CalculateTaxReliefService 
             log.error("Service: Monthly not found for year: " + year);
             throw new MonthlyNotFoundException("Il n'y a aucune entrée enregistré pour l'année: " + year);
         }
-        //get smic values by Insee Api
-        List<RateSmicApi> smicValues = new ArrayList<>();
-        try {
-            smicValues = rateSmicProxy.getRateSmicByInseeApi(year, "12");
-            System.out.println(smicValues);
-        } catch (Exception e) {
-            System.out.println("Cause: " + e.getCause());
-        }
         if (smicValues.isEmpty()) {
-            log.error("Service: Impossible obtain rate smic values via insee Api");
-            throw new SmicValueByApiNotFoundException("Les valeurs du Smic n'ont pas été obtenus via Insee Api");
+            try {
+                //get smic values by Insee Api
+                smicValues = rateSmicProxy.getRateSmicByInseeApi(year, "12");
+
+            } catch (Exception e) {
+                System.out.println("Cause: " + e.getCause());
+            }
+        } else {
+            List<String> YearTimePeriodList = Arrays.asList(smicValues.get(smicValues.size() - 1).getTimePeriod().split("-"));
+            if (!YearTimePeriodList.get(0).equals(year)) {
+                System.out.println("la donnée ne correspond pas dc on appel la requete!");
+                smicValues = rateSmicProxy.getRateSmicByInseeApi(year, "12");
+            }
         }
         //group rateSmic by values
         List<List<RateSmicApi>> listsRateSmicGroupByRateSmicValue = smicValues.stream()

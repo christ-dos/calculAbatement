@@ -34,7 +34,7 @@ public class ChildRestController {
 
     @GetMapping("/find/{id}")
     public ResponseEntity<?> getChildById(@PathVariable("id") int childId) {
-        Child child = null;
+        Child child = new Child();
         try {
             child = childService.getChildById(childId);
         } catch (ChildNotFoundException e) {
@@ -74,7 +74,6 @@ public class ChildRestController {
             taxRelief = calculateTaxReliefService.calculateTaxReliefByChild(year, childId);
         } catch (MonthlyNotFoundException e) {
             System.out.println(e.getMessage()); //todo clean code
-
         }
         log.debug("Controller: Tax Relief got for child ID: " + childId + " Value: " + taxRelief);
         return new ResponseEntity<>(taxRelief, HttpStatus.OK);

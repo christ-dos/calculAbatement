@@ -68,6 +68,7 @@ public class ChildServiceImpl implements ChildService {
 
     @Override
     public Iterable<Child> getChildrenByUserEmailOrderByDateAddedDesc() {
+        log.info("Service: list of children by user ordered by date added found!");
         return childRepository.findChildrenByUserEmailOrderByDateAddedDesc(SecurityUtilities.getCurrentUser());
     }
 

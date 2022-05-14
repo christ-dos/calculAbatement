@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.myprojet.calculabatement.configuration.CustomProperties;
 import com.myprojet.calculabatement.exceptions.IllegalYearException;
 import com.myprojet.calculabatement.exceptions.ConversionResponseApiXmlToJsonNullException;
+import com.myprojet.calculabatement.exceptions.SmicValueByApiNotFoundException;
 import com.myprojet.calculabatement.models.RateSmicApi;
 import com.myprojet.calculabatement.models.SeriesSmic;
 import lombok.extern.slf4j.Slf4j;
@@ -60,6 +61,10 @@ public class RateSmicProxy {
                 .retryWhen(Retry.fixedDelay(3, Duration.ofMillis(100)))
                 .block();
 
+        if(serieSmicResponse.getBody() == null){
+            log.error("Proxy: Impossible obtain rate smic values by insee Api");
+            throw new SmicValueByApiNotFoundException("Les valeurs du Smic n'ont pas été obtenus via Insee Api");
+        }
         SeriesSmic seriesSmic = getMappedObjectFromJson(serieSmicResponse);
         if (seriesSmic == null) {
             log.error("Proxy: An Error occurred during the mapping of the object, the variable seriesSmic is null");
