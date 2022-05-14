@@ -43,6 +43,13 @@ public class MonthlyRestController {
         return new ResponseEntity<>(monthlies, HttpStatus.OK);
     }
 
+    @GetMapping("/all/childid")
+    public ResponseEntity<Iterable<Monthly>> getMonthliesByChildIdOrderByYearDescMonthDesc(int childId) {
+        Iterable<Monthly> monthlies = monthlyService.getMonthliesByChildIdOrderByYearDescMonthDesc(childId);
+        log.info("Controller: Display list of monthlies by child ID order year Desc and month by Desc");
+        return new ResponseEntity<>(monthlies, HttpStatus.OK);
+    }
+
     @GetMapping("/months")
     public ResponseEntity<List<Month>> getMonths(){
         List<Month> monthsList = Arrays.asList(Month.values());

@@ -73,8 +73,13 @@ public class MonthlyServiceImpl implements MonthlyService {
     }
 
     @Override
-    public Iterable<Monthly> getAllMonthlyByYearAndChildIdOrderByMonthDesc(String year, int childId){
+    public Iterable<Monthly> getAllMonthlyByYearAndChildIdOrderByMonthDesc(String year, int childId){ // todo implement test in repository and monthlyServiceImpl
         return monthlyRepository.findMonthlyByYearAndChildIdOrderByMonthDesc(year, childId);
+    }
+
+    @Override
+    public Iterable<Monthly> getMonthliesByChildIdOrderByYearDescMonthDesc(int childId){
+        return monthlyRepository.findMonthlyByChildIdOrderByYearDescMonthDesc(childId);
     }
 
     @Override
