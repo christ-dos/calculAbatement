@@ -55,27 +55,30 @@ public class ChildRestController {
     }
 
     @GetMapping("/reportableamounts")
-    public ResponseEntity<Double> getAnnualReportableAmountsByChild(@Valid @RequestParam int childId, @Valid  @RequestParam String year) {
+    public ResponseEntity<?> getAnnualReportableAmountsByChild(@Valid @RequestParam int childId, @Valid  @RequestParam String year) {
         Child child = childService.getChildById(childId);
         double reportableAmounts = 0;
         try {
             reportableAmounts = totalAnnualTaxReliefsService.getTotalAnnualReportableAmountsByChild(child, year);
         } catch (MonthlyNotFoundException e) {
             String errorMessage = e.getMessage();
-           // return new ResponseEntity<>(errorMessage, HttpStatus.NOT_FOUND);
-            System.out.println(e.getMessage()); //todo clean code
+            System.out.println("mon message erreur: " + e.getMessage()); //todo clean code
+            return new ResponseEntity<>(errorMessage, HttpStatus.NOT_FOUND);
+
         }
         log.debug("Controller: Reportable amounts got for child ID: " + child.getId() + " Value: " + reportableAmounts);
         return new ResponseEntity<>(reportableAmounts, HttpStatus.OK);
     }
 
     @GetMapping("/taxrelief")
-    public ResponseEntity<Double> getTaxReliefByChild(@Valid @RequestParam int childId,@Valid  @RequestParam String year) {
+    public ResponseEntity<?> getTaxReliefByChild(@Valid @RequestParam int childId,@Valid  @RequestParam String year) {
         double taxRelief = 0;
         try {
             taxRelief = calculateTaxReliefService.calculateTaxReliefByChild(year, childId);
         } catch (MonthlyNotFoundException e) {
-            System.out.println(e.getMessage()); //todo clean code
+            String errorMessage = e.getMessage();
+            System.out.println("mon message erreur: " + e.getMessage()); //todo clean code
+            return new ResponseEntity<>(errorMessage, HttpStatus.NOT_FOUND);
         }
         log.debug("Controller: Tax Relief got for child ID: " + childId + " Value: " + taxRelief);
         return new ResponseEntity<>(taxRelief, HttpStatus.OK);

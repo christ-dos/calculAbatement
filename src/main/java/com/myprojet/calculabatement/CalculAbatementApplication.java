@@ -21,39 +21,39 @@ import java.util.Optional;
 
 @SpringBootApplication
 public class CalculAbatementApplication implements CommandLineRunner {
-    @Autowired
-    private UserService userService;
+//    @Autowired
+//    private UserService userService;
 
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private MonthlyRepository monthlyRepository;
-
-    @Autowired
-    private ChildRepository childRepository;
-
-    @Autowired
-    private CalculateTaxReliefServiceImpl calculateTaxReliefService;
-
-    @Autowired
-    private CalculateFoodCompensationService calculateFoodCompensationService;
-
-    @Autowired
-    private TaxableSalaryService taxableSalaryService;
-
-    @Autowired
-    private CustomProperties customProperties;
-
-    @Autowired
-    private RateSmicProxy rateSmicProxy;
-
-    @Autowired
-    private TotalAnnualTaxReliefsServiceImpl totalAnnualTaxReliefsServiceImpl;
-
-    @Autowired
-    private ChildService childService;
-
+//    @Autowired
+//    private UserRepository userRepository;
+//
+//    @Autowired
+//    private MonthlyRepository monthlyRepository;
+//
+//    @Autowired
+//    private ChildRepository childRepository;
+//
+//    @Autowired
+//    private CalculateTaxReliefServiceImpl calculateTaxReliefService;
+//
+//    @Autowired
+//    private CalculateFoodCompensationService calculateFoodCompensationService;
+//
+//    @Autowired
+//    private TaxableSalaryService taxableSalaryService;
+//
+//    @Autowired
+//    private CustomProperties customProperties;
+//
+//    @Autowired
+//    private RateSmicProxy rateSmicProxy;
+//
+//    @Autowired
+//    private TotalAnnualTaxReliefsServiceImpl totalAnnualTaxReliefsServiceImpl;
+//
+//    @Autowired
+//    private ChildService childService;
+//
 
     public static void main(String[] args) {
         SpringApplication.run(CalculAbatementApplication.class, args);

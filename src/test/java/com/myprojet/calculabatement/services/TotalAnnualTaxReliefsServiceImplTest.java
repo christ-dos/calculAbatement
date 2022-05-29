@@ -148,10 +148,10 @@ public class TotalAnnualTaxReliefsServiceImplTest {
         when(calculateFoodCompensationServiceMock.calculateFoodCompensationByYearAndByChild(anyString(), anyList(),anyDouble(), anyDouble())).thenReturn(15D, 15D);
         double totalAnnualReportableAmountsResult = totalAnnualTaxReliefsServiceImplTest.getTotalAnnualReportableAmountsForAllChildren("2022");
         //THEN
-        //totalTaxableSalary = 600.0, totalFoodCompensation = 30.0, totalTaxRelief = 1000.0
-        //one child is one year old and the other is over one year old
-        //when totalTaxRelief is greater the totalTaxableSalary and totalAnnualReportableAmountsResult is
-        //negative return 0.0
+        /* totalTaxableSalary = 600.0, totalFoodCompensation = 30.0, totalTaxRelief = 1000.0
+        one child is one year old and the other is over one year old
+        when totalTaxRelief is greater the totalTaxableSalary and totalAnnualReportableAmountsResult is
+        negative return 0.0 */
         assertEquals(0D, totalAnnualReportableAmountsResult);
     }
 
