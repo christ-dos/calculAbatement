@@ -2,23 +2,17 @@ package com.myprojet.calculabatement.proxies;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.myprojet.calculabatement.configuration.CustomProperties;
 import com.myprojet.calculabatement.exceptions.IllegalYearException;
-import com.myprojet.calculabatement.exceptions.ConversionResponseApiXmlToJsonNullException;
 import com.myprojet.calculabatement.exceptions.SmicValueByApiNotFoundException;
 import com.myprojet.calculabatement.models.RateSmicApi;
 import com.myprojet.calculabatement.models.SeriesSmic;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 import org.json.XML;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.*;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 import reactor.util.retry.Retry;
 
 import java.time.Duration;
@@ -28,15 +22,15 @@ import java.util.List;
 @Component
 @Slf4j
 public class RateSmicProxy {
-    private CustomProperties customProperties;
 
-    private RestTemplate restTemplate;
+    private WebClient myWebClientForApiInsee;
+
 
     @Autowired
-    public RateSmicProxy(CustomProperties customProperties, RestTemplate restTemplate) {
-        this.customProperties = customProperties;
-        this.restTemplate = restTemplate;
+    public RateSmicProxy( WebClient myWebClientForApiInsee) {
+        this.myWebClientForApiInsee = myWebClientForApiInsee;
     }
+
 
     public List<RateSmicApi> getRateSmicByInseeApi(String year, String monthValue) {
         if (Integer.parseInt(year) > LocalDate.now().getYear() || Integer.parseInt(year) <= 1951) {
@@ -44,24 +38,17 @@ public class RateSmicProxy {
             throw new IllegalYearException("L'année n'est pas valide");
         }
         //add a zero before number of the month to obtain 2 digits
-        monthValue = StringUtils.leftPad(monthValue, 2, "0");
-        String baseApiUrl = customProperties.getApiInseeBdmUrl();
-        String getRateSmicUrl = baseApiUrl + "/data/SERIES_BDM/000822484?startPeriod=" + year + "-01" + "&endPeriod=" + year + "-" + monthValue;
+       // monthValue = StringUtils.leftPad(monthValue, 2, "0"); //todo clean code
+        String uri = "/data/SERIES_BDM/000822484?startPeriod=" + year + "-01" + "&endPeriod=" + year + "-" + monthValue;
 
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.setContentType(MediaType.APPLICATION_XML);
-//        headers.set("Authorization", "Bearer 6bc53e08-2e61-3693-b166-19a02350b0c4");
-
-        ResponseEntity<String> serieSmicResponse = WebClient.create()
-                .get()
-                .uri(getRateSmicUrl)
-                .header("Authorization", "Bearer 6bc53e08-2e61-3693-b166-19a02350b0c4")
+        ResponseEntity<String> serieSmicResponse = myWebClientForApiInsee.get()
+                .uri(uri)
                 .retrieve()
                 .toEntity(String.class)
                 .retryWhen(Retry.fixedDelay(3, Duration.ofMillis(100)))
                 .block();
 
-        if(serieSmicResponse.getBody() == null){
+        if (serieSmicResponse.getBody() == null) {
             log.error("Proxy: Impossible obtain rate smic values by insee Api");
             throw new SmicValueByApiNotFoundException("Les valeurs du Smic n'ont pas été obtenus via Insee Api");
         }
@@ -76,10 +63,6 @@ public class RateSmicProxy {
 
     private String conversionResponseApiXmlToJson(ResponseEntity<String> response) {
         //Conversion Xml en Json
-        if (response.getBody() == null) {
-            log.error("Proxy: No result found for request at Insee Api!");
-            throw new ConversionResponseApiXmlToJsonNullException("La requête n'a reçu aucune réponse!");
-        }
         JSONObject json = XML.toJSONObject(response.getBody());
         String jsonString = json.toString(4);
         //Découpage du json pour récupérer uniquement le tableau Obs avec les valeurs du smic

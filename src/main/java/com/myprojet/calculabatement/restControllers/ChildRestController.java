@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/child")
 @CrossOrigin(origins = "http://localhost:4200")
@@ -33,7 +35,7 @@ public class ChildRestController {
     }
 
     @GetMapping("/find/{id}")
-    public ResponseEntity<?> getChildById(@PathVariable("id") int childId) {
+    public ResponseEntity<?> getChildById(@Valid @PathVariable("id") int childId) {
         Child child = new Child();
         try {
             child = childService.getChildById(childId);
@@ -46,14 +48,14 @@ public class ChildRestController {
     }
 
     @GetMapping("/taxablesalary")
-    public ResponseEntity<Double> getAnnualTaxableSalaryByChild(@RequestParam int childId, @RequestParam String year) {
+    public ResponseEntity<Double> getAnnualTaxableSalaryByChild(@Valid  @RequestParam  int childId, @Valid @RequestParam String year) {
         double taxableSalary = taxableSalaryService.getSumTaxableSalaryByChildAndByYear(year, childId);
         log.info("Controller: Taxable salary got for child ID: " + childId + " Value: " + taxableSalary);
         return new ResponseEntity<>(taxableSalary, HttpStatus.OK);
     }
 
     @GetMapping("/reportableamounts")
-    public ResponseEntity<Double> getAnnualReportableAmountsByChild(@RequestParam int childId, @RequestParam String year) {
+    public ResponseEntity<Double> getAnnualReportableAmountsByChild(@Valid @RequestParam int childId, @Valid  @RequestParam String year) {
         Child child = childService.getChildById(childId);
         double reportableAmounts = 0;
         try {
@@ -68,7 +70,7 @@ public class ChildRestController {
     }
 
     @GetMapping("/taxrelief")
-    public ResponseEntity<Double> getTaxReliefByChild(@RequestParam int childId, @RequestParam String year) {
+    public ResponseEntity<Double> getTaxReliefByChild(@Valid @RequestParam int childId,@Valid  @RequestParam String year) {
         double taxRelief = 0;
         try {
             taxRelief = calculateTaxReliefService.calculateTaxReliefByChild(year, childId);
@@ -80,14 +82,14 @@ public class ChildRestController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<Child> addChild(@RequestBody Child child) {
+    public ResponseEntity<Child> addChild(@Valid @RequestBody Child child) {
         Child newChild = childService.addChild(child);
         log.info("Controller: Child added");
         return new ResponseEntity<>(newChild, HttpStatus.CREATED);
     }
 
     @PutMapping("/update")
-    public ResponseEntity<Child> updateChild(@RequestBody Child child) {
+    public ResponseEntity<Child> updateChild(@Valid @RequestBody Child child) {
         child.setUserEmail(SecurityUtilities.getCurrentUser());
         Child updateChild = childService.updateChild(child);
         log.debug("Controller: Child updated with ID: " + updateChild.getId());
@@ -95,7 +97,7 @@ public class ChildRestController {
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> deleteChild(@PathVariable("id") int childId) {
+    public ResponseEntity<?> deleteChild(@Valid @PathVariable("id") int childId) {
         String message = childService.deleteChildById(childId);
         log.debug("Controller: Child deleted with ID: " + childId);
         return new ResponseEntity<>(HttpStatus.OK);

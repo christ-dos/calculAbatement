@@ -63,17 +63,7 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
 
         return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
     }
-
-    @ExceptionHandler(ConversionResponseApiXmlToJsonNullException.class)
-    public ResponseEntity<Object> handleConversionResponseApiXmlToJsonNullException(ConversionResponseApiXmlToJsonNullException ex, WebRequest request) {
-
-        Map<String, Object> body = new LinkedHashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("message", " No result found for request at Insee Api!");
-
-        return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
-    }
-
+    
     @ExceptionHandler(FeesEqualZeroException.class)
     public ResponseEntity<Object> handleFeesEqualZeroException(FeesEqualZeroException ex, WebRequest request) {
 

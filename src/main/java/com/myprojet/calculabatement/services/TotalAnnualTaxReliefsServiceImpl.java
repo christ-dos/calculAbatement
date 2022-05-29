@@ -82,7 +82,7 @@ public class TotalAnnualTaxReliefsServiceImpl implements TotalAnnualTaxReliefsSe
        // System.out.println("monthResult: " + stringValueOfMaxMonthInMonthliesFilteredByYear); //todo clean code
 
         int childAge = CalculateAge.getAge(child.getBirthDate(), year, Integer.toString(intValueOfMaxMonthInMonthliesFilteredByYear));
-        System.out.println("childAge: " + childAge);
+        System.out.println("childAge: " + childAge); // todo clean code
 
         if (childAge == 1) {
             foodCompensationByYearAndByChildId = getSumFoodCompensationWhenChildIsOneYearOld(child, year);

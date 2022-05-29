@@ -3,6 +3,7 @@ package com.myprojet.calculabatement.utils;
 import com.myprojet.calculabatement.exceptions.BirthdateNotValidException;
 import com.myprojet.calculabatement.models.Month;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.LocalDateTime;
 import org.joda.time.Months;
 import org.joda.time.Years;
@@ -14,12 +15,13 @@ import org.joda.time.format.DateTimeFormat;
 public class CalculateAge {
 
     public static int getAge(String birthDate, String year, String month) {
+       // month = StringUtils.leftPad(month, 2, "0");
         String dateToCompare = "01/" + month + "/" + year ;
         if (birthDate != null) {
             LocalDateTime birthDateParse = LocalDateTime.parse(birthDate, DateTimeFormat.forPattern("dd/MM/yyyy"));
            // LocalDateTime currentDate = LocalDateTime.now();
-            LocalDateTime dateToCompareParse = LocalDateTime.parse(dateToCompare, DateTimeFormat.forPattern("dd/MM/yyyy")); //todo refactor test avec une date a compoarer et non plus
-                                                                                                                         // la date coureante
+            LocalDateTime dateToCompareParse = LocalDateTime.parse(dateToCompare, DateTimeFormat.forPattern("dd/MM/yyyy")); //todo refactor test avec une date a comparer et non plus
+                                                                                                                         // la date courante
             if (dateToCompareParse.isAfter(birthDateParse)) {
                 Years age = Years.yearsBetween(birthDateParse, dateToCompareParse);
 

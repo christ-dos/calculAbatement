@@ -238,7 +238,7 @@ public class CalculateTaxReliefServiceImplTest {
         );
         //WHEN
         when(monthlyRepositoryMock.findMonthlyByYear(anyString())).thenReturn(monthliesByYearEmpty);
-        when(rateSmicProxyMock.getRateSmicByInseeApi(anyString(), anyString())).thenReturn(rateSmicApiList);
+       // when(rateSmicProxyMock.getRateSmicByInseeApi(anyString(), anyString())).thenReturn(rateSmicApiList);
         //THEN
         assertThrows(MonthlyNotFoundException.class, () -> calculateTaxReliefServiceImplTest.calculateTaxReliefByChild("2026", 1));
         verify(monthlyRepositoryMock, times(1)).findMonthlyByYear(anyString());
