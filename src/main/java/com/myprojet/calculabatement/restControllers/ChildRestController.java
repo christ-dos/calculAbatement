@@ -1,5 +1,6 @@
 package com.myprojet.calculabatement.restControllers;
 
+import com.myprojet.calculabatement.exceptions.ChildAlreadyExistException;
 import com.myprojet.calculabatement.exceptions.ChildNotFoundException;
 import com.myprojet.calculabatement.exceptions.MonthlyNotFoundException;
 import com.myprojet.calculabatement.models.Child;
@@ -40,6 +41,7 @@ public class ChildRestController {
         try {
             child = childService.getChildById(childId);
         } catch (ChildNotFoundException e) {
+            log.error("Controller: Child not found!");
             System.out.println("mon message d'erruer: " + e.getMessage()); //todo clean code
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
@@ -63,6 +65,7 @@ public class ChildRestController {
         } catch (MonthlyNotFoundException e) {
             String errorMessage = e.getMessage();
             System.out.println("mon message erreur: " + e.getMessage()); //todo clean code
+            log.error("Controller: Monthly not found!");
             return new ResponseEntity<>(errorMessage, HttpStatus.NOT_FOUND);
 
         }
@@ -78,6 +81,7 @@ public class ChildRestController {
         } catch (MonthlyNotFoundException e) {
             String errorMessage = e.getMessage();
             System.out.println("mon message erreur: " + e.getMessage()); //todo clean code
+            log.error("Controller: Monthly not found!");
             return new ResponseEntity<>(errorMessage, HttpStatus.NOT_FOUND);
         }
         log.debug("Controller: Tax Relief got for child ID: " + childId + " Value: " + taxRelief);
@@ -85,16 +89,33 @@ public class ChildRestController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<Child> addChild(@Valid @RequestBody Child child) {
-        Child newChild = childService.addChild(child);
+    public ResponseEntity<?> addChild(@Valid @RequestBody Child child) {
+        Child newChild = new Child();
+        try {
+            newChild = childService.addChild(child);
+        } catch (ChildAlreadyExistException e) {
+            String errorMessage = e.getMessage();
+            System.out.println("mon message erreur: " + e.getMessage()); //todo clean code
+            log.error("Controller: Child already exists!");
+            return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
+        }
         log.info("Controller: Child added");
         return new ResponseEntity<>(newChild, HttpStatus.CREATED);
     }
 
     @PutMapping("/update")
-    public ResponseEntity<Child> updateChild(@Valid @RequestBody Child child) {
+    public ResponseEntity<?> updateChild(@Valid @RequestBody Child child) {
         child.setUserEmail(SecurityUtilities.getCurrentUser());
-        Child updateChild = childService.updateChild(child);
+        Child updateChild = new Child();
+        try {
+            updateChild = childService.updateChild(child);
+        } catch (ChildNotFoundException e) {
+            String errorMessage = e.getMessage();
+            System.out.println("mon message erreur: " + e.getMessage()); //todo clean code
+            log.error("Controller: Child not found!");
+            return new ResponseEntity<>(errorMessage, HttpStatus.NOT_FOUND);
+
+        }
         log.debug("Controller: Child updated with ID: " + updateChild.getId());
         return new ResponseEntity<>(updateChild, HttpStatus.OK);
     }
@@ -103,6 +124,6 @@ public class ChildRestController {
     public ResponseEntity<?> deleteChild(@Valid @PathVariable("id") int childId) {
         String message = childService.deleteChildById(childId);
         log.debug("Controller: Child deleted with ID: " + childId);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(message, HttpStatus.OK);
     }
 }

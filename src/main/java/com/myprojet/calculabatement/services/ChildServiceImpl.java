@@ -63,7 +63,7 @@ public class ChildServiceImpl implements ChildService {
     public String deleteChildById(int childId) {
         childRepository.deleteById(childId);
         log.debug("Service: Child deleted with ID: " + childId);
-        return "L'enfant a été supprimé avec succes!";
+        return "L'enfant a été supprimé avec succés!";
     }
 
     @Override
