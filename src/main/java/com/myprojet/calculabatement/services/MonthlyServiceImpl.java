@@ -24,7 +24,7 @@ public class MonthlyServiceImpl implements MonthlyService {
 
     @Override
     public Monthly addMonthly(Monthly monthly) {
-        Month month = monthly.getMonth();
+       // Month month = monthly.getMonth(); // todo clean code
         boolean monthlyExists = monthlyRepository.existsById(monthly.getMonthlyId());
         if (monthlyExists) {
             log.error("Service: monthly added with ID: " + monthly.getMonthlyId() + " already exists!");

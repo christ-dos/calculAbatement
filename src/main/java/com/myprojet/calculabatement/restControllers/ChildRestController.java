@@ -1,10 +1,11 @@
 package com.myprojet.calculabatement.restControllers;
 
-import com.myprojet.calculabatement.exceptions.ChildAlreadyExistException;
 import com.myprojet.calculabatement.exceptions.ChildNotFoundException;
-import com.myprojet.calculabatement.exceptions.MonthlyNotFoundException;
 import com.myprojet.calculabatement.models.Child;
-import com.myprojet.calculabatement.services.*;
+import com.myprojet.calculabatement.services.CalculateTaxReliefService;
+import com.myprojet.calculabatement.services.ChildService;
+import com.myprojet.calculabatement.services.TaxableSalaryService;
+import com.myprojet.calculabatement.services.TotalAnnualTaxReliefsService;
 import com.myprojet.calculabatement.utils.SecurityUtilities;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,68 +38,36 @@ public class ChildRestController {
 
     @GetMapping("/find/{id}")
     public ResponseEntity<?> getChildById(@Valid @PathVariable("id") int childId) {
-        Child child = new Child();
-        try {
-            child = childService.getChildById(childId);
-        } catch (ChildNotFoundException e) {
-            log.error("Controller: Child not found!");
-            System.out.println("mon message d'erruer: " + e.getMessage()); //todo clean code
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
-        }
+       Child  child = childService.getChildById(childId);
         log.debug("Controller: Find child by ID: " + childId);
         return new ResponseEntity<>(child, HttpStatus.OK);
     }
 
     @GetMapping("/taxablesalary")
-    public ResponseEntity<Double> getAnnualTaxableSalaryByChild(@Valid  @RequestParam  int childId, @Valid @RequestParam String year) {
+    public ResponseEntity<Double> getAnnualTaxableSalaryByChild(@Valid @RequestParam int childId, @Valid @RequestParam String year) {
         double taxableSalary = taxableSalaryService.getSumTaxableSalaryByChildAndByYear(year, childId);
         log.info("Controller: Taxable salary got for child ID: " + childId + " Value: " + taxableSalary);
         return new ResponseEntity<>(taxableSalary, HttpStatus.OK);
     }
 
     @GetMapping("/reportableamounts")
-    public ResponseEntity<?> getAnnualReportableAmountsByChild(@Valid @RequestParam int childId, @Valid  @RequestParam String year) {
+    public ResponseEntity<?> getAnnualReportableAmountsByChild(@Valid @RequestParam int childId, @Valid @RequestParam String year) {
         Child child = childService.getChildById(childId);
-        double reportableAmounts = 0;
-        try {
-            reportableAmounts = totalAnnualTaxReliefsService.getTotalAnnualReportableAmountsByChild(child, year);
-        } catch (MonthlyNotFoundException e) {
-            String errorMessage = e.getMessage();
-            System.out.println("mon message erreur: " + e.getMessage()); //todo clean code
-            log.error("Controller: Monthly not found!");
-            return new ResponseEntity<>(errorMessage, HttpStatus.NOT_FOUND);
-
-        }
+        double reportableAmounts = totalAnnualTaxReliefsService.getTotalAnnualReportableAmountsByChild(child, year);
         log.debug("Controller: Reportable amounts got for child ID: " + child.getId() + " Value: " + reportableAmounts);
         return new ResponseEntity<>(reportableAmounts, HttpStatus.OK);
     }
 
     @GetMapping("/taxrelief")
-    public ResponseEntity<?> getTaxReliefByChild(@Valid @RequestParam int childId,@Valid  @RequestParam String year) {
-        double taxRelief = 0;
-        try {
-            taxRelief = calculateTaxReliefService.calculateTaxReliefByChild(year, childId);
-        } catch (MonthlyNotFoundException e) {
-            String errorMessage = e.getMessage();
-            System.out.println("mon message erreur: " + e.getMessage()); //todo clean code
-            log.error("Controller: Monthly not found!");
-            return new ResponseEntity<>(errorMessage, HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<?> getTaxReliefByChild(@Valid @RequestParam int childId, @Valid @RequestParam String year) {
+        double taxRelief = calculateTaxReliefService.calculateTaxReliefByChild(year, childId);
         log.debug("Controller: Tax Relief got for child ID: " + childId + " Value: " + taxRelief);
         return new ResponseEntity<>(taxRelief, HttpStatus.OK);
     }
 
     @PostMapping("/add")
     public ResponseEntity<?> addChild(@Valid @RequestBody Child child) {
-        Child newChild = new Child();
-        try {
-            newChild = childService.addChild(child);
-        } catch (ChildAlreadyExistException e) {
-            String errorMessage = e.getMessage();
-            System.out.println("mon message erreur: " + e.getMessage()); //todo clean code
-            log.error("Controller: Child already exists!");
-            return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
-        }
+        Child newChild = childService.addChild(child);
         log.info("Controller: Child added");
         return new ResponseEntity<>(newChild, HttpStatus.CREATED);
     }
@@ -106,16 +75,7 @@ public class ChildRestController {
     @PutMapping("/update")
     public ResponseEntity<?> updateChild(@Valid @RequestBody Child child) {
         child.setUserEmail(SecurityUtilities.getCurrentUser());
-        Child updateChild = new Child();
-        try {
-            updateChild = childService.updateChild(child);
-        } catch (ChildNotFoundException e) {
-            String errorMessage = e.getMessage();
-            System.out.println("mon message erreur: " + e.getMessage()); //todo clean code
-            log.error("Controller: Child not found!");
-            return new ResponseEntity<>(errorMessage, HttpStatus.NOT_FOUND);
-
-        }
+        Child updateChild = childService.updateChild(child);
         log.debug("Controller: Child updated with ID: " + updateChild.getId());
         return new ResponseEntity<>(updateChild, HttpStatus.OK);
     }

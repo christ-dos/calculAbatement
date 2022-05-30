@@ -6,8 +6,10 @@ import com.myprojet.calculabatement.exceptions.MonthlyNotFoundException;
 import com.myprojet.calculabatement.models.Child;
 import com.myprojet.calculabatement.models.Month;
 import com.myprojet.calculabatement.models.Monthly;
-import com.myprojet.calculabatement.repositories.ChildRepository;
-import com.myprojet.calculabatement.services.*;
+import com.myprojet.calculabatement.services.CalculateTaxReliefService;
+import com.myprojet.calculabatement.services.ChildServiceImpl;
+import com.myprojet.calculabatement.services.TaxableSalaryServiceImpl;
+import com.myprojet.calculabatement.services.TotalAnnualTaxReliefsService;
 import com.myprojet.calculabatement.utils.ConvertObjectToJsonString;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,7 +28,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -41,14 +44,16 @@ class ChildRestControllerTest {
     private MockMvc mockMvcChild;
 
     @MockBean
-    private TaxableSalaryService taxableSalaryServiceMock;
+    private TaxableSalaryServiceImpl taxableSalaryServiceMock;
+
     @MockBean
     private TotalAnnualTaxReliefsService totalAnnualTaxReliefsServiceMock;
+
     @MockBean
     private CalculateTaxReliefService calculateTaxReliefServiceMock;
 
     @MockBean
-    private ChildServiceImpl childServiceImplMock;
+    private ChildServiceImpl childServiceMock;
 
     private Child childTest;
 
@@ -72,7 +77,7 @@ class ChildRestControllerTest {
                 new Child(1, "Riboulet", "Romy", "12/01/2020", "02/05/2020", LocalDateTime.now().minusMinutes(30), "http://image.jpeg", "christine@email.fr")
         );
         //WHEN
-        when(childServiceImplMock.getChildrenByUserEmailOrderByDateAddedDesc()).thenReturn(children);
+        when(childServiceMock.getChildrenByUserEmailOrderByDateAddedDesc()).thenReturn(children);
         //THEN
         mockMvcChild.perform(MockMvcRequestBuilders.get("/child/all"))
                 .andExpect(status().isOk())
@@ -86,7 +91,7 @@ class ChildRestControllerTest {
     void getChildByIdTest_whenIdIs15_thenReturnAChildSanchezLea() throws Exception {
         //GIVEN
         //WHEN
-        when(childServiceImplMock.getChildById(anyInt())).thenReturn(childTest);
+        when(childServiceMock.getChildById(anyInt())).thenReturn(childTest);
         //THEN
         mockMvcChild.perform(MockMvcRequestBuilders.get("/child/find/15"))
                 .andExpect(status().isOk())
@@ -97,24 +102,27 @@ class ChildRestControllerTest {
     }
 
     @Test
-    void getChildByIdTest_whenChildNotFound_thenReturnStatusNotFound() throws Exception {
+    void getChildByIdTest_whenChildNotFound_thenReturnStatusNotFoundAndErrorMessage() throws Exception {
         //GIVEN
         //WHEN
-        when(childServiceImplMock.getChildById(anyInt())).thenThrow(new ChildNotFoundException("Child not found!"));
+        when(childServiceMock.getChildById(anyInt())).thenThrow(new ChildNotFoundException("Child not found!"));
         //THEN
         mockMvcChild.perform(MockMvcRequestBuilders.get("/child/find/105"))
                 .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$", is("Child not found!")))
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof ChildNotFoundException))
+                .andExpect(result -> assertEquals("Child not found!",
+                        result.getResolvedException().getMessage()))
+                .andExpect(jsonPath("$.message", is("Child not found, please try again!")))
                 .andDo(print());
     }
 
     @Test
-    void getAnnualTaxableSalaryByChildTest_whenChildHadMonthliesSaved_thenReturnResponseEntityWithTheResultAndStatusNotFound() throws Exception {
+    void getAnnualTaxableSalaryByChildTest_whenChildHadMonthliesSaved_thenReturnResponseEntityWithTheResult() throws Exception {
         //GIVEN
         //WHEN
-        when(childServiceImplMock.getChildById(anyInt())).thenReturn(childTest);
+        when(childServiceMock.getChildById(anyInt())).thenReturn(childTest);
         when(totalAnnualTaxReliefsServiceMock.getTotalAnnualReportableAmountsByChild(
-                any(Child.class),anyString())).thenReturn(637.50);
+                any(Child.class), anyString())).thenReturn(637.50);
         //THEN
         mockMvcChild.perform(MockMvcRequestBuilders.get("/child/reportableamounts?childId=15&year=2021"))
                 .andExpect(status().isOk())
@@ -126,9 +134,9 @@ class ChildRestControllerTest {
     void getAnnualReportableAmountsByChildTest_whenChildHasMonthliesSavedForYearRequested_thenReturnResponseEntityWithAnnualReportableAmounts() throws Exception {
         //GIVEN
         //WHEN
-        when(childServiceImplMock.getChildById(anyInt())).thenReturn(childTest);
+        when(childServiceMock.getChildById(anyInt())).thenReturn(childTest);
         when(totalAnnualTaxReliefsServiceMock.getTotalAnnualReportableAmountsByChild(
-                any(Child.class),anyString())).thenReturn(637.50);
+                any(Child.class), anyString())).thenReturn(637.50);
         //THEN
         mockMvcChild.perform(MockMvcRequestBuilders.get("/child/reportableamounts?childId=15&year=2021"))
                 .andExpect(status().isOk())
@@ -137,19 +145,22 @@ class ChildRestControllerTest {
     }
 
     @Test
-    void getAnnualReportableAmountsByChildTest_whenChildHasNoMonthliesForYearRequested_thenReturnResponseEntityWithErrorMessageAndStatus404() throws Exception {
+    void getAnnualReportableAmountsByChildTest_whenChildHasNoMonthliesForYearRequested_thenReturnErrorMessageAndStatus404() throws Exception {
         //GIVEN
         Child childHadNoMonthlies = new Child(
                 18, "Bernard", "Shanna", "12/01/2020",
                 "02/05/2020", "http://image.jpeg", "christine@email.fr");
         //WHEN
-        when(childServiceImplMock.getChildById(anyInt())).thenReturn(childHadNoMonthlies);
+        when(childServiceMock.getChildById(anyInt())).thenReturn(childHadNoMonthlies);
         when(totalAnnualTaxReliefsServiceMock.getTotalAnnualReportableAmountsByChild(
-                any(Child.class),anyString())).thenThrow(new MonthlyNotFoundException("Monthly not found!"));
+                any(Child.class), anyString())).thenThrow(new MonthlyNotFoundException("Monthly not found!"));
         //THEN
         mockMvcChild.perform(MockMvcRequestBuilders.get("/child/reportableamounts?childId=18&year=2021"))
                 .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$", is("Monthly not found!")))
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof MonthlyNotFoundException))
+                .andExpect(result -> assertEquals("Monthly not found!",
+                        result.getResolvedException().getMessage()))
+                .andExpect(jsonPath("$.message", is("Monthly not found, please try again!")))
                 .andDo(print());
     }
 
@@ -157,7 +168,7 @@ class ChildRestControllerTest {
     void getTaxReliefByChildTest_whenChildHasMonthliesSavedForYearRequested_thenReturnResponseEntityWithTaxReliefCalculated() throws Exception {
         //GIVEN
         //WHEN
-        when(calculateTaxReliefServiceMock.calculateTaxReliefByChild(anyString(),anyInt())).thenReturn(920D);
+        when(calculateTaxReliefServiceMock.calculateTaxReliefByChild(anyString(), anyInt())).thenReturn(920D);
         //THEN
         mockMvcChild.perform(MockMvcRequestBuilders.get("/child/taxrelief?childId=18&year=2021"))
                 .andExpect(status().isOk())
@@ -166,14 +177,17 @@ class ChildRestControllerTest {
     }
 
     @Test
-    void getTaxReliefByChildTest_whenChildHasNoMonthlies_thenReturnResponseEntityWithErrorMessageAnsStatus404() throws Exception {
+    void getTaxReliefByChildTest_whenChildHasNoMonthlies_thenReturnErrorMessageAnsStatus404() throws Exception {
         //GIVEN
-         //WHEN
-        when(calculateTaxReliefServiceMock.calculateTaxReliefByChild(anyString(),anyInt())).thenThrow(new MonthlyNotFoundException("Monthly not found!"));
+        //WHEN
+        when(calculateTaxReliefServiceMock.calculateTaxReliefByChild(anyString(), anyInt())).thenThrow(new MonthlyNotFoundException("Monthly not found!"));
         //THEN
         mockMvcChild.perform(MockMvcRequestBuilders.get("/child/taxrelief?childId=15&year=2021"))
                 .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$", is("Monthly not found!")))
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof MonthlyNotFoundException))
+                .andExpect(result -> assertEquals("Monthly not found!",
+                        result.getResolvedException().getMessage()))
+                .andExpect(jsonPath("$.message", is("Monthly not found, please try again!")))
                 .andDo(print());
     }
 
@@ -181,7 +195,7 @@ class ChildRestControllerTest {
     void addChildTest_whenChildIsNotExistsInDB_thenReturnChildAdded() throws Exception {
         //GIVEN
         //WHEN
-        when(childServiceImplMock.addChild(any(Child.class))).thenReturn(childTest);
+        when(childServiceMock.addChild(any(Child.class))).thenReturn(childTest);
         //THEN
         mockMvcChild.perform(MockMvcRequestBuilders.post("/child/add")
                         .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)
@@ -195,16 +209,19 @@ class ChildRestControllerTest {
     }
 
     @Test
-    void addChildTest_whenChildAlreadyExistsInDB_thenReturnResponseEntityWithErrorMessageAndStatusBadRequest() throws Exception {
+    void addChildTest_whenChildAlreadyExistsInDB_thenReturnErrorMessageAndStatusBadRequest() throws Exception {
         //GIVEN
         //WHEN
-        when(childServiceImplMock.addChild(any(Child.class))).thenThrow(new ChildAlreadyExistException("Child already exists, unable to add!"));
+        when(childServiceMock.addChild(any(Child.class))).thenThrow(new ChildAlreadyExistException("Child already exists, unable to add!"));
         //THEN
         mockMvcChild.perform(MockMvcRequestBuilders.post("/child/add")
                         .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)
                         .content(ConvertObjectToJsonString.asJsonString(childTest)))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$", is("Child already exists, unable to add!")))
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof ChildAlreadyExistException))
+                .andExpect(result -> assertEquals("Child already exists, unable to add!",
+                        result.getResolvedException().getMessage()))
+                .andExpect(jsonPath("$.message", is("The child that we try to save already exist, please process to an update!")))
                 .andDo(print());
     }
 
@@ -214,7 +231,7 @@ class ChildRestControllerTest {
         Child childTestUpdated = new Child(
                 15, "LastnameUpdated", "FirstnameUpdated", "12/01/2020", "02/05/2020", "http://image.jpeg", "christine@email.fr");
         //WHEN
-        when(childServiceImplMock.updateChild(any(Child.class))).thenReturn(childTestUpdated);
+        when(childServiceMock.updateChild(any(Child.class))).thenReturn(childTestUpdated);
         //THEN
         mockMvcChild.perform(MockMvcRequestBuilders.put("/child/update")
                         .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)
@@ -226,24 +243,27 @@ class ChildRestControllerTest {
     }
 
     @Test
-    void updateChildTest_ChildNotFound_thenReturnResponseEntityWithErrorMessageAndStatusNotFound() throws Exception {
+    void updateChildTest_ChildNotFound_thenReturnErrorMessageAndStatus404() throws Exception {
         //GIVEN
         //WHEN
-        when(childServiceImplMock.updateChild(any(Child.class))).thenThrow(new ChildNotFoundException("Child not found, unable to update!"));
+        when(childServiceMock.updateChild(any(Child.class))).thenThrow(new ChildNotFoundException("Child not found, unable to update!"));
         //THEN
         mockMvcChild.perform(MockMvcRequestBuilders.put("/child/update")
                         .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)
                         .content(ConvertObjectToJsonString.asJsonString(childTest)))
                 .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$", is("Child not found, unable to update!")))
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof ChildNotFoundException))
+                .andExpect(result -> assertEquals("Child not found, unable to update!",
+                        result.getResolvedException().getMessage()))
+                .andExpect(jsonPath("$.message", is("Child not found, please try again!")))
                 .andDo(print());
     }
 
     @Test
-    void deleteChildTest_thenReturnResponseEntityWithASuccessMessage() throws Exception {
+    void deleteChildTest_thenReturnASuccessMessage() throws Exception {
         //GIVEN
         //WHEN
-        when(childServiceImplMock.deleteChildById(anyInt())).thenReturn("Child deleted with success!");
+        when(childServiceMock.deleteChildById(anyInt())).thenReturn("Child deleted with success!");
         //THEN
         mockMvcChild.perform(MockMvcRequestBuilders.delete("/child/delete/15"))
                 .andExpect(status().isOk())

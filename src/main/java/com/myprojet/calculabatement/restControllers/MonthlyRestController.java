@@ -1,6 +1,7 @@
 package com.myprojet.calculabatement.restControllers;
 
 import com.myprojet.calculabatement.exceptions.MonthlyAlreadyExistException;
+import com.myprojet.calculabatement.exceptions.NetBrutCoefficientNotNullException;
 import com.myprojet.calculabatement.models.Month;
 import com.myprojet.calculabatement.models.Monthly;
 import com.myprojet.calculabatement.services.MonthlyService;
@@ -25,13 +26,8 @@ public class MonthlyRestController {
     private TaxableSalaryService taxableSalaryService;
 
     @PostMapping("/add")
-    public ResponseEntity<Monthly> addMonthly(@RequestBody Monthly monthly) {
-        Monthly newMonthly = null;
-        try {
-            newMonthly = monthlyService.addMonthly(monthly);
-        } catch (MonthlyAlreadyExistException e) {
-            e.getMessage();
-        }
+    public ResponseEntity<?> addMonthly(@RequestBody Monthly monthly) {
+        Monthly  newMonthly = monthlyService.addMonthly(monthly);
         log.debug("Controller: Monthly added for child with ID: " + monthly.getChildId());
         return new ResponseEntity<>(newMonthly, HttpStatus.CREATED);
     }
@@ -58,7 +54,7 @@ public class MonthlyRestController {
     }
 
     @GetMapping("/taxablesalarysibling")
-    public ResponseEntity<Double> getTaxableSalarySibling(double netSalary, double netBrutCoefficient, double maintenanceCost) {
+    public ResponseEntity<?> getTaxableSalarySibling(double netSalary, double netBrutCoefficient, double maintenanceCost) {
         double taxableSalarySibling = taxableSalaryService.calculateTaxableSalarySiblingByMonth(netSalary, netBrutCoefficient, maintenanceCost);
         log.info("Controller: Display taxable salary sibling");
         return new ResponseEntity<>(taxableSalarySibling, HttpStatus.OK);
