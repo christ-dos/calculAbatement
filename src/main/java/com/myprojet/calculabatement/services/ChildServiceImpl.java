@@ -77,7 +77,7 @@ public class ChildServiceImpl implements ChildService {
         Optional<Child> childFound = childRepository.findById(childId);
         if (!childFound.isPresent()) {
             log.error("Service: Child not found with ID: " + childId);
-            throw new ChildNotFoundException("Service: L'enfant n'a pas été trouvé!");
+            throw new ChildNotFoundException("L'enfant n'a pas été trouvé!");
         }
         log.debug("Service: Child found with ID: " + childId);
         return childFound.get();

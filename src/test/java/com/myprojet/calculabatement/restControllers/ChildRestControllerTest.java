@@ -69,7 +69,7 @@ class ChildRestControllerTest {
     }
 
     @Test
-    void getAllChildrenTest_theReturnAnIterableOfChild() throws Exception {
+    void getAllChildrenTest_theReturnAnIterableOfChildOrderByDateAddedDesc() throws Exception {
         //GIVEN
         List<Child> children = Arrays.asList(
                 new Child(3, "Charton", "Nathan", "14/05/2021", "24/08/2021", LocalDateTime.now(), "http://image.jpeg", "christine@email.fr"),
@@ -117,14 +117,14 @@ class ChildRestControllerTest {
     }
 
     @Test
-    void getAnnualTaxableSalaryByChildTest_whenChildHadMonthliesSaved_thenReturnResponseEntityWithTheResult() throws Exception {
+    void getAnnualTaxableSalaryByChildTest_whenChildHasMonthliesSaved_thenReturnResponseEntityWithTheResult() throws Exception {
         //GIVEN
         //WHEN
         when(childServiceMock.getChildById(anyInt())).thenReturn(childTest);
-        when(totalAnnualTaxReliefsServiceMock.getTotalAnnualReportableAmountsByChild(
-                any(Child.class), anyString())).thenReturn(637.50);
+        when(taxableSalaryServiceMock.getSumTaxableSalaryByChildAndByYear(
+                anyString(), anyInt())).thenReturn(637.5);
         //THEN
-        mockMvcChild.perform(MockMvcRequestBuilders.get("/child/reportableamounts?childId=15&year=2021"))
+        mockMvcChild.perform(MockMvcRequestBuilders.get("/child/taxablesalary?childId=15&year=2021"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", is(637.5)))
                 .andDo(print());
@@ -136,7 +136,7 @@ class ChildRestControllerTest {
         //WHEN
         when(childServiceMock.getChildById(anyInt())).thenReturn(childTest);
         when(totalAnnualTaxReliefsServiceMock.getTotalAnnualReportableAmountsByChild(
-                any(Child.class), anyString())).thenReturn(637.50);
+                any(Child.class), anyString())).thenReturn(637.5);
         //THEN
         mockMvcChild.perform(MockMvcRequestBuilders.get("/child/reportableamounts?childId=15&year=2021"))
                 .andExpect(status().isOk())
