@@ -82,8 +82,8 @@ public class ChildRestController {
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteChild(@Valid @PathVariable("id") int childId) {
-        String message = childService.deleteChildById(childId);
+        String successMessage = childService.deleteChildById(childId);
         log.debug("Controller: Child deleted with ID: " + childId);
-        return new ResponseEntity<>(message, HttpStatus.OK);
+        return new ResponseEntity<>(successMessage, HttpStatus.OK);
     }
 }

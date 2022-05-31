@@ -102,7 +102,7 @@ public class MonthlyServiceImplTest {
         doNothing().when(monthlyRepositoryMock).deleteById(monthlyId);
         String responseDeletionMonthly = monthlyServiceTest.deleteMonthlyById(monthlyId);
         //THEN
-        assertEquals("La déclaration mesuelle a été supprimé avec succes!", responseDeletionMonthly);
+        assertEquals("La déclaration mensuelle a été supprimé avec succés!", responseDeletionMonthly);
         verify(monthlyRepositoryMock, times(1)).deleteById(anyInt());
 
     }

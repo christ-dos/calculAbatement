@@ -260,14 +260,14 @@ class ChildRestControllerTest {
     }
 
     @Test
-    void deleteChildTest_thenReturnASuccessMessage() throws Exception {
+    void deleteChildTest_thenReturnSuccessMessage() throws Exception {
         //GIVEN
         //WHEN
-        when(childServiceMock.deleteChildById(anyInt())).thenReturn("Child deleted with success!");
+        when(childServiceMock.deleteChildById(anyInt())).thenReturn("L'enfant a été supprimé!");
         //THEN
         mockMvcChild.perform(MockMvcRequestBuilders.delete("/child/delete/15"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", is("Child deleted with success!")))
+                .andExpect(jsonPath("$", is("L'enfant a été supprimé!")))
                 .andDo(print());
     }
 }

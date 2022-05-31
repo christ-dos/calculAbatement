@@ -98,7 +98,7 @@ public class ChildServiceImplTest {
         doNothing().when(childRepositoryMock).deleteById(childExist.getId());
         String responseDeletionChild = childServiceTest.deleteChildById(childExist.getId());
         //THEN
-        assertEquals("L'enfant a été supprimé avec succes!", responseDeletionChild);
+        assertEquals("L'enfant a été supprimé avec succés!", responseDeletionChild);
         verify(childRepositoryMock, times(1)).deleteById(anyInt());
     }
 
@@ -116,7 +116,7 @@ public class ChildServiceImplTest {
         doNothing().when(childRepositoryMock).deleteById(childExistWithMonthlies.getId());
         String responseDeletionChild = childServiceTest.deleteChildById(childExistWithMonthlies.getId());
         //THEN
-        assertEquals("L'enfant a été supprimé avec succes!", responseDeletionChild);
+        assertEquals("L'enfant a été supprimé avec succés!", responseDeletionChild);
         verify(childRepositoryMock, times(1)).deleteById(anyInt());
     }
 

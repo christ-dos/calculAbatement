@@ -57,7 +57,7 @@ public class MonthlyServiceImpl implements MonthlyService {
     public String deleteMonthlyById(int monthlyId) {
         monthlyRepository.deleteById(monthlyId);
         log.debug("Service: Monthly deleted with ID: " + monthlyId);
-        return "La déclaration mesuelle a été supprimé avec succes!";
+        return "La déclaration mensuelle a été supprimé avec succés!";
     }
 
     @Override
