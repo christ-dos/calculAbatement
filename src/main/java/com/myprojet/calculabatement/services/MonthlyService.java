@@ -13,7 +13,9 @@ public interface MonthlyService {
 
     Iterable<Monthly> getAllMonthlyByChildId(int childId);
 
-    Iterable<Monthly> getAllMonthlyByYear(String year);
+    Iterable<Monthly> getAllMonthlyByYearAndChildIdOrderByMonthDesc(String year, int childId);
+
+    Iterable<Monthly> getMonthliesByChildIdOrderByYearDescMonthDesc(int childId);
 
     Monthly getMonthlyById(int monthlyId);
 }

@@ -4,8 +4,11 @@ import com.myprojet.calculabatement.models.Child;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public interface ChildRepository extends CrudRepository<Child,Integer> {
+import java.util.Optional;
 
-    Iterable<Child> findChildrenByUserEmail(String userEmail);
+@Repository
+public interface ChildRepository extends CrudRepository<Child, Integer> {
+
+    Iterable<Child> findChildrenByUserEmailOrderByDateAddedDesc(String userEmail);
+
 }

@@ -9,10 +9,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Slf4j
 @Service
+@Transactional
 public class ChildServiceImpl implements ChildService {
     private ChildRepository childRepository;
     private final static String currentUser = "christine@email.fr";
@@ -29,7 +32,9 @@ public class ChildServiceImpl implements ChildService {
             log.error("Service: Child with ID: "+ child.getId() + " already exists!");
             throw new ChildAlreadyExistException("L'enfant que vous essayez d'ajouter existe déja!");
         }
-        log.debug("Service: Child added with email: " + child.getId());
+        child.setUserEmail(SecurityUtilities.getCurrentUser());
+        child.setDateAdded(LocalDateTime.now());
+        log.debug("Service: Child added for user email: " + child.getId());
         return childRepository.save(child);
     }
 
@@ -43,7 +48,12 @@ public class ChildServiceImpl implements ChildService {
         childToUpdate.get().setFirstname(child.getFirstname());
         childToUpdate.get().setLastname(child.getLastname());
         childToUpdate.get().setBeginContract(child.getBeginContract());
+        childToUpdate.get().setEndContract(child.getEndContract());
+        childToUpdate.get().setFeesLunch(child.getFeesLunch());
+        childToUpdate.get().setFeesSnack(child.getFeesSnack());
+        childToUpdate.get().setDateAdded(LocalDateTime.now());
         childToUpdate.get().setBirthDate(child.getBirthDate());
+        childToUpdate.get().setImageUrl(child.getImageUrl());
 
         log.debug("Service: Child updated with ID: " + child.getId());
         return childRepository.save(childToUpdate.get());
@@ -53,12 +63,13 @@ public class ChildServiceImpl implements ChildService {
     public String deleteChildById(int childId) {
         childRepository.deleteById(childId);
         log.debug("Service: Child deleted with ID: " + childId);
-        return "L'enfant a été supprimé avec succes!";
+        return "L'enfant a été supprimé avec succés!";
     }
 
     @Override
-    public Iterable<Child> getChildrenByUserEmail() {
-        return childRepository.findChildrenByUserEmail(SecurityUtilities.getCurrentUser());
+    public Iterable<Child> getChildrenByUserEmailOrderByDateAddedDesc() {
+        log.info("Service: list of children by user ordered by date added found!");
+        return childRepository.findChildrenByUserEmailOrderByDateAddedDesc(SecurityUtilities.getCurrentUser());
     }
 
     @Override
@@ -68,7 +79,7 @@ public class ChildServiceImpl implements ChildService {
             log.error("Service: Child not found with ID: " + childId);
             throw new ChildNotFoundException("Service: L'enfant n'a pas été trouvé!");
         }
-        log.debug("Service: Child found with: " + childId);
+        log.debug("Service: Child found with ID: " + childId);
         return childFound.get();
     }
 }

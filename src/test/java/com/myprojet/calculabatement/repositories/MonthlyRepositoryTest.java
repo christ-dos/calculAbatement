@@ -1,6 +1,7 @@
 package com.myprojet.calculabatement.repositories;
 
 import com.myprojet.calculabatement.models.Child;
+import com.myprojet.calculabatement.models.Month;
 import com.myprojet.calculabatement.models.Monthly;
 import com.myprojet.calculabatement.models.User;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,7 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 
-import java.time.Month;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -36,22 +37,25 @@ public class MonthlyRepositoryTest {
         User userSaved = new User("christine@email.fr", "pass", "Duarte", "Christine");
         userRepositoryTest.save(userSaved);
 
-        Child childSaved = new Child(1, "Benoit", "Evan", "14/12/2014", "15/03/2020", "christine@email.fr");
-        childRepositoryTest.save(childSaved);
+        Child childSavedOne = new Child(1, "Benoit", "Evan", "14/12/2014", "15/03/2020", LocalDateTime.now(), "http://image.jpeg","christine@email.fr");
+        childRepositoryTest.save(childSavedOne);
+        Child childSavedTwo = new Child(2, "Bernard", "Jean", "14/12/2014", "15/03/2020", LocalDateTime.now(), "http://image.jpeg","christine@email.fr");
+        childRepositoryTest.save(childSavedTwo);
 
-        Monthly monthlyTest = new Monthly(1, Month.JANUARY, "2022", 650D, 20, 20, 20, 0, 1);
+
+        Monthly monthlyTest = new Monthly(1, Month.JANVIER, "2022", 650D, 20, 20, 20, 0, 1);
         monthlyRepositoryTest.save(monthlyTest);
     }
 
     @Test
     public void saveMonthlyTest_thenReturnMonthlyAdded() {
         //GIVEN
-        Monthly monthlyToSave = new Monthly(2, Month.JANUARY, "2022", 650D, 20, 20, 20, 0, 1);
+        Monthly monthlyToSave = new Monthly(2, Month.JANVIER, "2022", 650D, 20, 20, 20, 0, 1);
         //WHEN
         Monthly monthlyResult = monthlyRepositoryTest.save(monthlyToSave);
         //THEN
         assertEquals(2, monthlyResult.getMonthlyId());
-        assertEquals(Month.JANUARY, monthlyResult.getMonth());
+        assertEquals(Month.JANVIER, monthlyResult.getMonth());
         assertEquals("2022", monthlyResult.getYear());
         assertEquals(1, monthlyResult.getChildId());
     }
@@ -68,7 +72,7 @@ public class MonthlyRepositoryTest {
     @Test
     public void existByIdTest_whenMonthlyNotExist_thenReturnFalse() {
         //GIVEN
-        Monthly monthlyTest = new Monthly(999, Month.JANUARY, "2022", 650D, 20, 20, 20, 0, 1);
+        Monthly monthlyTest = new Monthly(999, Month.JANVIER, "2022", 650D, 20, 20, 20, 0, 1);
         //WHEN
         boolean monthlyNotExist = monthlyRepositoryTest.existsById(999);
         //THEN
@@ -93,11 +97,11 @@ public class MonthlyRepositoryTest {
     public void findAllTest_whenMonthliesContainThreeElements_thenReturnIterableWithThreeElements() {
         //GIVEN
         List<Monthly> monthlies = Arrays.asList(
-                new Monthly(1, Month.JANUARY, "2022", 650D, 20, 20, 20, 0, 1),
-                new Monthly(2, Month.FEBRUARY, "2022", 650D, 20, 20, 20, 0, 1),
-                new Monthly(3, Month.MARCH, "2022", 650D, 20, 20, 20, 0, 2)
+                new Monthly(1, Month.JANVIER, "2022", 650D, 20, 20, 20, 0, 1),
+                new Monthly(2, Month.FEVRIER, "2022", 650D, 20, 20, 20, 0, 1),
+                new Monthly(3, Month.MARS, "2022", 650D, 20, 20, 20, 0, 2)
         );
-        Child childSavedIdTwo = new Child(2, "Benoit", "Evan", "14/12/2014", "15/03/2020", "christine@email.fr");
+        Child childSavedIdTwo = new Child(2, "Benoit", "Evan", "14/12/2014", "15/03/2020",LocalDateTime.now(), "http://image.jpeg", "christine@email.fr");
         //WHEN
         childRepositoryTest.save(childSavedIdTwo);
         monthlyRepositoryTest.saveAll(monthlies);
@@ -114,11 +118,11 @@ public class MonthlyRepositoryTest {
     public void findMonthlyByChildIdTest_whenMonthliesContainThreeElements_thenReturnIterableWithTwoElementsWithChildIdOne() {
         //GIVEN
         List<Monthly> monthlies = Arrays.asList(
-                new Monthly(1, Month.JANUARY, "2022", 650D, 20, 20, 20, 0, 1),
-                new Monthly(2, Month.FEBRUARY, "2022", 650D, 20, 20, 20, 0, 1),
-                new Monthly(3, Month.MARCH, "2022", 650D, 20, 20, 20, 0, 2)
+                new Monthly(1, Month.JANVIER, "2022", 650D, 20, 20, 20, 0, 1),
+                new Monthly(2, Month.FEVRIER, "2022", 650D, 20, 20, 20, 0, 1),
+                new Monthly(3, Month.MARS, "2022", 650D, 20, 20, 20, 0, 2)
         );
-        Child childSavedIdTwo = new Child(2, "Benoit", "Evan", "14/12/2014", "15/03/2020", "christine@email.fr");
+        Child childSavedIdTwo = new Child(2, "Benoit", "Evan", "14/12/2014", "15/03/2020",LocalDateTime.now(), "http://image.jpeg", "christine@email.fr");
         //WHEN
         childRepositoryTest.save(childSavedIdTwo);
         monthlyRepositoryTest.saveAll(monthlies);
@@ -135,9 +139,9 @@ public class MonthlyRepositoryTest {
     public void findMonthlyByYearTest_whenMonthliesContainThreeElements_thenReturnIterableWithTwoElementsWithYear2022() {
         //GIVEN
         List<Monthly> monthlies = Arrays.asList(
-                new Monthly(1, Month.JANUARY, "2021", 650D, 20, 20, 20, 10.0, 1),
-                new Monthly(2, Month.FEBRUARY, "2022", 650D, 20, 20, 20, 10.5, 1),
-                new Monthly(3, Month.MARCH, "2022", 650D, 20, 20, 20, 15, 1)
+                new Monthly(1, Month.JANVIER, "2021", 650D, 20, 20, 20, 10.0, 1),
+                new Monthly(2, Month.FEVRIER, "2022", 650D, 20, 20, 20, 10.5, 1),
+                new Monthly(3, Month.MARS, "2022", 650D, 20, 20, 20, 15, 1)
         );
         //WHEN
         monthlyRepositoryTest.saveAll(monthlies);
@@ -149,6 +153,31 @@ public class MonthlyRepositoryTest {
         assertEquals("2022", monthliesResult.get(0).getYear());
         assertEquals("2022", monthliesResult.get(1).getYear());
     }
+
+    @Test
+    public void findMonthlyByYearAndChildIdOrderByMonthDescTest_whenMonthliesContainFourElements_thenReturnIterableWithTwoElementsForYear2022AndForChildIdOneAndOrderedByMonthDesc() {
+        //GIVEN
+        List<Monthly> monthlies = Arrays.asList(
+                new Monthly(1, Month.JANVIER, "2021", 650D, 20, 20, 20, 10.0, 1),
+                new Monthly(2, Month.FEVRIER, "2022", 650D, 20, 20, 20, 10.5, 1),
+                new Monthly(3, Month.DECEMBRE, "2022", 650D, 20, 20, 20, 15, 1),
+                new Monthly(4, Month.AVRIL, "2022", 650D, 20, 20, 20, 15, 2)
+        );
+        //WHEN
+        monthlyRepositoryTest.saveAll(monthlies);
+        List<Monthly> monthliesResult = (List<Monthly>) monthlyRepositoryTest.findMonthlyByYearAndChildIdOrderByMonthDesc("2022", 1);
+        //THEN
+        assertEquals(2, monthliesResult.size());
+        //Ordered by Month desc DECEMBRE is after FEVRIER
+        assertEquals(Month.DECEMBRE, monthliesResult.get(0).getMonth());
+        assertEquals(Month.FEVRIER, monthliesResult.get(1).getMonth());
+        assertEquals("2022", monthliesResult.get(0).getYear());
+        assertEquals("2022", monthliesResult.get(1).getYear());
+        //verify that no monthly got for child id 2
+        assertNotEquals(2,monthliesResult.get(0).getChildId());
+        assertNotEquals(2, monthliesResult.get(1).getChildId());
+    }
+
 
     @Test
     public void findByIdTest_whenMonthlyExist_thenReturnMonthlyFound() {
@@ -163,7 +192,7 @@ public class MonthlyRepositoryTest {
     @Test
     public void findByIdTest_whenMonthlyNotExist_thenReturnEmptyOptional() {
         //GIVEN
-        Monthly monthlyTest = new Monthly(999, Month.JANUARY, "2022", 650D, 20, 20, 20, 0, 1);
+        Monthly monthlyTest = new Monthly(999, Month.JANVIER, "2022", 650D, 20, 20, 20, 0, 1);
         //WHEN
         Optional<Monthly> monthlyFound = monthlyRepositoryTest.findById(999);
         //THEN

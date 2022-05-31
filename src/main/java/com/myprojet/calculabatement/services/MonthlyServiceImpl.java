@@ -2,11 +2,13 @@ package com.myprojet.calculabatement.services;
 
 import com.myprojet.calculabatement.exceptions.MonthlyAlreadyExistException;
 import com.myprojet.calculabatement.exceptions.MonthlyNotFoundException;
+import com.myprojet.calculabatement.models.Month;
 import com.myprojet.calculabatement.models.Monthly;
 import com.myprojet.calculabatement.repositories.MonthlyRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 
 import java.util.Optional;
 
@@ -22,12 +24,13 @@ public class MonthlyServiceImpl implements MonthlyService {
 
     @Override
     public Monthly addMonthly(Monthly monthly) {
+       // Month month = monthly.getMonth(); // todo clean code
         boolean monthlyExists = monthlyRepository.existsById(monthly.getMonthlyId());
         if (monthlyExists) {
             log.error("Service: monthly added with ID: " + monthly.getMonthlyId() + " already exists!");
             throw new MonthlyAlreadyExistException("La déclaration mensuelle que vous essayez d'ajouter existe déja");
         }
-        log.debug("Service: Monthly added with ID: " + monthly.getMonthlyId());
+        log.debug("Service: Monthly added to children ID: " + monthly.getChildId());
         return monthlyRepository.save(monthly);
     }
 
@@ -43,7 +46,7 @@ public class MonthlyServiceImpl implements MonthlyService {
         monthlyToUpdate.get().setDayWorked(monthly.getDayWorked());
         monthlyToUpdate.get().setHoursWorked(monthly.getHoursWorked());
         monthlyToUpdate.get().setLunch(monthly.getLunch());
-        monthlyToUpdate.get().setTaste(monthly.getTaste());
+        monthlyToUpdate.get().setSnack(monthly.getSnack());
         monthlyToUpdate.get().setTaxableSalary(monthly.getTaxableSalary());
 
         log.debug("Service: Monthly updated with ID: " + monthly.getMonthlyId());
@@ -54,12 +57,12 @@ public class MonthlyServiceImpl implements MonthlyService {
     public String deleteMonthlyById(int monthlyId) {
         monthlyRepository.deleteById(monthlyId);
         log.debug("Service: Monthly deleted with ID: " + monthlyId);
-        return "La déclaration mesuelle a été supprimé avec succes!";
+        return "La déclaration mensuelle a été supprimé avec succés!";
     }
 
     @Override
     public Iterable<Monthly> getAllMonthly() {
-        log.info("Service: List of all Monthly is displayed!");
+        log.info("Service: List of all Monthlies is displayed!");
         return monthlyRepository.findAll();
     }
 
@@ -70,12 +73,18 @@ public class MonthlyServiceImpl implements MonthlyService {
     }
 
     @Override
-    public Iterable<Monthly> getAllMonthlyByYear(String year){
-        return monthlyRepository.findMonthlyByYear(year);
+    public Iterable<Monthly> getAllMonthlyByYearAndChildIdOrderByMonthDesc(String year, int childId){ // todo implement test in repository and monthlyServiceImpl
+        return monthlyRepository.findMonthlyByYearAndChildIdOrderByMonthDesc(year, childId);
+    }
+
+    @Override
+    public Iterable<Monthly> getMonthliesByChildIdOrderByYearDescMonthDesc(int childId){
+        return monthlyRepository.findMonthlyByChildIdOrderByYearDescMonthDesc(childId);
     }
 
     @Override
     public Monthly getMonthlyById(int monthlyId) {
+
         Optional<Monthly> monthlyFound = monthlyRepository.findById(monthlyId);
         if (!monthlyFound.isPresent()) {
             log.error("Service: Monthly not found with ID: " + monthlyId);
