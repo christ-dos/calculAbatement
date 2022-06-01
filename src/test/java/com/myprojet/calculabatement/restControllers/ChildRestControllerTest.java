@@ -64,7 +64,7 @@ class ChildRestControllerTest {
                 Arrays.asList(
                         new Monthly(1, Month.JANVIER, "2021", 500D, 20, 20, 10, 0, 1),
                         new Monthly(2, Month.FEVRIER, "2021", 500D, 20, 20, 10, 0, 1),
-                        new Monthly(3, Month.MARS, "2021", 500D, 20, 20, 10, 0, 2)
+                        new Monthly(3, Month.MARS, "2021", 500D, 20, 20, 10, 0, 1)
                 ));
     }
 
@@ -192,7 +192,7 @@ class ChildRestControllerTest {
     }
 
     @Test
-    void addChildTest_whenChildIsNotExistsInDB_thenReturnChildAdded() throws Exception {
+    void addChildTest_whenChildNotExistsInDB_thenReturnChildAdded() throws Exception {
         //GIVEN
         //WHEN
         when(childServiceMock.addChild(any(Child.class))).thenReturn(childTest);

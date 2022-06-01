@@ -1,18 +1,23 @@
 package com.myprojet.calculabatement.IT;
 
+import com.myprojet.calculabatement.exceptions.ChildAlreadyExistException;
 import com.myprojet.calculabatement.exceptions.ChildNotFoundException;
+import com.myprojet.calculabatement.exceptions.MonthlyNotFoundException;
 import com.myprojet.calculabatement.models.Child;
 import com.myprojet.calculabatement.models.Month;
 import com.myprojet.calculabatement.models.Monthly;
 import com.myprojet.calculabatement.repositories.ChildRepository;
+import com.myprojet.calculabatement.services.CalculateTaxReliefService;
 import com.myprojet.calculabatement.services.ChildService;
 import com.myprojet.calculabatement.services.TaxableSalaryService;
 import com.myprojet.calculabatement.services.TotalAnnualTaxReliefsService;
+import com.myprojet.calculabatement.utils.ConvertObjectToJsonString;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
@@ -25,8 +30,6 @@ import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -49,7 +52,11 @@ public class ChildTestIT {
     @Autowired
     private TotalAnnualTaxReliefsService totalAnnualTaxReliefsServiceTest;
 
-    @Autowired private TaxableSalaryService taxableSalaryServiceTest;
+    @Autowired
+    private TaxableSalaryService taxableSalaryServiceTest;
+
+    @Autowired
+    private CalculateTaxReliefService calculateTaxReliefService;
 
     private Child childTest;
 
@@ -158,7 +165,7 @@ public class ChildTestIT {
                 .andDo(print());
 
         double taxableSalaryChildIdOne = taxableSalaryServiceTest.getSumTaxableSalaryByChildAndByYear("2021", 1);
-        assertEquals(1500D,taxableSalaryChildIdOne );
+        assertEquals(1500D, taxableSalaryChildIdOne);
     }
 
     @Test
@@ -172,10 +179,147 @@ public class ChildTestIT {
                 .andExpect(jsonPath("$", is(637.5)))
                 .andDo(print());
 
-        double annualReportableAmountForChildIdOne = totalAnnualTaxReliefsServiceTest.getTotalAnnualReportableAmountsByChild(childTest,"2021");
+        double annualReportableAmountForChildIdOne = totalAnnualTaxReliefsServiceTest.getTotalAnnualReportableAmountsByChild(childTest, "2021");
         assertEquals(637.50, annualReportableAmountForChildIdOne);
     }
-    ///todo continu implement annulReportableAmouts gerer lexception
+
+    @Test
+    void getAnnualReportableAmountsByChildTest_whenChildHasNoMonthliesForYearRequested_thenReturnErrorMessageAndStatus404() throws Exception {
+        //GIVEN
+        Child childHasNoMonthliesIn2021 = new Child(
+                1, "Bernard", "Shanna", "12/01/2020",
+                "02/05/2020", "http://image.jpeg", "christine@email.fr", Arrays.asList(
+                new Monthly(1, Month.JANVIER, "2022", 500D, 20, 20, 10, 0, 1)
+        ));
+        childServiceTest.addChild(childHasNoMonthliesIn2021);
+        //WHEN
+        //THEN
+        mockMvcChild.perform(MockMvcRequestBuilders.get("/child/reportableamounts?childId=1&year=2021"))
+                .andExpect(status().isNotFound())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof MonthlyNotFoundException))
+                .andExpect(result -> assertEquals("Il n'y a aucune entrée enregistré pour l'année: 2021",
+                        result.getResolvedException().getMessage()))
+                .andExpect(jsonPath("$.message", is("Monthly not found, please try again!")))
+                .andDo(print());
+
+        MonthlyNotFoundException thrown = assertThrows(MonthlyNotFoundException.class, () -> {
+            totalAnnualTaxReliefsServiceTest.getTotalAnnualReportableAmountsByChild(childHasNoMonthliesIn2021, "2021");
+        }, "Monthly not found, please try again!");
+        assertEquals("Il n'y a aucune entrée enregistré pour l'année: 2021", thrown.getMessage());
+    }
+
+    @Test
+    void getTaxReliefByChildTest_whenChildHasMonthliesSavedForYearRequested_thenReturnResponseEntityWithTaxReliefCalculated() throws Exception {
+        //GIVEN
+        childServiceTest.addChild(childTest);
+        //WHEN
+        //THEN
+        mockMvcChild.perform(MockMvcRequestBuilders.get("/child/taxrelief?childId=1&year=2021"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", is(922.50)))
+                .andDo(print());
+
+        double taxReliefByChild = calculateTaxReliefService.calculateTaxReliefByChild("2021", childTest.getId());
+        assertEquals(922.5, taxReliefByChild);
+    }
+
+    @Test
+    void getTaxReliefByChildTest_whenChildHasNoMonthlies_thenReturnErrorMessageAnsStatus404() throws Exception {
+        //GIVEN
+        Child childHasNoMonthliesIn2021 = new Child(
+                1, "Bernard", "Shanna", "12/01/2020",
+                "02/05/2020", "http://image.jpeg", "christine@email.fr", Arrays.asList(
+                new Monthly(1, Month.JANVIER, "2022", 500D, 20, 20, 10, 0, 1)
+        ));
+        childServiceTest.addChild(childHasNoMonthliesIn2021);
+        //WHEN
+        //THEN
+        mockMvcChild.perform(MockMvcRequestBuilders.get("/child/taxrelief?childId=1&year=2021"))
+                .andExpect(status().isNotFound())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof MonthlyNotFoundException))
+                .andExpect(result -> assertEquals("Il n'y a aucune entrée enregistré pour l'année: 2021",
+                        result.getResolvedException().getMessage()))
+                .andExpect(jsonPath("$.message", is("Monthly not found, please try again!")))
+                .andDo(print());
+
+        MonthlyNotFoundException thrown = assertThrows(MonthlyNotFoundException.class, () -> {
+            calculateTaxReliefService.calculateTaxReliefByChild("2021", 1);
+        }, "Monthly not found, please try again!");
+        assertEquals("Il n'y a aucune entrée enregistré pour l'année: 2021", thrown.getMessage());
+
+    }
+
+    @Test
+    void addChildTest_whenChildNotExistsInDB_thenReturnChildAdded() throws Exception {
+        //GIVEN
+        Child childToAdd = new Child(
+                1, "Bernard", "Shanna", "12/01/2020",
+                "02/05/2020", "http://image.jpeg", "christine@email.fr");
+        Child childToAddInService = new Child(
+                2, "Dupont", "Sylvie", "15/01/2020",
+                "02/05/2020", "http://image.jpeg", "christine@email.fr");
+        Child childToAddInRepository = new Child(
+                3, "Pais", "Jo", "12/05/2020",
+                "02/05/2020", LocalDateTime.now(), "http://image.jpeg", "christine@email.fr");
+        //WHEN
+        //THEN
+        mockMvcChild.perform(MockMvcRequestBuilders.post("/child/add")
+                        .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)
+                        .content(ConvertObjectToJsonString.asJsonString(childToAdd)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id", is(1)))
+                .andExpect(jsonPath("$.firstname", is("Shanna")))
+                .andExpect(jsonPath("$.lastname", is("Bernard")))
+                .andExpect(jsonPath("$.birthDate", is("12/01/2020")))
+                .andDo(print());
+
+
+        Child childAddedService = childServiceTest.addChild(childToAddInService);
+        assertEquals(2, childAddedService.getId());
+        assertEquals("Sylvie", childAddedService.getFirstname());
+        assertEquals("Dupont", childAddedService.getLastname());
+        assertEquals("15/01/2020", childAddedService.getBirthDate());
+
+
+        Child childAddedRepository = childRepositoryTest.save(childToAddInRepository);
+        assertEquals(3, childAddedRepository.getId());
+        assertEquals("Jo", childAddedRepository.getFirstname());
+        assertEquals("Pais", childAddedRepository.getLastname());
+        assertEquals("12/05/2020", childAddedRepository.getBirthDate());
+
+    }
+
+    @Test
+    void addChildTest_whenChildAlreadyExistsInDB_thenReturnErrorMessageAndStatusBadRequest() throws Exception {
+        //GIVEN
+        Child childToAddAlreadyExist = new Child(
+                1, "Bernard", "Shanna", "12/01/2020",
+                "02/05/2020", "http://image.jpeg", "christine@email.fr");
+        childServiceTest.addChild(childToAddAlreadyExist);
+        //WHEN
+        //THEN
+        mockMvcChild.perform(MockMvcRequestBuilders.post("/child/add")
+                        .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)
+                        .content(ConvertObjectToJsonString.asJsonString(childToAddAlreadyExist)))
+                .andExpect(status().isBadRequest())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof ChildAlreadyExistException))
+                .andExpect(result -> assertEquals("L'enfant que vous essayez d'ajouter existe déja!",
+                        result.getResolvedException().getMessage()))
+                .andExpect(jsonPath("$.message", is("The child that we try to save already exist, please process to an update!")))
+                .andDo(print());
+
+        ChildAlreadyExistException thrown = assertThrows(ChildAlreadyExistException.class, () -> {
+            childServiceTest.addChild(childToAddAlreadyExist);
+        }, "Monthly not found, please try again!");
+        assertEquals("L'enfant que vous essayez d'ajouter existe déja!", thrown.getMessage());
+
+        Child childAlreadyExistSavedInRepository = childRepositoryTest.save(childToAddAlreadyExist);
+        assertEquals(1, childAlreadyExistSavedInRepository.getId());
+
+        List<Child> listChildrenSaved = (List<Child>) childServiceTest.getChildrenByUserEmailOrderByDateAddedDesc();
+        assertTrue(listChildrenSaved.size() == 1 );
+        assertEquals(1,listChildrenSaved.get(0).getId());
+    }
 
 
 }
