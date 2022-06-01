@@ -30,6 +30,8 @@ import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -146,7 +148,7 @@ public class ChildTestIT {
 
         ChildNotFoundException thrown = assertThrows(ChildNotFoundException.class, () -> {
             childServiceTest.getChildById(105);
-        }, "Child not found, please try again!");
+        });
         assertEquals("L'enfant n'a pas été trouvé!", thrown.getMessage());
 
         Optional<Child> childNotFoundRepository = childRepositoryTest.findById(105);
@@ -204,7 +206,7 @@ public class ChildTestIT {
 
         MonthlyNotFoundException thrown = assertThrows(MonthlyNotFoundException.class, () -> {
             totalAnnualTaxReliefsServiceTest.getTotalAnnualReportableAmountsByChild(childHasNoMonthliesIn2021, "2021");
-        }, "Monthly not found, please try again!");
+        });
         assertEquals("Il n'y a aucune entrée enregistré pour l'année: 2021", thrown.getMessage());
     }
 
@@ -244,7 +246,7 @@ public class ChildTestIT {
 
         MonthlyNotFoundException thrown = assertThrows(MonthlyNotFoundException.class, () -> {
             calculateTaxReliefService.calculateTaxReliefByChild("2021", 1);
-        }, "Monthly not found, please try again!");
+        });
         assertEquals("Il n'y a aucune entrée enregistré pour l'année: 2021", thrown.getMessage());
 
     }
@@ -310,17 +312,94 @@ public class ChildTestIT {
 
         ChildAlreadyExistException thrown = assertThrows(ChildAlreadyExistException.class, () -> {
             childServiceTest.addChild(childToAddAlreadyExist);
-        }, "Monthly not found, please try again!");
+        });
         assertEquals("L'enfant que vous essayez d'ajouter existe déja!", thrown.getMessage());
 
         Child childAlreadyExistSavedInRepository = childRepositoryTest.save(childToAddAlreadyExist);
         assertEquals(1, childAlreadyExistSavedInRepository.getId());
 
         List<Child> listChildrenSaved = (List<Child>) childServiceTest.getChildrenByUserEmailOrderByDateAddedDesc();
-        assertTrue(listChildrenSaved.size() == 1 );
-        assertEquals(1,listChildrenSaved.get(0).getId());
+        assertTrue(listChildrenSaved.size() == 1);
+        assertEquals(1, listChildrenSaved.get(0).getId());
     }
 
+    @Test
+    void updateChildTest_whenChildExists_thenReturnChildUpdated() throws Exception {
+        //GIVEN
+        Child childSaved = new Child(
+                1, "Bernard", "Shanna", "12/01/2020",
+                "02/05/2020", "http://image.jpeg", "christine@email.fr");
+        childServiceTest.addChild(childSaved);
+        Child childTestToUpdate = new Child(
+                1, "LastnameUpdated", "FirstnameUpdated", "12/01/2020", "02/05/2020", "http://image.jpeg", "christine@email.fr");
+        Child childTestToUpdateService = new Child(
+                1, "LastnameUpdatedService", "FirstnameUpdatedService", "12/01/2020", "02/05/2020", "http://image.jpeg", "christine@email.fr");
+        Child childTestToUpdateRepository = new Child(
+                1, "LastnameUpdatedRepo", "FirstnameUpdatedRepo", "12/01/2020", "02/05/2020", LocalDateTime.now(), "http://image.jpeg", "christine@email.fr");
 
+        //WHEN
+        //THEN
+        mockMvcChild.perform(MockMvcRequestBuilders.put("/child/update")
+                        .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)
+                        .content(ConvertObjectToJsonString.asJsonString(childTestToUpdate)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(1)))
+                .andExpect(jsonPath("$.firstname", is("FirstnameUpdated")))
+                .andExpect(jsonPath("$.lastname", is("LastnameUpdated")))
+                .andDo(print());
+
+        Child childUpdatedService = childServiceTest.updateChild(childTestToUpdateService);
+        assertEquals(1, childUpdatedService.getId());
+        assertEquals("FirstnameUpdatedService", childUpdatedService.getFirstname());
+        assertEquals("LastnameUpdatedService", childUpdatedService.getLastname());
+
+        Child childUpdatedRepository = childRepositoryTest.save(childTestToUpdateRepository);
+        assertEquals(1, childUpdatedRepository.getId());
+        assertEquals("FirstnameUpdatedRepo", childUpdatedRepository.getFirstname());
+        assertEquals("LastnameUpdatedRepo", childUpdatedRepository.getLastname());
+    }
+
+    @Test
+    void updateChildTest_ChildNotFound_thenReturnErrorMessageAndStatus404() throws Exception {
+        //GIVEN
+        //WHEN
+        //THEN
+        mockMvcChild.perform(MockMvcRequestBuilders.put("/child/update")
+                        .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)
+                        .content(ConvertObjectToJsonString.asJsonString(childTest)))
+                .andExpect(status().isNotFound())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof ChildNotFoundException))
+                .andExpect(result -> assertEquals("L'enfant que vous essayez de mettre à jour n'existe pas!",
+                        result.getResolvedException().getMessage()))
+                .andExpect(jsonPath("$.message", is("Child not found, please try again!")))
+                .andDo(print());
+
+        ChildNotFoundException thrown = assertThrows(ChildNotFoundException.class, () -> {
+            childServiceTest.updateChild(childTest);
+        });
+        assertEquals("L'enfant que vous essayez de mettre à jour n'existe pas!", thrown.getMessage());
+
+        List<Child> listChildren = (List<Child>) childServiceTest.getChildrenByUserEmailOrderByDateAddedDesc();
+        assertTrue(listChildren.isEmpty());
+    }
+
+    @Test
+    void deleteChildTest_thenReturnSuccessMessage() throws Exception {
+        //GIVEN
+        Child childToDelete = new Child(
+                1, "Bernard", "Shanna", "12/01/2020",
+                "02/05/2020", "http://image.jpeg", "christine@email.fr");
+        childServiceTest.addChild(childToDelete);
+        //WHEN
+        //THEN
+        mockMvcChild.perform(MockMvcRequestBuilders.delete("/child/delete/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", is("L'enfant a été supprimé avec succés!")))
+                .andDo(print());
+
+        Child childToDeleteInService = childServiceTest.addChild(childToDelete);
+        String successMessage = childServiceTest.deleteChildById(childToDeleteInService.getId());
+        assertEquals("L'enfant a été supprimé avec succés!", successMessage);
+   }
 }
 

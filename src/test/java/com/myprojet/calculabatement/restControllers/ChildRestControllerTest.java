@@ -235,7 +235,7 @@ class ChildRestControllerTest {
         //THEN
         mockMvcChild.perform(MockMvcRequestBuilders.put("/child/update")
                         .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)
-                        .content(ConvertObjectToJsonString.asJsonString(childTest)))
+                        .content(ConvertObjectToJsonString.asJsonString(childTestUpdated)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.firstname", is("FirstnameUpdated")))
                 .andExpect(jsonPath("$.lastname", is("LastnameUpdated")))
