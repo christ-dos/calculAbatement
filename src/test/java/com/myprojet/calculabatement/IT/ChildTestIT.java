@@ -30,8 +30,6 @@ import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -67,9 +65,9 @@ public class ChildTestIT {
         childTest = new Child(
                 1, "Sanchez", "Lea", "12/01/2020", "02/05/2020", null, 1.0, 0.5, LocalDateTime.now(), "http://image.jpeg", "christine@email.fr",
                 Arrays.asList(
-                        new Monthly(1, Month.JANVIER, "2021", 500D, 20, 20, 10, 0, 1),
-                        new Monthly(2, Month.FEVRIER, "2021", 500D, 20, 20, 10, 0, 1),
-                        new Monthly(3, Month.MARS, "2021", 500D, 20, 20, 10, 0, 1)
+                        new Monthly(1, Month.JANVIER, "2021", 500D, 10, 10, 10, 0, 1),
+                        new Monthly(2, Month.FEVRIER, "2021", 500D, 10, 10, 10, 0, 1),
+                        new Monthly(3, Month.MARS, "2021", 500D, 10, 10, 10, 0, 1)
                 ));
     }
 
@@ -178,11 +176,11 @@ public class ChildTestIT {
         //THEN
         mockMvcChild.perform(MockMvcRequestBuilders.get("/child/reportableamounts?childId=1&year=2021"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", is(637.5)))
+                .andExpect(jsonPath("$", is(607.5)))
                 .andDo(print());
 
         double annualReportableAmountForChildIdOne = totalAnnualTaxReliefsServiceTest.getTotalAnnualReportableAmountsByChild(childTest, "2021");
-        assertEquals(637.50, annualReportableAmountForChildIdOne);
+        assertEquals(607.50, annualReportableAmountForChildIdOne);
     }
 
     @Test
@@ -298,6 +296,7 @@ public class ChildTestIT {
                 1, "Bernard", "Shanna", "12/01/2020",
                 "02/05/2020", "http://image.jpeg", "christine@email.fr");
         childServiceTest.addChild(childToAddAlreadyExist);
+
         //WHEN
         //THEN
         mockMvcChild.perform(MockMvcRequestBuilders.post("/child/add")
@@ -311,8 +310,8 @@ public class ChildTestIT {
                 .andDo(print());
 
         ChildAlreadyExistException thrown = assertThrows(ChildAlreadyExistException.class, () -> {
-            childServiceTest.addChild(childToAddAlreadyExist);
-        });
+            childServiceTest.addChild(childToAddAlreadyExist)
+            ;});
         assertEquals("L'enfant que vous essayez d'ajouter existe déja!", thrown.getMessage());
 
         Child childAlreadyExistSavedInRepository = childRepositoryTest.save(childToAddAlreadyExist);
@@ -321,6 +320,7 @@ public class ChildTestIT {
         List<Child> listChildrenSaved = (List<Child>) childServiceTest.getChildrenByUserEmailOrderByDateAddedDesc();
         assertTrue(listChildrenSaved.size() == 1);
         assertEquals(1, listChildrenSaved.get(0).getId());
+        assertEquals("christine@email.fr", listChildrenSaved.get(0).getUserEmail());
     }
 
     @Test
@@ -400,6 +400,6 @@ public class ChildTestIT {
         Child childToDeleteInService = childServiceTest.addChild(childToDelete);
         String successMessage = childServiceTest.deleteChildById(childToDeleteInService.getId());
         assertEquals("L'enfant a été supprimé avec succés!", successMessage);
-   }
+    }
 }
 
