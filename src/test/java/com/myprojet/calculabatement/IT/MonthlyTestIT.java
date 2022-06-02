@@ -1,12 +1,15 @@
 package com.myprojet.calculabatement.IT;
 
 import com.myprojet.calculabatement.exceptions.MonthlyAlreadyExistException;
+import com.myprojet.calculabatement.exceptions.MonthlyNotFoundException;
+import com.myprojet.calculabatement.exceptions.NetBrutCoefficientNotNullException;
 import com.myprojet.calculabatement.models.Child;
 import com.myprojet.calculabatement.models.Month;
 import com.myprojet.calculabatement.models.Monthly;
 import com.myprojet.calculabatement.repositories.MonthlyRepository;
 import com.myprojet.calculabatement.services.ChildService;
 import com.myprojet.calculabatement.services.MonthlyService;
+import com.myprojet.calculabatement.services.TaxableSalaryService;
 import com.myprojet.calculabatement.utils.ConvertObjectToJsonString;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,8 +28,6 @@ import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -48,6 +49,9 @@ public class MonthlyTestIT {
 
     @Autowired
     private ChildService childServiceTest;
+
+    @Autowired
+    private TaxableSalaryService taxableSalaryService;
 
     private Monthly monthlyTest;
 
@@ -220,7 +224,147 @@ public class MonthlyTestIT {
         assertEquals("2021", monthliesByChildIdOrderByYearDescMonthDescRepository.get(2).getYear());
 
     }
-    // todo continuer avec getMonth
 
+    @Test
+    void getMonthsTest_thenReturnListOfMonths() throws Exception {
+        //GIVEN
+        List<String> monthsListTest = Arrays.asList(Month.JANVIER.toString(), Month.FEVRIER.toString(), Month.MARS.toString(),
+                Month.AVRIL.toString(), Month.MAI.toString(),
+                Month.JUIN.toString(), Month.JUILLET.toString(), Month.AOUT.toString(), Month.SEPTEMBRE.toString(), Month.OCTOBRE.toString(), Month.NOVEMBRE.toString(),
+                Month.DECEMBRE.toString());
+        //WHEN
+        //THEN
+        mockMvcMonthly.perform(MockMvcRequestBuilders.get("/monthly/months"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.[0]", is("JANVIER")))
+                .andExpect(jsonPath("$", is(monthsListTest)))
+                .andExpect(jsonPath("$.[5]", is("JUIN")))
+                .andExpect(jsonPath("$.[11]", is("DECEMBRE")))
+                .andDo(print());
+    }
 
+    @Test
+    void getTaxableSalarySiblingTest_whenNetSalaryEqual500AndNetBrutCoefficientEqual07801AndMaintenanceCostEqual30_thenReturnResult() throws Exception {
+        //GIVEN
+        //WHEN
+        //THEN
+        mockMvcMonthly.perform(MockMvcRequestBuilders.get("/monthly/taxablesalarysibling?netSalary=500&netBrutCoefficient=0.7801&maintenanceCost=30"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", is(548.26)))
+                .andDo(print());
+
+        double taxableSalarySibling = taxableSalaryService.calculateTaxableSalarySiblingByMonth(500D, 0.7801, 30);
+        assertEquals(548.26, taxableSalarySibling);
+    }
+
+    @Test
+    void getTaxableSalarySiblingTest_whenNetBrutCoefficientIsNull_thenReturnErrorMessageAndStatusBadRequest() throws Exception {
+        //GIVEN
+        //WHEN
+        //THEN
+        mockMvcMonthly.perform(MockMvcRequestBuilders.get("/monthly/taxablesalarysibling?netSalary=500&netBrutCoefficient=0D&maintenanceCost=30"))
+                .andExpect(status().isBadRequest())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof NetBrutCoefficientNotNullException))
+                .andExpect(result -> assertEquals("Le coefficient de conversion de net en brut ne peut pas être equal à 0!",
+                        result.getResolvedException().getMessage()))
+                .andExpect(jsonPath("$.message", is("The coefficient of conversion net/brut of the salary can not be null!")))
+                .andDo(print());
+
+        NetBrutCoefficientNotNullException thrown = assertThrows(NetBrutCoefficientNotNullException.class, () -> {
+            taxableSalaryService.calculateTaxableSalarySiblingByMonth(500D, 0, 30);
+        });
+        assertEquals("Le coefficient de conversion de net en brut ne peut pas être equal à 0!", thrown.getMessage());
+    }
+
+    @Test
+    void updateMonthlyTest_whenTaxableSalaryUpdatedTo550AndDayWorkedUpdatedTo15_thenReturnMonthlyUpdated() throws Exception {
+        //GIVEN
+        Monthly monthlyToUpdate = new Monthly(1, Month.JANVIER, "2021",
+                550D, 20, 20, 15, 0, 1);
+        monthlyRepositoryTest.save(monthlyTest);
+
+        List<Monthly> monthlies = (List<Monthly>) monthlyServiceTest.getAllMonthly();
+        assertTrue(monthlies.size() == 1);
+        assertEquals(1, monthlies.get(0).getMonthlyId());
+        assertEquals(1, monthlies.get(0).getChildId());
+        //WHEN
+        //THEN
+        mockMvcMonthly.perform(MockMvcRequestBuilders.put("/monthly/update")
+                        .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)
+                        .content(ConvertObjectToJsonString.asJsonString(monthlyToUpdate)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.monthlyId", is(1)))
+                .andExpect(jsonPath("$.taxableSalary", is(550D)))
+                .andExpect(jsonPath("$.dayWorked", is(15)))
+                .andExpect(jsonPath("$.childId", is(1)))
+                .andDo(print());
+
+        Monthly monthlyUpdatedService = monthlyServiceTest.updateMonthly(monthlyToUpdate);
+        assertTrue(monthlyUpdatedService != null);
+        assertEquals(1, monthlyUpdatedService.getMonthlyId());
+        assertEquals(1, monthlyUpdatedService.getChildId());
+        assertEquals(550D, monthlyUpdatedService.getTaxableSalary());
+        assertEquals(15, monthlyUpdatedService.getDayWorked());
+
+        Monthly monthlyUpdatedRepository = monthlyRepositoryTest.save(monthlyToUpdate);
+        assertEquals(1, monthlyUpdatedService.getMonthlyId());
+        assertEquals(1, monthlyUpdatedService.getChildId());
+        assertEquals(550D, monthlyUpdatedService.getTaxableSalary());
+        assertEquals(15, monthlyUpdatedService.getDayWorked());
+
+        List<Monthly> monthlyListAfterUpdate = (List<Monthly>) monthlyServiceTest.getAllMonthly();
+        assertTrue(monthlyListAfterUpdate.size() == 1);
+        assertEquals(1, monthlyUpdatedService.getMonthlyId());
+        assertEquals(1, monthlyUpdatedService.getChildId());
+    }
+
+    @Test
+    void updateMonthlyTest_whenMonthlyNotExists_thenReturnErrorMessageAndStatusNotFound() throws Exception {
+        //GIVEN
+        boolean isMonthlyToUpdateExist = monthlyRepositoryTest.existsById(1);
+        assertTrue(!isMonthlyToUpdateExist);
+
+        Monthly monthlyToUpdateNotExist = new Monthly(250, Month.JANVIER, "2021",
+                500D, 20, 20, 10, 0, 1);
+        //WHEN
+        //THEN
+        mockMvcMonthly.perform(MockMvcRequestBuilders.put("/monthly/update")
+                        .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)
+                        .content(ConvertObjectToJsonString.asJsonString(monthlyToUpdateNotExist)))
+                .andExpect(status().isNotFound())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof MonthlyNotFoundException))
+                .andExpect(result -> assertEquals("La déclaration mensuelle que vous essayez de mettre à jour, n'existe pas!",
+                        result.getResolvedException().getMessage()))
+                .andExpect(jsonPath("$.message", is("Monthly not found, please try again!")))
+                .andDo(print());
+
+        MonthlyNotFoundException thrown = assertThrows(MonthlyNotFoundException.class, () -> {
+            monthlyServiceTest.updateMonthly(monthlyToUpdateNotExist);
+        });
+        assertEquals("La déclaration mensuelle que vous essayez de mettre à jour, n'existe pas!", thrown.getMessage());
+
+        boolean isMonthlyAfterUpdateTest = monthlyRepositoryTest.existsById(1);
+        assertTrue(!isMonthlyAfterUpdateTest);
+    }
+
+    @Test
+    void deleteMonthlyByIdTest_thenReturnSuccessMessage() throws Exception {
+        //GIVEN
+        monthlyRepositoryTest.save(monthlyTest);
+        List<Monthly> monthliesBeforeDeletion = (List<Monthly>) monthlyServiceTest.getAllMonthly();
+        assertTrue(monthliesBeforeDeletion.size() > 0);
+        //WHEN
+        //THEN
+        mockMvcMonthly.perform(MockMvcRequestBuilders.delete("/monthly/delete/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", is("La déclaration mensuelle a été supprimé avec succés!")))
+                .andDo(print());
+
+        Monthly monthlyAdded = monthlyRepositoryTest.save(monthlyTest);
+        String successMessage = monthlyServiceTest.deleteMonthlyById(monthlyAdded.getMonthlyId());
+        assertEquals("La déclaration mensuelle a été supprimé avec succés!", successMessage);
+
+        List<Monthly> monthliesAfterDeletion = (List<Monthly>) monthlyServiceTest.getAllMonthly();
+        assertTrue(monthliesAfterDeletion.isEmpty());
+    }
 }
