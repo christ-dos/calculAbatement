@@ -100,7 +100,7 @@ public class MonthlyTestIT {
     }
 
     @Test
-    void addMonthlyTest_whenMonthlyAlreadyExistInDB_thenReturnErrorMessageAndStatusBadRequest() throws Exception {
+    void addMonthlyTest_whenMonthlyIDAlreadyExistInDB_thenReturnErrorMessageAndStatusBadRequest() throws Exception {
         //GIVEN
         monthlyServiceTest.addMonthly(monthlyTest);
         //WHEN
@@ -129,6 +129,40 @@ public class MonthlyTestIT {
         assertEquals(1, monthlies.get(0).getMonthlyId());
         assertEquals(1, monthlies.get(0).getChildId());
     }
+
+    @Test
+    void addMonthlyTest_whenMonthlyMonthAndYearAlreadyExistInDB_thenReturnErrorMessageAndStatusBadRequest() throws Exception {
+        //GIVEN
+        monthlyServiceTest.addMonthly(monthlyTest);
+        Monthly monthlyAlreadyExistByMonthAndByYear = new Monthly(250, Month.JANVIER, "2021",
+                500D, 10, 10, 10, 0, 1);
+        //WHEN
+        //THEN
+        mockMvcMonthly.perform(MockMvcRequestBuilders.post("/monthly/add")
+                        .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)
+                        .content(ConvertObjectToJsonString.asJsonString(monthlyAlreadyExistByMonthAndByYear)))
+                .andExpect(status().isBadRequest())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof MonthlyAlreadyExistException))
+                .andExpect(result -> assertEquals("La déclaration mensuelle que vous essayez d'ajouter existe déja!",
+                        result.getResolvedException().getMessage()))
+                .andExpect(jsonPath("$.message", is("Monthly already exits, please process an update!")))
+                .andDo(print());
+
+        MonthlyAlreadyExistException thrown = assertThrows(MonthlyAlreadyExistException.class, () -> {
+            monthlyServiceTest.addMonthly(monthlyTest);
+        });
+        assertEquals("La déclaration mensuelle que vous essayez d'ajouter existe déja!", thrown.getMessage());
+
+        Monthly monthlyAlreadyExistSavedInRepository = monthlyRepositoryTest.save(monthlyTest);
+        assertEquals(1, monthlyAlreadyExistSavedInRepository.getMonthlyId());
+        assertEquals(1, monthlyAlreadyExistSavedInRepository.getChildId());
+
+        List<Monthly> monthlies = (List<Monthly>) monthlyServiceTest.getAllMonthly();
+        assertTrue(monthlies.size() == 1);
+        assertEquals(1, monthlies.get(0).getMonthlyId());
+        assertEquals(1, monthlies.get(0).getChildId());
+    }
+
 
     @Test
     void getAllMonthliesByYearAndChildIdOrderByMonthDescTest_thenDisplayedListOfMonthliesByYearOrderByMonthDesc() throws Exception {

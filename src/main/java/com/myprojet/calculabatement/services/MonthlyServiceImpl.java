@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -25,12 +26,19 @@ public class MonthlyServiceImpl implements MonthlyService {
     @Override
     public Monthly addMonthly(Monthly monthly) {
         boolean monthlyExists = monthlyRepository.existsById(monthly.getMonthlyId());
-        if (monthlyExists) {
-            log.error("Service: monthly added with ID: " + monthly.getMonthlyId() + " already exists!");
+          if (monthlyExists || isMonthlyAlreadyExist(monthly)) {
+            log.error("Service: The monthly that we try to add with ID: " + monthly.getMonthlyId() + " already exists!");
             throw new MonthlyAlreadyExistException("La déclaration mensuelle que vous essayez d'ajouter existe déja!");
         }
         log.debug("Service: Monthly added to children ID: " + monthly.getChildId());
         return monthlyRepository.save(monthly);
+    }
+
+    private boolean isMonthlyAlreadyExist(Monthly monthly){
+        List <Monthly> monthliesByYearAndChildId = (List<Monthly>) monthlyRepository.findMonthlyByYearAndChildIdOrderByMonthDesc(monthly.getYear(), monthly.getChildId());
+        boolean answer = monthliesByYearAndChildId.stream().anyMatch(x->x.getMonth().equals(monthly.getMonth()));
+        System.out.println("reponse: " + answer);
+        return answer;
     }
 
     @Override
