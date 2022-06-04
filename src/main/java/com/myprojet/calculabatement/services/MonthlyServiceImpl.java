@@ -2,13 +2,11 @@ package com.myprojet.calculabatement.services;
 
 import com.myprojet.calculabatement.exceptions.MonthlyAlreadyExistException;
 import com.myprojet.calculabatement.exceptions.MonthlyNotFoundException;
-import com.myprojet.calculabatement.models.Month;
 import com.myprojet.calculabatement.models.Monthly;
 import com.myprojet.calculabatement.repositories.MonthlyRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 
 import java.util.List;
 import java.util.Optional;
@@ -26,19 +24,12 @@ public class MonthlyServiceImpl implements MonthlyService {
     @Override
     public Monthly addMonthly(Monthly monthly) {
         boolean monthlyExists = monthlyRepository.existsById(monthly.getMonthlyId());
-          if (monthlyExists || isMonthlyAlreadyExist(monthly)) {
+        if (monthlyExists || isMonthlyAlreadyExist(monthly)) {
             log.error("Service: The monthly that we try to add with ID: " + monthly.getMonthlyId() + " already exists!");
             throw new MonthlyAlreadyExistException("La déclaration mensuelle que vous essayez d'ajouter existe déja!");
         }
         log.debug("Service: Monthly added to children ID: " + monthly.getChildId());
         return monthlyRepository.save(monthly);
-    }
-
-    private boolean isMonthlyAlreadyExist(Monthly monthly){
-        List <Monthly> monthliesByYearAndChildId = (List<Monthly>) monthlyRepository.findMonthlyByYearAndChildIdOrderByMonthDesc(monthly.getYear(), monthly.getChildId());
-        boolean answer = monthliesByYearAndChildId.stream().anyMatch(x->x.getMonth().equals(monthly.getMonth()));
-        System.out.println("reponse: " + answer);
-        return answer;
     }
 
     @Override
@@ -80,12 +71,12 @@ public class MonthlyServiceImpl implements MonthlyService {
     }
 
     @Override
-    public Iterable<Monthly> getAllMonthlyByYearAndChildIdOrderByMonthDesc(String year, int childId){ // todo implement test in repository and monthlyServiceImpl
+    public Iterable<Monthly> getAllMonthlyByYearAndChildIdOrderByMonthDesc(String year, int childId) { // todo implement test in repository and monthlyServiceImpl
         return monthlyRepository.findMonthlyByYearAndChildIdOrderByMonthDesc(year, childId);
     }
 
     @Override
-    public Iterable<Monthly> getMonthliesByChildIdOrderByYearDescMonthDesc(int childId){
+    public Iterable<Monthly> getMonthliesByChildIdOrderByYearDescMonthDesc(int childId) {
         return monthlyRepository.findMonthlyByChildIdOrderByYearDescMonthDesc(childId);
     }
 
@@ -99,5 +90,11 @@ public class MonthlyServiceImpl implements MonthlyService {
         }
         log.info("Service: Monthly found with ID : " + monthlyId);
         return monthlyFound.get();
+    }
+
+    private boolean isMonthlyAlreadyExist(Monthly monthly) {
+        List<Monthly> monthliesByYearAndChildId = (List<Monthly>) monthlyRepository.findMonthlyByYearAndChildIdOrderByMonthDesc(monthly.getYear(), monthly.getChildId());
+
+        return monthliesByYearAndChildId.stream().anyMatch(x -> x.getMonth().equals(monthly.getMonth()));
     }
 }
