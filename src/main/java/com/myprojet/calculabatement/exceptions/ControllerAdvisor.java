@@ -89,7 +89,7 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
 
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("timestamp", LocalDateTime.now());
-        body.put("message", "Monthly already exits, please process an update!");
+        body.put("message", "Cette déclaration existe déjà!");
 
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
@@ -142,5 +142,15 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
         body.put("message", "User not found, please try again!");
 
         return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(YearNotValidException.class)
+    public ResponseEntity<Object> handleUserNotFoundException(YearNotValidException ex, WebRequest request) {
+
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+        body.put("message", "L'année saisie est icorrecte");
+
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 }
