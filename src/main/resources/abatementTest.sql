@@ -71,7 +71,7 @@ ALTER TABLE monthly
         FOREIGN KEY (child_id)
             REFERENCES child (id)
             ON DELETE CASCADE
-            ON UPDATE CASCADE;
+            ON UPDATE NO ACTION ;
 commit;
 
 

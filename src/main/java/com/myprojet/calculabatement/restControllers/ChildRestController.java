@@ -84,6 +84,6 @@ public class ChildRestController {
     public ResponseEntity<?> deleteChild(@Valid @PathVariable("id") int childId) {
         String successMessage = childService.deleteChildById(childId);
         log.debug("Controller: Child deleted with ID: " + childId);
-        return new ResponseEntity<>(successMessage, HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

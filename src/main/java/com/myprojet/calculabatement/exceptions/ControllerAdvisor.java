@@ -89,7 +89,7 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
 
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("timestamp", LocalDateTime.now());
-        body.put("message", "Cette déclaration existe déjà!");
+        body.put("message", "Cette déclaration existe déjà !");
 
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
@@ -149,7 +149,7 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
 
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("timestamp", LocalDateTime.now());
-        body.put("message", "L'année saisie est icorrecte");
+        body.put("message", "L'année saisie est incorrecte !");
 
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }

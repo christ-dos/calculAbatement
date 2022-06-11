@@ -46,7 +46,7 @@ public class MonthlyServiceImpl implements MonthlyService {
             log.error("Service: Monthly with ID: " + monthly.getMonthlyId() + " not found!");
             throw new MonthlyNotFoundException("La déclaration mensuelle que vous essayez de mettre à jour, n'existe pas!");
         }
-        if(monthly.getMonth() != monthlyToUpdate.get().getMonth() || monthly.getYear() != monthlyToUpdate.get().getYear()){
+        if(!monthly.getMonth().equals(monthlyToUpdate.get().getMonth()) || !monthly.getYear().equals(monthlyToUpdate.get().getYear())){
             if(isMonthlyAlreadyExistByMonthAndYear(monthly)){
                 log.error("Service: Monthly with month: " + monthly.getMonth() + " already exist for year: " + monthly.getYear());
                 throw new MonthlyAlreadyExistException("Le mois: " + monthly.getMonth() + " existe déja pour l'année: " + monthly.getYear());
@@ -68,15 +68,7 @@ public class MonthlyServiceImpl implements MonthlyService {
         return monthlyRepository.save(monthlyToUpdate.get());
     }
 
-    private boolean isYearNotValid(String year){
-       int yearNumber = Integer.parseInt(year);
-       int currentYear = LocalDateTime.now().getYear();
-       System.out.println(currentYear);
-       if(yearNumber < 1900 || yearNumber > currentYear){
-           return true;
-       }
-       return false;
-    }
+
 
     @Override
     public String deleteMonthlyById(int monthlyId) {
@@ -117,6 +109,16 @@ public class MonthlyServiceImpl implements MonthlyService {
         }
         log.info("Service: Monthly found with ID : " + monthlyId);
         return monthlyFound.get();
+    }
+
+    private boolean isYearNotValid(String year){
+        int yearNumber = Integer.parseInt(year);
+        int currentYear = LocalDateTime.now().getYear();
+        System.out.println(currentYear);
+        if(yearNumber < 1952|| yearNumber > currentYear){
+            return true;
+        }
+        return false;
     }
 
     private boolean isMonthlyAlreadyExistByMonthAndYear(Monthly monthly) {

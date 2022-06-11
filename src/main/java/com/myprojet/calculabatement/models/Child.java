@@ -61,8 +61,10 @@ public class Child {
             cascade = CascadeType.ALL,
             orphanRemoval = true,
             fetch = FetchType.EAGER)
-    @JoinColumn(name = "child_id")
+    @JoinColumn(name = "child_id", updatable = false)
     private List<Monthly> monthlies = new ArrayList<>();
+
+
 
     public Child(int id, String lastname, String firstname, String birthDate, String beginContract, LocalDateTime dateAdded, String imageUrl, String userEmail) {
         this.id = id;
