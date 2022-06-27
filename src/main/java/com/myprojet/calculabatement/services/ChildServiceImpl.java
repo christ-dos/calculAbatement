@@ -49,6 +49,12 @@ public class ChildServiceImpl implements ChildService {
             log.error("Service: Child with ID: " + child.getId() + " not found!");
             throw new ChildNotFoundException("L'enfant " + child.getFirstname().toUpperCase() + " " + child.getLastname().toUpperCase() + " que vous essayez de mettre à jour n'existe pas!");
         }
+        boolean childExist = childRepository.existsByFirstnameAndLastnameAndBirthDate(child.getFirstname(), child.getLastname(), child.getBirthDate());
+        if(childExist){
+            log.error("Service: Child: "+ child.getFirstname() + " " + child.getLastname() + " already exists!");
+            throw new ChildAlreadyExistException("L'enfant: " + child.getFirstname().toUpperCase() + " " + child.getLastname().toUpperCase().toUpperCase() +  " est déjà enregistré dans la base de données!");
+        // TODO IMPLMENTER LE TEST
+        }
         childToUpdate.get().setFirstname(child.getFirstname());
         childToUpdate.get().setLastname(child.getLastname());
         childToUpdate.get().setBeginContract(child.getBeginContract());

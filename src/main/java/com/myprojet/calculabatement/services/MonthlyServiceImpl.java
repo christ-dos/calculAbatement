@@ -29,7 +29,7 @@ public class MonthlyServiceImpl implements MonthlyService {
         // todo retirer le test pour verifier existance du monthly ds unit et integration
         if (isMonthlyAlreadyExistByMonthAndYear(monthly)) {
             log.error("Service: The monthly that we try to add with ID: " + monthly.getMonthlyId() + " already exists!");
-            throw new MonthlyAlreadyExistException("La déclaration mensuelle pour: "+ monthly.getMonth() + " " + monthly.getYear() + " que vous essayez d'ajouter existe déja!");
+            throw new MonthlyAlreadyExistException("La déclaration mensuelle pour: "+ monthly.getMonth() + " " + monthly.getYear() + ", que vous essayez d'ajouter existe déja!");
         }
         if(isYearNotValid(monthly.getYear())){
             throw new YearNotValidException("L'année saisie doit être comprise entre 1952 et " + LocalDateTime.now().getYear() + " !");
@@ -67,8 +67,6 @@ public class MonthlyServiceImpl implements MonthlyService {
         log.debug("Service: Monthly updated with ID: " + monthly.getMonthlyId());
         return monthlyRepository.save(monthlyToUpdate.get());
     }
-
-
 
     @Override
     public String deleteMonthlyById(int monthlyId) {
@@ -116,7 +114,6 @@ public class MonthlyServiceImpl implements MonthlyService {
         if(yearNumber < 1952 || yearNumber > currentYear){
             return true;
         }
-
         return false;
     }
 
