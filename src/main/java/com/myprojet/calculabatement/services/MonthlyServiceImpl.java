@@ -29,10 +29,10 @@ public class MonthlyServiceImpl implements MonthlyService {
         // todo retirer le test pour verifier existance du monthly ds unit et integration
         if (isMonthlyAlreadyExistByMonthAndYear(monthly)) {
             log.error("Service: The monthly that we try to add with ID: " + monthly.getMonthlyId() + " already exists!");
-            throw new MonthlyAlreadyExistException("La déclaration mensuelle que vous essayez d'ajouter existe déja!");
+            throw new MonthlyAlreadyExistException("La déclaration mensuelle pour: "+ monthly.getMonth() + " " + monthly.getYear() + " que vous essayez d'ajouter existe déja!");
         }
         if(isYearNotValid(monthly.getYear())){
-            throw new YearNotValidException("L'année saisie est incorrecte!");
+            throw new YearNotValidException("L'année saisie doit être comprise entre 1952 et " + LocalDateTime.now().getYear() + " !");
             //todo implementer test unit et integration
         }
         log.debug("Service: Monthly added to children ID: " + monthly.getChildId());
@@ -44,7 +44,7 @@ public class MonthlyServiceImpl implements MonthlyService {
         Optional<Monthly> monthlyToUpdate = monthlyRepository.findById(monthly.getMonthlyId());
         if (!monthlyToUpdate.isPresent()) {
             log.error("Service: Monthly with ID: " + monthly.getMonthlyId() + " not found!");
-            throw new MonthlyNotFoundException("La déclaration mensuelle que vous essayez de mettre à jour, n'existe pas!");
+            throw new MonthlyNotFoundException("La déclaration mensuelle " + monthly.getMonth() + " " + monthly.getYear() + " n'existe pas !");
         }
         if(!monthly.getMonth().equals(monthlyToUpdate.get().getMonth()) || !monthly.getYear().equals(monthlyToUpdate.get().getYear())){
             if(isMonthlyAlreadyExistByMonthAndYear(monthly)){
@@ -52,7 +52,7 @@ public class MonthlyServiceImpl implements MonthlyService {
                 throw new MonthlyAlreadyExistException("Le mois: " + monthly.getMonth() + " existe déja pour l'année: " + monthly.getYear());
             }
             if(isYearNotValid(monthly.getYear())){
-                throw new YearNotValidException("L'année saisie est incorrecte!");
+                throw new YearNotValidException("L'année saisie doit être comprise entre 1952 et " + LocalDateTime.now().getYear() + " !");
                 //todo implementer test unit et integration
             }
             monthlyToUpdate.get().setMonth(monthly.getMonth());
@@ -101,11 +101,10 @@ public class MonthlyServiceImpl implements MonthlyService {
 
     @Override
     public Monthly getMonthlyById(int monthlyId) {
-
         Optional<Monthly> monthlyFound = monthlyRepository.findById(monthlyId);
         if (!monthlyFound.isPresent()) {
             log.error("Service: Monthly not found with ID: " + monthlyId);
-            throw new MonthlyNotFoundException(("La déclaration mensuelle n'existe pas!"));
+            throw new MonthlyNotFoundException("La déclaration mensuelle avec ID: " + monthlyId +" n'existe pas!");
         }
         log.info("Service: Monthly found with ID : " + monthlyId);
         return monthlyFound.get();
@@ -114,10 +113,10 @@ public class MonthlyServiceImpl implements MonthlyService {
     private boolean isYearNotValid(String year){
         int yearNumber = Integer.parseInt(year);
         int currentYear = LocalDateTime.now().getYear();
-        System.out.println(currentYear);
-        if(yearNumber < 1952|| yearNumber > currentYear){
+        if(yearNumber < 1952 || yearNumber > currentYear){
             return true;
         }
+
         return false;
     }
 

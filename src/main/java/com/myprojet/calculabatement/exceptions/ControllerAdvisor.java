@@ -39,7 +39,7 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
 
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("timestamp", LocalDateTime.now());
-        body.put("message", "The birthdate is not valid, please input a date valid!");
+        body.put("message", ex.getMessage());
 
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
@@ -49,7 +49,7 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
 
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("timestamp", LocalDateTime.now());
-        body.put("message", "The child that we try to save already exist, please process to an update!");
+        body.put("message", ex.getMessage());
 
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
@@ -59,7 +59,7 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
 
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("timestamp", LocalDateTime.now());
-        body.put("message", "Child not found, please try again!");
+        body.put("message", ex.getMessage());
 
         return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
     }
@@ -69,7 +69,7 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
 
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("timestamp", LocalDateTime.now());
-        body.put("message", "Fees cannot be null when lunch or taste are present, please enter value of fees!");
+        body.put("message", ex.getMessage());
 
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
@@ -79,7 +79,7 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
 
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("timestamp", LocalDateTime.now());
-        body.put("message", "Invalid year for request in Insee Api, please enter year valid!");
+        body.put("message", ex.getMessage());
 
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
@@ -89,7 +89,7 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
 
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("timestamp", LocalDateTime.now());
-        body.put("message", "Cette déclaration existe déjà !");
+        body.put("message", ex.getMessage());
 
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
@@ -99,7 +99,7 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
 
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("timestamp", LocalDateTime.now());
-        body.put("message", "Monthly not found, please try again!");
+        body.put("message", ex.getMessage());
 
         return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
     }
@@ -109,7 +109,7 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
 
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("timestamp", LocalDateTime.now());
-        body.put("message", "The coefficient of conversion net/brut of the salary can not be null!");
+        body.put("message", ex.getMessage());
 
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
@@ -119,7 +119,7 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
 
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("timestamp", LocalDateTime.now());
-        body.put("message", "No result obtained for smic in Insee Api!");
+        body.put("message", ex.getMessage());
 
         return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
     }
@@ -129,7 +129,7 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
 
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("timestamp", LocalDateTime.now());
-        body.put("message", "User already exists, please process an update!");
+        body.put("message", ex.getMessage());
 
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
@@ -139,7 +139,7 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
 
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("timestamp", LocalDateTime.now());
-        body.put("message", "User not found, please try again!");
+        body.put("message",ex.getMessage());
 
         return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
     }
@@ -149,7 +149,7 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
 
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("timestamp", LocalDateTime.now());
-        body.put("message", "L'année saisie est incorrecte !");
+        body.put("message", ex.getMessage());
 
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }

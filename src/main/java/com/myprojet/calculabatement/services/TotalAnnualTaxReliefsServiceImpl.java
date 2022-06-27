@@ -77,13 +77,8 @@ public class TotalAnnualTaxReliefsServiceImpl implements TotalAnnualTaxReliefsSe
         Integer intValueOfMaxMonthInMonthliesFilteredByYear = child.getMonthlies().stream()
                 .filter(monthly -> monthly.getYear().equals(year))
                 .map(monthly -> monthly.getMonth().getValue()).max(Integer::compare).get();
-       // Month stringValueOfMaxMonthInMonthliesFilteredByYear = Month.convertIntToStringOfMonth(intValueOfMaxMonthInMonthliesFilteredByYear);
-        System.out.println("result entier du mois: " + intValueOfMaxMonthInMonthliesFilteredByYear);
-       // System.out.println("monthResult: " + stringValueOfMaxMonthInMonthliesFilteredByYear); //todo clean code
 
         int childAge = CalculateAge.getAge(child.getBirthDate(), year, Integer.toString(intValueOfMaxMonthInMonthliesFilteredByYear));
-        System.out.println("childAge: " + childAge); // todo clean code
-
         if (childAge == 1) {
             foodCompensationByYearAndByChildId = getSumFoodCompensationWhenChildIsOneYearOld(child, year);
             log.info("Service: The child is one year old and food compensation equal: " + foodCompensationByYearAndByChildId);

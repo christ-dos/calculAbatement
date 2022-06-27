@@ -36,12 +36,10 @@ public class CalculateFoodCompensationService {
 
         if (sumLunchByChild > 0 && feesLunch == 0D || sumSnacksByChild > 0 && feesSnacks == 0D) {
             log.error("Service: Fees cannot be null when lunch or snacks are present");
-            throw new FeesEqualZeroException("Le tarif des repas ne peut pas être null");
+            throw new FeesEqualZeroException("Les frais de repas et de goûter ne peuvent pas être null");
         }
         double sumFoodCompensation =  (sumLunchByChild * feesLunch + (sumSnacksByChild * feesSnacks));
-
         log.debug("Service: Food compensation by child ID : " + monthlies.get(0).getChildId() + " and by year: " + year + ", total: " + sumFoodCompensation);
         return sumFoodCompensation;
     }
-
 }
