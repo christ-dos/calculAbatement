@@ -112,7 +112,7 @@ class ChildRestControllerTest {
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof ChildNotFoundException))
                 .andExpect(result -> assertEquals("Child not found!",
                         result.getResolvedException().getMessage()))
-                .andExpect(jsonPath("$.message", is("Child not found, please try again!")))
+                .andExpect(jsonPath("$.message", is("Child not found!")))
                 .andDo(print());
     }
 
@@ -160,7 +160,7 @@ class ChildRestControllerTest {
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof MonthlyNotFoundException))
                 .andExpect(result -> assertEquals("Monthly not found!",
                         result.getResolvedException().getMessage()))
-                .andExpect(jsonPath("$.message", is("Monthly not found, please try again!")))
+                .andExpect(jsonPath("$.message", is("Monthly not found!")))
                 .andDo(print());
     }
 
@@ -187,7 +187,7 @@ class ChildRestControllerTest {
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof MonthlyNotFoundException))
                 .andExpect(result -> assertEquals("Monthly not found!",
                         result.getResolvedException().getMessage()))
-                .andExpect(jsonPath("$.message", is("Monthly not found, please try again!")))
+                .andExpect(jsonPath("$.message", is("Monthly not found!")))
                 .andDo(print());
     }
 
@@ -221,7 +221,7 @@ class ChildRestControllerTest {
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof ChildAlreadyExistException))
                 .andExpect(result -> assertEquals("Child already exists, unable to add!",
                         result.getResolvedException().getMessage()))
-                .andExpect(jsonPath("$.message", is("The child that we try to save already exist, please process to an update!")))
+                .andExpect(jsonPath("$.message", is("Child already exists, unable to add!")))
                 .andDo(print());
     }
 
@@ -255,7 +255,7 @@ class ChildRestControllerTest {
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof ChildNotFoundException))
                 .andExpect(result -> assertEquals("Child not found, unable to update!",
                         result.getResolvedException().getMessage()))
-                .andExpect(jsonPath("$.message", is("Child not found, please try again!")))
+                .andExpect(jsonPath("$.message", is("Child not found, unable to update!")))
                 .andDo(print());
     }
 
@@ -267,7 +267,6 @@ class ChildRestControllerTest {
         //THEN
         mockMvcChild.perform(MockMvcRequestBuilders.delete("/child/delete/15"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", is("L'enfant a été supprimé!")))
                 .andDo(print());
     }
 }

@@ -37,7 +37,6 @@ public class RateSmicProxy {
             throw new IllegalYearException("L'année: " + year +"  n'est pas valide");
         }
         //add a zero before number of the month to obtain 2 digits
-       // monthValue = StringUtils.leftPad(monthValue, 2, "0"); //todo clean code
         String uri = "/data/SERIES_BDM/000822484?startPeriod=" + year + "-01" + "&endPeriod=" + year + "-" + monthValue;
 
         ResponseEntity<String> serieSmicResponse = myWebClientForApiInsee.get()

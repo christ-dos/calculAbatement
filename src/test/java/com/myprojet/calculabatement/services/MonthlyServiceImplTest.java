@@ -54,18 +54,6 @@ public class MonthlyServiceImplTest {
     }
 
     @Test
-    public void addMonthlyTest_whenMonthlyAlreadyExistById_thenThrowMonthlyAlreadyExistException() {
-        //GIVEN
-        Monthly monthlyAlreadyExist = new Monthly(1, Month.JANVIER, "2021", 680D, 18, 18, 20, 8, 1);
-        //WHEN
-        when(monthlyRepositoryMock.existsById(anyInt())).thenReturn(true);
-        //THEN
-        assertThrows(MonthlyAlreadyExistException.class, () -> monthlyServiceTest.addMonthly(monthlyAlreadyExist));
-        verify(monthlyRepositoryMock, times(1)).existsById(isA(Integer.class));
-        verify(monthlyRepositoryMock, times(0)).save(isA(Monthly.class));
-    }
-
-    @Test
     public void addMonthlyTest_whenMonthlyAlreadyExistByMonthAndByYear_thenThrowMonthlyAlreadyExistException() {
         //GIVEN
         List<Monthly> monthliesByChildIdAndByYear = Arrays.asList(

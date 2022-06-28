@@ -91,7 +91,7 @@ class MonthlyRestControllerTest {
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof MonthlyAlreadyExistException))
                 .andExpect(result -> assertEquals("Monthly already exists, unable to add!",
                         result.getResolvedException().getMessage()))
-                .andExpect(jsonPath("$.message", is("Monthly already exits, please process an update!")))
+                .andExpect(jsonPath("$.message", is("Monthly already exists, unable to add!")))
                 .andDo(print());
     }
 
@@ -179,12 +179,12 @@ class MonthlyRestControllerTest {
         //GIVEN
         //WHEN
         when(taxableSalaryServiceMock.calculateTaxableSalarySiblingByMonth(anyDouble(), anyDouble(), anyDouble()))
-                .thenThrow(new NetBrutCoefficientNotNullException("Le coefficient net/brut ne peut pas être null!"));
+                .thenThrow(new NetBrutCoefficientNotNullException("The coefficient of conversion net/brut of the salary can not be null!"));
         //THEN
         mockMvcMonthly.perform(MockMvcRequestBuilders.get("/monthly/taxablesalarysibling?netSalary=500&netBrutCoefficient=0D&maintenanceCost=30"))
                 .andExpect(status().isBadRequest())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof NetBrutCoefficientNotNullException))
-                .andExpect(result -> assertEquals("Le coefficient net/brut ne peut pas être null!",
+                .andExpect(result -> assertEquals("The coefficient of conversion net/brut of the salary can not be null!",
                         result.getResolvedException().getMessage()))
                 .andExpect(jsonPath("$.message", is("The coefficient of conversion net/brut of the salary can not be null!")))
                 .andDo(print());
@@ -227,7 +227,7 @@ class MonthlyRestControllerTest {
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof MonthlyNotFoundException))
                 .andExpect(result -> assertEquals("Monthly not found!",
                         result.getResolvedException().getMessage()))
-                .andExpect(jsonPath("$.message", is("Monthly not found, please try again!")))
+                .andExpect(jsonPath("$.message", is("Monthly not found!")))
                 .andDo(print());
     }
 
@@ -239,7 +239,6 @@ class MonthlyRestControllerTest {
         //THEN
         mockMvcMonthly.perform(MockMvcRequestBuilders.delete("/monthly/delete/1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", is("La déclaration mensuelle a été supprimé!")))
                 .andDo(print());
     }
 }

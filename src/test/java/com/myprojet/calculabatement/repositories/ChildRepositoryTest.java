@@ -61,6 +61,36 @@ public class ChildRepositoryTest {
     }
 
     @Test
+    public void existsByFirstnameAndLastnameAndBirthDateTest_whenChildAlreadyExist_ThenReturnTrueIfChildExistByFirstnameAndLastnameAndBirthDate() {
+       Child childToVerifyIfExist =  new Child(5, "Riboulet", "Manon", "30/11/2017", "01/04/2018", "http://image.jpeg", "christine@email.fr");
+        List<Child> children = Arrays.asList(
+                new Child(2, "Riboulet", "Manon", "30/11/2017", "01/03/2017",LocalDateTime.now().minusMinutes(30), "http://image.jpeg", "christine@email.fr"),
+                new Child(3, "Thomaset", "Lubin", "14/12/2020", "15/03/2020",LocalDateTime.now().minusMinutes(15), "http://image.jpeg", "christine@email.fr"),
+                new Child(4, "Babar", "Elephant", "12/05/2020", "02/05/2020", LocalDateTime.now() ,"http://image.jpeg", "sylvie@email.fr")
+        );
+        // WHEN
+        childRepositoryTest.saveAll(children);
+        boolean childExistResult = childRepositoryTest.existsByFirstnameAndLastnameAndBirthDate(childToVerifyIfExist.getFirstname(), childToVerifyIfExist.getLastname(),childToVerifyIfExist.getBirthDate());
+        //THEN
+        assertTrue(childExistResult);
+    }
+
+    @Test
+    public void existsByFirstnameAndLastnameAndBirthDateTest_whenChildNotExist_ThenReturnFalseIfChildExistByFirstnameAndLastnameAndBirthDate() {
+        Child childToVerifyIfExist =  new Child(5, "Riboulet", "Romy", "01/01/2020", "01/04/2018", "http://image.jpeg", "christine@email.fr");
+        List<Child> children = Arrays.asList(
+                new Child(2, "Riboulet", "Manon", "30/11/2017", "01/03/2017",LocalDateTime.now().minusMinutes(30), "http://image.jpeg", "christine@email.fr"),
+                new Child(3, "Thomaset", "Lubin", "14/12/2020", "15/03/2020",LocalDateTime.now().minusMinutes(15), "http://image.jpeg", "christine@email.fr"),
+                new Child(4, "Babar", "Elephant", "12/05/2020", "02/05/2020", LocalDateTime.now() ,"http://image.jpeg", "sylvie@email.fr")
+        );
+        // WHEN
+        childRepositoryTest.saveAll(children);
+        boolean childExistResult = childRepositoryTest.existsByFirstnameAndLastnameAndBirthDate(childToVerifyIfExist.getFirstname(), childToVerifyIfExist.getLastname(),childToVerifyIfExist.getBirthDate());
+        //THEN
+        assertFalse(childExistResult);
+    }
+
+    @Test
     public void saveChildTest_thenReturnChildAdded() {
         //GIVEN
         Child childToSave = new Child(2, "Benoit", "Evan", "14/12/2014", "15/03/2020",LocalDateTime.now(), "http://image.jpeg", "christine@email.fr");
@@ -71,26 +101,6 @@ public class ChildRepositoryTest {
         assertEquals(2, childResult.getId());
         assertEquals("Benoit", childResult.getLastname());
         assertEquals("Evan", childResult.getFirstname());
-    }
-
-    @Test
-    public void existByIdTest_whenChildExist_thenReturnTrue() {
-        //GIVEN
-        //WHEN
-        boolean childExist = childRepositoryTest.existsById(1);
-        //THEN
-        assertTrue(childExist);
-    }
-
-    @Test
-    public void existByIdTest_whenChildNotExist_thenReturnFalse() {
-        //GIVEN
-        Child childTest = new Child(999, "Benoit", "Evan", "14/12/2014", "15/03/2020", "http://image.jpeg", "christine@email.fr");
-        //WHEN
-        boolean childNotExist = childRepositoryTest.existsById(999);
-        //THEN
-        //verify that child is not present in DB
-        assertFalse(childNotExist);
     }
 
     @Test

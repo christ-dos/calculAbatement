@@ -27,13 +27,10 @@ public class ChildServiceImpl implements ChildService {
 
     @Override
     public Child addChild(Child child) {
-        //boolean childExist = childRepository.existsById(child.getId());
         boolean childExist = childRepository.existsByFirstnameAndLastnameAndBirthDate(child.getFirstname(), child.getLastname(), child.getBirthDate());
-        //todo retirer test existsby Id et add test existsByFirstname etc..
-        // Optional<Child> childExist = childRepository.findByFirstnameAndLastnameAndBirthDate(child.getFirstname(), child.getLastname(), child.getBirthDate())
         if (childExist) {
             log.error("Service: Child: "+ child.getFirstname() + " " + child.getLastname() + " already exists!");
-            throw new ChildAlreadyExistException("L'enfant: " + child.getFirstname().toUpperCase() + " " + child.getLastname().toUpperCase().toUpperCase() +  " que vous essayez d'ajouter existe déja!");
+            throw new ChildAlreadyExistException("L'enfant " + child.getFirstname().toUpperCase() + " " + child.getLastname().toUpperCase().toUpperCase() +  " que vous essayez d'ajouter existe déja!");
         }
         child.setUserEmail(SecurityUtilities.getCurrentUser());
         child.setDateAdded(LocalDateTime.now());
@@ -53,7 +50,6 @@ public class ChildServiceImpl implements ChildService {
         if(childExist){
             log.error("Service: Child: "+ child.getFirstname() + " " + child.getLastname() + " already exists!");
             throw new ChildAlreadyExistException("L'enfant: " + child.getFirstname().toUpperCase() + " " + child.getLastname().toUpperCase().toUpperCase() +  " est déjà enregistré dans la base de données!");
-        // TODO IMPLMENTER LE TEST
         }
         childToUpdate.get().setFirstname(child.getFirstname());
         childToUpdate.get().setLastname(child.getLastname());

@@ -25,9 +25,7 @@ public class MonthlyServiceImpl implements MonthlyService {
 
     @Override
     public Monthly addMonthly(Monthly monthly) {
-       // boolean monthlyExistsById = monthlyRepository.existsById(monthly.getMonthlyId());
-        // todo retirer le test pour verifier existance du monthly ds unit et integration
-        if (isMonthlyAlreadyExistByMonthAndYear(monthly)) {
+      if (isMonthlyAlreadyExistByMonthAndYear(monthly)) {
             log.error("Service: The monthly that we try to add with ID: " + monthly.getMonthlyId() + " already exists!");
             throw new MonthlyAlreadyExistException("La déclaration mensuelle pour: "+ monthly.getMonth() + " " + monthly.getYear() + ", que vous essayez d'ajouter existe déja!");
         }
@@ -44,7 +42,7 @@ public class MonthlyServiceImpl implements MonthlyService {
         Optional<Monthly> monthlyToUpdate = monthlyRepository.findById(monthly.getMonthlyId());
         if (!monthlyToUpdate.isPresent()) {
             log.error("Service: Monthly with ID: " + monthly.getMonthlyId() + " not found!");
-            throw new MonthlyNotFoundException("La déclaration mensuelle " + monthly.getMonth() + " " + monthly.getYear() + " n'existe pas !");
+            throw new MonthlyNotFoundException("La déclaration mensuelle " + monthly.getMonth() + " " + monthly.getYear() + " n'existe pas!");
         }
         if(!monthly.getMonth().equals(monthlyToUpdate.get().getMonth()) || !monthly.getYear().equals(monthlyToUpdate.get().getYear())){
             if(isMonthlyAlreadyExistByMonthAndYear(monthly)){

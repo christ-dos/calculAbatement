@@ -15,11 +15,11 @@ import org.joda.time.format.DateTimeFormat;
 public class CalculateAge {
 
     public static int getAge(String birthDate, String year, String month) {
-       // month = StringUtils.leftPad(month, 2, "0");
+       // month = StringUtils.leftPad(month, 2, "0"); //todo clean code
         String dateToCompare = "01/" + month + "/" + year ;
         if (birthDate != null) {
             LocalDateTime birthDateParse = LocalDateTime.parse(birthDate, DateTimeFormat.forPattern("dd/MM/yyyy"));
-           // LocalDateTime currentDate = LocalDateTime.now();
+           // LocalDateTime currentDate = LocalDateTime.now(); //todo clean code
             LocalDateTime dateToCompareParse = LocalDateTime.parse(dateToCompare, DateTimeFormat.forPattern("dd/MM/yyyy")); //todo refactor test avec une date a comparer et non plus
                                                                                                                          // la date courante
             if (dateToCompareParse.isAfter(birthDateParse)) {

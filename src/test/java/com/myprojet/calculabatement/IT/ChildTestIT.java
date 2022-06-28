@@ -139,18 +139,18 @@ public class ChildTestIT {
         mockMvcChild.perform(MockMvcRequestBuilders.get("/child/find/105"))
                 .andExpect(status().isNotFound())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof ChildNotFoundException))
-                .andExpect(result -> assertEquals("L'enfant n'a pas été trouvé!",
+                .andExpect(result -> assertEquals("L'enfant avec ID: 105 n'a pas été trouvé!",
                         result.getResolvedException().getMessage()))
-                .andExpect(jsonPath("$.message", is("Child not found, please try again!")))
+                .andExpect(jsonPath("$.message", is("L'enfant avec ID: 105 n'a pas été trouvé!")))
                 .andDo(print());
 
         ChildNotFoundException thrown = assertThrows(ChildNotFoundException.class, () -> {
             childServiceTest.getChildById(105);
         });
-        assertEquals("L'enfant n'a pas été trouvé!", thrown.getMessage());
+        assertEquals("L'enfant avec ID: 105 n'a pas été trouvé!", thrown.getMessage());
 
         Optional<Child> childNotFoundRepository = childRepositoryTest.findById(105);
-        assertTrue(!childNotFoundRepository.isPresent());
+        assertFalse(childNotFoundRepository.isPresent());
     }
 
     @Test
@@ -199,7 +199,7 @@ public class ChildTestIT {
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof MonthlyNotFoundException))
                 .andExpect(result -> assertEquals("Il n'y a aucune entrée enregistré pour l'année: 2021",
                         result.getResolvedException().getMessage()))
-                .andExpect(jsonPath("$.message", is("Monthly not found, please try again!")))
+                .andExpect(jsonPath("$.message", is("Il n'y a aucune entrée enregistré pour l'année: 2021")))
                 .andDo(print());
 
         MonthlyNotFoundException thrown = assertThrows(MonthlyNotFoundException.class, () -> {
@@ -239,7 +239,7 @@ public class ChildTestIT {
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof MonthlyNotFoundException))
                 .andExpect(result -> assertEquals("Il n'y a aucune entrée enregistré pour l'année: 2021",
                         result.getResolvedException().getMessage()))
-                .andExpect(jsonPath("$.message", is("Monthly not found, please try again!")))
+                .andExpect(jsonPath("$.message", is("Il n'y a aucune entrée enregistré pour l'année: 2021")))
                 .andDo(print());
 
         MonthlyNotFoundException thrown = assertThrows(MonthlyNotFoundException.class, () -> {
@@ -296,7 +296,6 @@ public class ChildTestIT {
                 1, "Bernard", "Shanna", "12/01/2020",
                 "02/05/2020", "http://image.jpeg", "christine@email.fr");
         childServiceTest.addChild(childToAddAlreadyExist);
-
         //WHEN
         //THEN
         mockMvcChild.perform(MockMvcRequestBuilders.post("/child/add")
@@ -304,15 +303,17 @@ public class ChildTestIT {
                         .content(ConvertObjectToJsonString.asJsonString(childToAddAlreadyExist)))
                 .andExpect(status().isBadRequest())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof ChildAlreadyExistException))
-                .andExpect(result -> assertEquals("L'enfant que vous essayez d'ajouter existe déja!",
+                .andExpect(result -> assertEquals("L'enfant "+ childToAddAlreadyExist.getFirstname().toUpperCase() + " " + childToAddAlreadyExist.getLastname().toUpperCase() + " que vous essayez d'ajouter existe déja!",
                         result.getResolvedException().getMessage()))
-                .andExpect(jsonPath("$.message", is("The child that we try to save already exist, please process to an update!")))
+                .andExpect(jsonPath("$.message", is(
+                        "L'enfant "+ childToAddAlreadyExist.getFirstname().toUpperCase() + " " + childToAddAlreadyExist.getLastname().toUpperCase() + " que vous essayez d'ajouter existe déja!")))
                 .andDo(print());
 
         ChildAlreadyExistException thrown = assertThrows(ChildAlreadyExistException.class, () -> {
             childServiceTest.addChild(childToAddAlreadyExist)
             ;});
-        assertEquals("L'enfant que vous essayez d'ajouter existe déja!", thrown.getMessage());
+        assertEquals(
+                "L'enfant "+ childToAddAlreadyExist.getFirstname().toUpperCase() + " " + childToAddAlreadyExist.getLastname().toUpperCase() + " que vous essayez d'ajouter existe déja!", thrown.getMessage());
 
         Child childAlreadyExistSavedInRepository = childRepositoryTest.save(childToAddAlreadyExist);
         assertEquals(1, childAlreadyExistSavedInRepository.getId());
@@ -369,15 +370,17 @@ public class ChildTestIT {
                         .content(ConvertObjectToJsonString.asJsonString(childTest)))
                 .andExpect(status().isNotFound())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof ChildNotFoundException))
-                .andExpect(result -> assertEquals("L'enfant que vous essayez de mettre à jour n'existe pas!",
+                .andExpect(result -> assertEquals(
+                        "L'enfant "+ childTest.getFirstname().toUpperCase() + " " + childTest.getLastname().toUpperCase() + " que vous essayez de mettre à jour n'existe pas!",
                         result.getResolvedException().getMessage()))
-                .andExpect(jsonPath("$.message", is("Child not found, please try again!")))
+                .andExpect(jsonPath("$.message", is(
+                        "L'enfant "+ childTest.getFirstname().toUpperCase() + " " + childTest.getLastname().toUpperCase() + " que vous essayez de mettre à jour n'existe pas!")))
                 .andDo(print());
 
         ChildNotFoundException thrown = assertThrows(ChildNotFoundException.class, () -> {
             childServiceTest.updateChild(childTest);
         });
-        assertEquals("L'enfant que vous essayez de mettre à jour n'existe pas!", thrown.getMessage());
+        assertEquals("L'enfant "+ childTest.getFirstname().toUpperCase() + " " + childTest.getLastname().toUpperCase() + " que vous essayez de mettre à jour n'existe pas!", thrown.getMessage());
 
         List<Child> listChildren = (List<Child>) childServiceTest.getChildrenByUserEmailOrderByDateAddedDesc();
         assertTrue(listChildren.isEmpty());
@@ -394,11 +397,10 @@ public class ChildTestIT {
         //THEN
         mockMvcChild.perform(MockMvcRequestBuilders.delete("/child/delete/1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", is("L'enfant a été supprimé avec succés!")))
                 .andDo(print());
 
-        Child childToDeleteInService = childServiceTest.addChild(childToDelete);
-        String successMessage = childServiceTest.deleteChildById(childToDeleteInService.getId());
+        //Child childToDeleteInService = childServiceTest.addChild(childToDelete);
+        String successMessage = childServiceTest.deleteChildById(1);
         assertEquals("L'enfant a été supprimé avec succés!", successMessage);
     }
 }

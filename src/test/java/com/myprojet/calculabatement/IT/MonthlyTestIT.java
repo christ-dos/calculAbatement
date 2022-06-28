@@ -100,38 +100,7 @@ public class MonthlyTestIT {
     }
 
     @Test
-    void addMonthlyTest_whenMonthlyIDAlreadyExistInDB_thenReturnErrorMessageAndStatusBadRequest() throws Exception {
-        //GIVEN
-        monthlyServiceTest.addMonthly(monthlyTest);
-        //WHEN
-        //THEN
-        mockMvcMonthly.perform(MockMvcRequestBuilders.post("/monthly/add")
-                        .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)
-                        .content(ConvertObjectToJsonString.asJsonString(monthlyTest)))
-                .andExpect(status().isBadRequest())
-                .andExpect(result -> assertTrue(result.getResolvedException() instanceof MonthlyAlreadyExistException))
-                .andExpect(result -> assertEquals("La déclaration mensuelle que vous essayez d'ajouter existe déja!",
-                        result.getResolvedException().getMessage()))
-                .andExpect(jsonPath("$.message", is("Monthly already exits, please process an update!")))
-                .andDo(print());
-
-        MonthlyAlreadyExistException thrown = assertThrows(MonthlyAlreadyExistException.class, () -> {
-            monthlyServiceTest.addMonthly(monthlyTest);
-        });
-        assertEquals("La déclaration mensuelle que vous essayez d'ajouter existe déja!", thrown.getMessage());
-
-        Monthly monthlyAlreadyExistSavedInRepository = monthlyRepositoryTest.save(monthlyTest);
-        assertEquals(1, monthlyAlreadyExistSavedInRepository.getMonthlyId());
-        assertEquals(1, monthlyAlreadyExistSavedInRepository.getChildId());
-
-        List<Monthly> monthlies = (List<Monthly>) monthlyServiceTest.getAllMonthly();
-        assertTrue(monthlies.size() == 1);
-        assertEquals(1, monthlies.get(0).getMonthlyId());
-        assertEquals(1, monthlies.get(0).getChildId());
-    }
-
-    @Test
-    void addMonthlyTest_whenMonthlyMonthAndYearAlreadyExistInDB_thenReturnErrorMessageAndStatusBadRequest() throws Exception {
+    void addMonthlyTest_whenMonthlyByMonthAndYearAlreadyExistInDB_thenReturnErrorMessageAndStatusBadRequest() throws Exception {
         //GIVEN
         monthlyServiceTest.addMonthly(monthlyTest);
         Monthly monthlyAlreadyExistByMonthAndByYear = new Monthly(250, Month.JANVIER, "2021",
@@ -143,15 +112,15 @@ public class MonthlyTestIT {
                         .content(ConvertObjectToJsonString.asJsonString(monthlyAlreadyExistByMonthAndByYear)))
                 .andExpect(status().isBadRequest())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof MonthlyAlreadyExistException))
-                .andExpect(result -> assertEquals("La déclaration mensuelle que vous essayez d'ajouter existe déja!",
+                .andExpect(result -> assertEquals("La déclaration mensuelle pour: JANVIER 2021, que vous essayez d'ajouter existe déja!",
                         result.getResolvedException().getMessage()))
-                .andExpect(jsonPath("$.message", is("Monthly already exits, please process an update!")))
+                .andExpect(jsonPath("$.message", is("La déclaration mensuelle pour: JANVIER 2021, que vous essayez d'ajouter existe déja!")))
                 .andDo(print());
 
-        MonthlyAlreadyExistException thrown = assertThrows(MonthlyAlreadyExistException.class, () -> {
-            monthlyServiceTest.addMonthly(monthlyTest);
-        });
-        assertEquals("La déclaration mensuelle que vous essayez d'ajouter existe déja!", thrown.getMessage());
+        MonthlyAlreadyExistException thrown = assertThrows(MonthlyAlreadyExistException.class, () ->
+            monthlyServiceTest.addMonthly(monthlyTest)
+        );
+        assertEquals("La déclaration mensuelle pour: JANVIER 2021, que vous essayez d'ajouter existe déja!", thrown.getMessage());
 
         Monthly monthlyAlreadyExistSavedInRepository = monthlyRepositoryTest.save(monthlyTest);
         assertEquals(1, monthlyAlreadyExistSavedInRepository.getMonthlyId());
@@ -176,7 +145,7 @@ public class MonthlyTestIT {
         monthlyRepositoryTest.saveAll(monthlies);
 
         List<Monthly> allMonthlies = (List<Monthly>) monthlyServiceTest.getAllMonthly();
-        assertTrue(allMonthlies.size() == 4);
+        assertEquals(4,allMonthlies.size());
         //WHEN
         //THEN
         mockMvcMonthly.perform(MockMvcRequestBuilders.get("/monthly/all/year/childid?year=2022&childId=1"))
@@ -301,12 +270,12 @@ public class MonthlyTestIT {
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof NetBrutCoefficientNotNullException))
                 .andExpect(result -> assertEquals("Le coefficient de conversion de net en brut ne peut pas être equal à 0!",
                         result.getResolvedException().getMessage()))
-                .andExpect(jsonPath("$.message", is("The coefficient of conversion net/brut of the salary can not be null!")))
+                .andExpect(jsonPath("$.message", is("Le coefficient de conversion de net en brut ne peut pas être equal à 0!")))
                 .andDo(print());
 
-        NetBrutCoefficientNotNullException thrown = assertThrows(NetBrutCoefficientNotNullException.class, () -> {
-            taxableSalaryService.calculateTaxableSalarySiblingByMonth(500D, 0, 30);
-        });
+        NetBrutCoefficientNotNullException thrown = assertThrows(NetBrutCoefficientNotNullException.class, () ->
+            taxableSalaryService.calculateTaxableSalarySiblingByMonth(500D, 0, 30)
+        );
         assertEquals("Le coefficient de conversion de net en brut ne peut pas être equal à 0!", thrown.getMessage());
     }
 
@@ -334,7 +303,7 @@ public class MonthlyTestIT {
                 .andDo(print());
 
         Monthly monthlyUpdatedService = monthlyServiceTest.updateMonthly(monthlyToUpdate);
-        assertTrue(monthlyUpdatedService != null);
+        assertNotNull(monthlyUpdatedService);
         assertEquals(1, monthlyUpdatedService.getMonthlyId());
         assertEquals(1, monthlyUpdatedService.getChildId());
         assertEquals(550D, monthlyUpdatedService.getTaxableSalary());
@@ -356,7 +325,7 @@ public class MonthlyTestIT {
     void updateMonthlyTest_whenMonthlyNotExists_thenReturnErrorMessageAndStatusNotFound() throws Exception {
         //GIVEN
         boolean isMonthlyToUpdateExist = monthlyRepositoryTest.existsById(1);
-        assertTrue(!isMonthlyToUpdateExist);
+        assertFalse(isMonthlyToUpdateExist);
 
         Monthly monthlyToUpdateNotExist = new Monthly(250, Month.JANVIER, "2021",
                 500D, 20, 20, 10, 0, 1);
@@ -367,18 +336,19 @@ public class MonthlyTestIT {
                         .content(ConvertObjectToJsonString.asJsonString(monthlyToUpdateNotExist)))
                 .andExpect(status().isNotFound())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof MonthlyNotFoundException))
-                .andExpect(result -> assertEquals("La déclaration mensuelle que vous essayez de mettre à jour, n'existe pas!",
+                .andExpect(result -> assertEquals("La déclaration mensuelle " + monthlyToUpdateNotExist.getMonth() + " " + monthlyToUpdateNotExist.getYear() + " n'existe pas!",
                         result.getResolvedException().getMessage()))
-                .andExpect(jsonPath("$.message", is("Monthly not found, please try again!")))
+                .andExpect(jsonPath("$.message", is("La déclaration mensuelle " + monthlyToUpdateNotExist.getMonth() + " " + monthlyToUpdateNotExist.getYear() + " n'existe pas!")))
                 .andDo(print());
 
-        MonthlyNotFoundException thrown = assertThrows(MonthlyNotFoundException.class, () -> {
-            monthlyServiceTest.updateMonthly(monthlyToUpdateNotExist);
-        });
-        assertEquals("La déclaration mensuelle que vous essayez de mettre à jour, n'existe pas!", thrown.getMessage());
+        MonthlyNotFoundException thrown = assertThrows(MonthlyNotFoundException.class, () ->
+            monthlyServiceTest.updateMonthly(monthlyToUpdateNotExist)
+        );
+        assertEquals(
+                "La déclaration mensuelle " + monthlyToUpdateNotExist.getMonth() + " " + monthlyToUpdateNotExist.getYear() + " n'existe pas!", thrown.getMessage());
 
         boolean isMonthlyAfterUpdateTest = monthlyRepositoryTest.existsById(1);
-        assertTrue(!isMonthlyAfterUpdateTest);
+        assertFalse(isMonthlyAfterUpdateTest);
     }
 
     @Test
@@ -391,7 +361,6 @@ public class MonthlyTestIT {
         //THEN
         mockMvcMonthly.perform(MockMvcRequestBuilders.delete("/monthly/delete/1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", is("La déclaration mensuelle a été supprimé avec succés!")))
                 .andDo(print());
 
         Monthly monthlyAdded = monthlyRepositoryTest.save(monthlyTest);
