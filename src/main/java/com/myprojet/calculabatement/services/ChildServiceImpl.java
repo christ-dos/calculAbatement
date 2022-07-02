@@ -51,7 +51,7 @@ public class ChildServiceImpl implements ChildService {
                 childRepository.findByFirstnameAndLastnameAndBirthDate(child.getFirstname(), child.getLastname(), child.getBirthDate());
         if (childAlreadyExistsByFirstNameAndLastnameAndBirthDate.get().size() > 0) {
             log.error("Service: Child: " + child.getFirstname() + " " + child.getLastname() + " already exists!");
-            throw new ChildAlreadyExistException("L'enfant: " + child.getFirstname().toUpperCase() + " " + child.getLastname().toUpperCase().toUpperCase() + " est déjà enregistré dans la base de données!");
+            throw new ChildAlreadyExistException("L'enfant: " + child.getFirstname().toUpperCase() + " " + child.getLastname().toUpperCase() + " est déjà enregistré dans la base de données!");
         }
         childToUpdate.get().setFirstname(child.getFirstname());
         childToUpdate.get().setLastname(child.getLastname());

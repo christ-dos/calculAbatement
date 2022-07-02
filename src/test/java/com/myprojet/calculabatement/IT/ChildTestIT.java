@@ -391,25 +391,30 @@ public class ChildTestIT {
     @Test
     void updateChildTest_whenChildExistsByFirstnameAndLastnameAndBirthdate_thenReturnErrorMessageAndStatus404() throws Exception {
         //GIVEN
-        Child childExist = new Child(
-                15, "Sanchez", "Lea", "12/01/2020", "02/05/2019", "http://image.jpeg", "christine@email.fr");
-
         Child childFirstnameAndLastnameAndBirthDateAlreadyExist = new Child(
                 25, "Sanchez", "Lea", "12/01/2020", "02/05/2019", "http://image.jpeg", "christine@email.fr");
+        Child childToUpdate = new Child(
+                2, "Sanchez", "Lilly", "12/01/2020", "02/05/2019", "http://image.jpeg", "christine@email.fr");
+
+        Child childThatTryToUpdate = new Child(
+                2, "Sanchez", "Lea", "12/01/2020", "02/05/2019", "http://image.jpeg", "christine@email.fr");
         //WHEN
+        childServiceTest.addChild(childFirstnameAndLastnameAndBirthDateAlreadyExist);
+        childServiceTest.addChild(childToUpdate);
+
         //THEN
         mockMvcChild.perform(MockMvcRequestBuilders.put("/child/update")
                         .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)
-                        .content(ConvertObjectToJsonString.asJsonString(childFirstnameAndLastnameAndBirthDateAlreadyExist)))
+                        .content(ConvertObjectToJsonString.asJsonString(childThatTryToUpdate)))
                 .andExpect(status().isBadRequest())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof ChildAlreadyExistException))
-                .andExpect(result -> assertEquals( "Child with firstname: " + childFirstnameAndLastnameAndBirthDateAlreadyExist.getFirstname()
-                                + " and lastname: " + childFirstnameAndLastnameAndBirthDateAlreadyExist.getLastname() +
-                                " already exists, unable to update!",
+                .andExpect(result -> assertEquals( "L'enfant: "
+                                + childThatTryToUpdate.getFirstname().toUpperCase() + " "
+                                + childThatTryToUpdate.getLastname().toUpperCase() + " est déjà enregistré dans la base de données!",
                         result.getResolvedException().getMessage()))
-                .andExpect(jsonPath("$.message", is( "Child with firstname: " + childFirstnameAndLastnameAndBirthDateAlreadyExist.getFirstname()
-                        + " and lastname: " + childFirstnameAndLastnameAndBirthDateAlreadyExist.getLastname() +
-                        " already exists, unable to update!")))
+                .andExpect(jsonPath("$.message", is( "L'enfant: "
+                        + childThatTryToUpdate.getFirstname().toUpperCase() + " "
+                        + childThatTryToUpdate.getLastname().toUpperCase() + " est déjà enregistré dans la base de données!")))
                 .andDo(print());
     }
 

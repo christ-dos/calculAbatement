@@ -89,7 +89,7 @@ public class ChildServiceImplTest {
     }
 
     @Test
-    public void updateChildTest_whenLastnameAndBirthDateThatWeChangedAlreadyExistInDBButLastnameIsDifferent_thenReturnChildUpdated() {
+    public void updateChildTest_whenLastnameAndBirthDateThatWeChangedAlreadyExistButLastnameIsDifferent_thenReturnChildUpdated() {
         //GIVEN
         Child childToUpdate = new Child(25, "Martin", "Jean", "12/12/2020", "02/05/2020", "http://image.jpeg", "christine@email.fr");
         Child childFindById = new Child(25, "Martin", "Wiliam", "12/12/2020", "02/05/2020", "http://image.jpeg", "christine@email.fr");
@@ -98,8 +98,8 @@ public class ChildServiceImplTest {
         when(childRepositoryMock.findById(anyInt())).thenReturn(Optional.of(childFindById));
         when(childRepositoryMock.findByFirstnameAndLastnameAndBirthDate(anyString(), anyString(), anyString())).thenReturn(Optional.of(emptyListOfChild));
         when(childRepositoryMock.save(isA(Child.class))).thenReturn(childToUpdate);
-        Child childUpdatedWithSuccessWhenLastnameAndBirthDateAlreadyExistInDB = childServiceTest.updateChild(childToUpdate)
-;        //THEN
+        Child childUpdatedWithSuccessWhenLastnameAndBirthDateAlreadyExistInDB = childServiceTest.updateChild(childToUpdate);
+       //THEN
        assertEquals(childToUpdate, childUpdatedWithSuccessWhenLastnameAndBirthDateAlreadyExistInDB);
        assertEquals(25, childUpdatedWithSuccessWhenLastnameAndBirthDateAlreadyExistInDB.getId());
        assertEquals("Martin", childUpdatedWithSuccessWhenLastnameAndBirthDateAlreadyExistInDB.getLastname());
@@ -112,9 +112,11 @@ public class ChildServiceImplTest {
         //GIVEN
         Child childExist = new Child(1, "Riboulet", "Romy", "12/05/2020", "02/05/2020",  "http://image.jpeg", "christine@email.fr");
         Child childExistUpdated = new Child(1, "RibouletUpdated", "Romy", "12/05/2020", "02/05/2020", "http://image.jpeg", "christine@email.fr");
+        List<Child> emptyListOfChild =  new ArrayList<>();
         //WHEN
         when(childRepositoryMock.findById(anyInt())).thenReturn(Optional.of(childExist));
         when(childRepositoryMock.save(isA(Child.class))).thenReturn(childExistUpdated);
+        when(childRepositoryMock.findByFirstnameAndLastnameAndBirthDate(anyString(), anyString(), anyString())).thenReturn(Optional.of(emptyListOfChild));
         Child childUpdatedSaved = childServiceTest.updateChild(childExistUpdated);
         //THEN
         assertEquals(1, childUpdatedSaved.getId());
