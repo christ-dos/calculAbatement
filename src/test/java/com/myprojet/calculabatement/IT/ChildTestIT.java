@@ -30,6 +30,8 @@ import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -144,9 +146,9 @@ public class ChildTestIT {
                 .andExpect(jsonPath("$.message", is("L'enfant avec ID: 105 n'a pas été trouvé!")))
                 .andDo(print());
 
-        ChildNotFoundException thrown = assertThrows(ChildNotFoundException.class, () -> {
-            childServiceTest.getChildById(105);
-        });
+        ChildNotFoundException thrown = assertThrows(ChildNotFoundException.class, () ->
+            childServiceTest.getChildById(105)
+        );
         assertEquals("L'enfant avec ID: 105 n'a pas été trouvé!", thrown.getMessage());
 
         Optional<Child> childNotFoundRepository = childRepositoryTest.findById(105);
@@ -202,9 +204,9 @@ public class ChildTestIT {
                 .andExpect(jsonPath("$.message", is("Il n'y a aucune entrée enregistré pour l'année: 2021")))
                 .andDo(print());
 
-        MonthlyNotFoundException thrown = assertThrows(MonthlyNotFoundException.class, () -> {
-            totalAnnualTaxReliefsServiceTest.getTotalAnnualReportableAmountsByChild(childHasNoMonthliesIn2021, "2021");
-        });
+        MonthlyNotFoundException thrown = assertThrows(MonthlyNotFoundException.class, () ->
+            totalAnnualTaxReliefsServiceTest.getTotalAnnualReportableAmountsByChild(childHasNoMonthliesIn2021, "2021")
+        );
         assertEquals("Il n'y a aucune entrée enregistré pour l'année: 2021", thrown.getMessage());
     }
 
@@ -242,9 +244,9 @@ public class ChildTestIT {
                 .andExpect(jsonPath("$.message", is("Il n'y a aucune entrée enregistré pour l'année: 2021")))
                 .andDo(print());
 
-        MonthlyNotFoundException thrown = assertThrows(MonthlyNotFoundException.class, () -> {
-            calculateTaxReliefService.calculateTaxReliefByChild("2021", 1);
-        });
+        MonthlyNotFoundException thrown = assertThrows(MonthlyNotFoundException.class, () ->
+            calculateTaxReliefService.calculateTaxReliefByChild("2021", 1)
+        );
         assertEquals("Il n'y a aucune entrée enregistré pour l'année: 2021", thrown.getMessage());
 
     }
@@ -309,9 +311,9 @@ public class ChildTestIT {
                         "L'enfant "+ childToAddAlreadyExist.getFirstname().toUpperCase() + " " + childToAddAlreadyExist.getLastname().toUpperCase() + " que vous essayez d'ajouter existe déja!")))
                 .andDo(print());
 
-        ChildAlreadyExistException thrown = assertThrows(ChildAlreadyExistException.class, () -> {
+        ChildAlreadyExistException thrown = assertThrows(ChildAlreadyExistException.class, () ->
             childServiceTest.addChild(childToAddAlreadyExist)
-            ;});
+            );
         assertEquals(
                 "L'enfant "+ childToAddAlreadyExist.getFirstname().toUpperCase() + " " + childToAddAlreadyExist.getLastname().toUpperCase() + " que vous essayez d'ajouter existe déja!", thrown.getMessage());
 
@@ -319,7 +321,7 @@ public class ChildTestIT {
         assertEquals(1, childAlreadyExistSavedInRepository.getId());
 
         List<Child> listChildrenSaved = (List<Child>) childServiceTest.getChildrenByUserEmailOrderByDateAddedDesc();
-        assertTrue(listChildrenSaved.size() == 1);
+        assertEquals(1,listChildrenSaved.size());
         assertEquals(1, listChildrenSaved.get(0).getId());
         assertEquals("christine@email.fr", listChildrenSaved.get(0).getUserEmail());
     }
@@ -377,14 +379,40 @@ public class ChildTestIT {
                         "L'enfant "+ childTest.getFirstname().toUpperCase() + " " + childTest.getLastname().toUpperCase() + " que vous essayez de mettre à jour n'existe pas!")))
                 .andDo(print());
 
-        ChildNotFoundException thrown = assertThrows(ChildNotFoundException.class, () -> {
-            childServiceTest.updateChild(childTest);
-        });
+        ChildNotFoundException thrown = assertThrows(ChildNotFoundException.class, () ->
+            childServiceTest.updateChild(childTest)
+        );
         assertEquals("L'enfant "+ childTest.getFirstname().toUpperCase() + " " + childTest.getLastname().toUpperCase() + " que vous essayez de mettre à jour n'existe pas!", thrown.getMessage());
 
         List<Child> listChildren = (List<Child>) childServiceTest.getChildrenByUserEmailOrderByDateAddedDesc();
         assertTrue(listChildren.isEmpty());
     }
+
+    @Test
+    void updateChildTest_whenChildExistsByFirstnameAndLastnameAndBirthdate_thenReturnErrorMessageAndStatus404() throws Exception {
+        //GIVEN
+        Child childExist = new Child(
+                15, "Sanchez", "Lea", "12/01/2020", "02/05/2019", "http://image.jpeg", "christine@email.fr");
+
+        Child childFirstnameAndLastnameAndBirthDateAlreadyExist = new Child(
+                25, "Sanchez", "Lea", "12/01/2020", "02/05/2019", "http://image.jpeg", "christine@email.fr");
+        //WHEN
+        //THEN
+        mockMvcChild.perform(MockMvcRequestBuilders.put("/child/update")
+                        .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)
+                        .content(ConvertObjectToJsonString.asJsonString(childFirstnameAndLastnameAndBirthDateAlreadyExist)))
+                .andExpect(status().isBadRequest())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof ChildAlreadyExistException))
+                .andExpect(result -> assertEquals( "Child with firstname: " + childFirstnameAndLastnameAndBirthDateAlreadyExist.getFirstname()
+                                + " and lastname: " + childFirstnameAndLastnameAndBirthDateAlreadyExist.getLastname() +
+                                " already exists, unable to update!",
+                        result.getResolvedException().getMessage()))
+                .andExpect(jsonPath("$.message", is( "Child with firstname: " + childFirstnameAndLastnameAndBirthDateAlreadyExist.getFirstname()
+                        + " and lastname: " + childFirstnameAndLastnameAndBirthDateAlreadyExist.getLastname() +
+                        " already exists, unable to update!")))
+                .andDo(print());
+    }
+
 
     @Test
     void deleteChildTest_thenReturnSuccessMessage() throws Exception {

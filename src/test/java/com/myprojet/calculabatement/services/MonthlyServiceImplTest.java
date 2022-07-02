@@ -2,6 +2,7 @@ package com.myprojet.calculabatement.services;
 
 import com.myprojet.calculabatement.exceptions.MonthlyAlreadyExistException;
 import com.myprojet.calculabatement.exceptions.MonthlyNotFoundException;
+import com.myprojet.calculabatement.exceptions.YearNotValidException;
 import com.myprojet.calculabatement.models.Monthly;
 import com.myprojet.calculabatement.repositories.MonthlyRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -71,6 +72,26 @@ public class MonthlyServiceImplTest {
     }
 
     @Test
+    public void addMonthlyTest_whenYearIsNotValidAndLessThan1952_thenThrowYearNotValidException() {
+        //GIVEN
+        Monthly monthlyWithYearNotValid = new Monthly(250, Month.DECEMBRE, "1900", 680D, 18, 18, 20, 8, 1);
+        //WHEN
+        //THEN
+        assertThrows(YearNotValidException.class, () -> monthlyServiceTest.addMonthly(monthlyWithYearNotValid));
+        verify(monthlyRepositoryMock, times(0)).save(isA(Monthly.class));
+    }
+
+    @Test
+    public void addMonthlyTest_whenYearIsNotValidAndGreaterThanCurrentYear_thenThrowYearNotValidException() {
+        //GIVEN
+        Monthly monthlyWithYearNotValid = new Monthly(250, Month.DECEMBRE, "2090", 680D, 18, 18, 20, 8, 1);
+        //WHEN
+        //THEN
+        assertThrows(YearNotValidException.class, () -> monthlyServiceTest.addMonthly(monthlyWithYearNotValid));
+        verify(monthlyRepositoryMock, times(0)).save(isA(Monthly.class));
+    }
+
+    @Test
     public void updateMonthlyTest_whenMonthlyNotExist_thenThrowMonthlyNotFoundException() {
         Monthly monthlyNotExist = new Monthly(990, Month.JANVIER, "2023", 620D, 18, 18, 20, 8, 1);
         //WHEN
@@ -96,8 +117,52 @@ public class MonthlyServiceImplTest {
 
         verify(monthlyRepositoryMock, times(1)).save(isA(Monthly.class));
         verify(monthlyRepositoryMock, times(1)).findById(anyInt());
-
     }
+
+    @Test
+    public void updateMonthlyTest_whenYearIsNotValidAndLessThan1952_thenThrowYearNotValidException() {
+        //GIVEN
+        Monthly monthlyExist = new Monthly(1, Month.JANVIER, "2022", 620D, 18, 18, 20, 8, 1);
+        Monthly monthlyWithYearNotValid = new Monthly(1, Month.JANVIER, "1900", 620D, 18, 18, 20, 8, 1);
+        //WHEN
+        when(monthlyRepositoryMock.findById(anyInt())).thenReturn(Optional.of(monthlyExist));
+        //THEN
+        assertThrows(YearNotValidException.class, () -> monthlyServiceTest.updateMonthly(monthlyWithYearNotValid));
+        verify(monthlyRepositoryMock, times(0)).save(isA(Monthly.class));
+    }
+
+    @Test
+    public void updateMonthlyTest_whenYearIsNotValidAndGreaterThanCurrentYear_thenThrowYearNotValidException() {
+        //GIVEN
+        Monthly monthlyExist = new Monthly(1, Month.JANVIER, "2022", 620D, 18, 18, 20, 8, 1);
+        Monthly monthlyWithYearNotValid = new Monthly(1, Month.JANVIER, "2099", 620D, 18, 18, 20, 8, 1);
+        //WHEN
+        when(monthlyRepositoryMock.findById(anyInt())).thenReturn(Optional.of(monthlyExist));
+        //THEN
+        assertThrows(YearNotValidException.class, () -> monthlyServiceTest.updateMonthly(monthlyWithYearNotValid));
+        verify(monthlyRepositoryMock, times(0)).save(isA(Monthly.class));
+    }
+
+    @Test
+    public void updateMonthlyTest_whenMonthlyAlreadyExistByMonthAndByYear_thenThrowMonthlyAlreadyExistException() {
+        //GIVEN
+        List<Monthly> monthliesByChildIdAndByYear = Arrays.asList(
+                new Monthly(1, Month.DECEMBRE, "2022", 620D, 18, 18, 20, 8, 1),
+                new Monthly(2, Month.JANVIER, "2022", 620D, 18, 18, 20, 8, 1),
+                new Monthly(3, Month.FEVRIER, "2022", 620D, 18, 18, 20, 8, 1)
+        );
+        Monthly monthlyFound = new Monthly(250, Month.OCTOBRE, "2022", 680D, 18, 18, 20, 8, 1);
+        Monthly monthlyUpdatedAlreadyExistByMonthAndByYear = new Monthly(250, Month.DECEMBRE, "2022", 680D, 18, 18, 20, 8, 1);
+        //WHEN
+        when(monthlyRepositoryMock.findById(anyInt())).thenReturn(Optional.of(monthlyFound));
+        when(monthlyRepositoryMock.findMonthlyByYearAndChildIdOrderByMonthDesc(anyString(),anyInt())).thenReturn(monthliesByChildIdAndByYear);
+        //THEN
+        assertThrows(MonthlyAlreadyExistException.class, () -> monthlyServiceTest.updateMonthly(monthlyUpdatedAlreadyExistByMonthAndByYear));
+        verify(monthlyRepositoryMock, times(1)).findMonthlyByYearAndChildIdOrderByMonthDesc(anyString(), anyInt());
+        verify(monthlyRepositoryMock, times(0)).save(isA(Monthly.class));
+    }
+
+
 
     @Test
     public void deleteMonthlyByIdTest_thenReturnMessageConfirmationOfDeletion() {

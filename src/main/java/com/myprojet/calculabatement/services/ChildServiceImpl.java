@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -29,8 +30,8 @@ public class ChildServiceImpl implements ChildService {
     public Child addChild(Child child) {
         boolean childExist = childRepository.existsByFirstnameAndLastnameAndBirthDate(child.getFirstname(), child.getLastname(), child.getBirthDate());
         if (childExist) {
-            log.error("Service: Child: "+ child.getFirstname() + " " + child.getLastname() + " already exists!");
-            throw new ChildAlreadyExistException("L'enfant " + child.getFirstname().toUpperCase() + " " + child.getLastname().toUpperCase().toUpperCase() +  " que vous essayez d'ajouter existe déja!");
+            log.error("Service: Child: " + child.getFirstname() + " " + child.getLastname() + " already exists!");
+            throw new ChildAlreadyExistException("L'enfant " + child.getFirstname().toUpperCase() + " " + child.getLastname().toUpperCase().toUpperCase() + " que vous essayez d'ajouter existe déja!");
         }
         child.setUserEmail(SecurityUtilities.getCurrentUser());
         child.setDateAdded(LocalDateTime.now());
@@ -46,10 +47,11 @@ public class ChildServiceImpl implements ChildService {
             log.error("Service: Child with ID: " + child.getId() + " not found!");
             throw new ChildNotFoundException("L'enfant " + child.getFirstname().toUpperCase() + " " + child.getLastname().toUpperCase() + " que vous essayez de mettre à jour n'existe pas!");
         }
-        boolean childExist = childRepository.existsByFirstnameAndLastnameAndBirthDate(child.getFirstname(), child.getLastname(), child.getBirthDate());
-        if(childExist){
-            log.error("Service: Child: "+ child.getFirstname() + " " + child.getLastname() + " already exists!");
-            throw new ChildAlreadyExistException("L'enfant: " + child.getFirstname().toUpperCase() + " " + child.getLastname().toUpperCase().toUpperCase() +  " est déjà enregistré dans la base de données!");
+        Optional<List<Child>> childAlreadyExistsByFirstNameAndLastnameAndBirthDate =
+                childRepository.findByFirstnameAndLastnameAndBirthDate(child.getFirstname(), child.getLastname(), child.getBirthDate());
+        if (childAlreadyExistsByFirstNameAndLastnameAndBirthDate.get().size() > 0) {
+            log.error("Service: Child: " + child.getFirstname() + " " + child.getLastname() + " already exists!");
+            throw new ChildAlreadyExistException("L'enfant: " + child.getFirstname().toUpperCase() + " " + child.getLastname().toUpperCase().toUpperCase() + " est déjà enregistré dans la base de données!");
         }
         childToUpdate.get().setFirstname(child.getFirstname());
         childToUpdate.get().setLastname(child.getLastname());

@@ -12,6 +12,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -75,14 +76,34 @@ public class ChildServiceImplTest {
     public void updateChildTest_whenLastnameAndFirstnameAndBirthDateThatWeChangedAlreadyExistInDB_thenThrowChildAlreadyExistException() {
         //GIVEN
         Child childUpdated = new Child(25, "Martin", "Paul", "12/08/2020", "02/05/2020", "http://image.jpeg", "christine@email.fr");
-        Child childExistByFirstnameAndLastnameAndBirthDate = new Child(50, "Martin", "Paul", "12/08/2020", "02/05/2020", "http://image.jpeg", "christine@email.fr");
+        List<Child> childFindByFirstnameAndLastnameAndBirthDateList = Arrays.asList(
+                new Child(50, "Martin", "Paul", "12/08/2020", "02/05/2020", "http://image.jpeg", "christine@email.fr")
+        );
         //WHEN
         when(childRepositoryMock.findById(anyInt())).thenReturn(Optional.of(childUpdated));
-        when(childRepositoryMock.existsByFirstnameAndLastnameAndBirthDate(anyString(), anyString(), anyString())).thenReturn(true);
+        when(childRepositoryMock.findByFirstnameAndLastnameAndBirthDate(anyString(), anyString(), anyString())).thenReturn(Optional.of(childFindByFirstnameAndLastnameAndBirthDateList));
         //THEN
-        assertThrows(ChildAlreadyExistException.class, () -> childServiceTest.updateChild(childExistByFirstnameAndLastnameAndBirthDate));
-        verify(childRepositoryMock, times(1)).existsByFirstnameAndLastnameAndBirthDate(anyString(), anyString(), anyString());
+        assertThrows(ChildAlreadyExistException.class, () -> childServiceTest.updateChild(childUpdated));
+        verify(childRepositoryMock, times(1)).findByFirstnameAndLastnameAndBirthDate(anyString(), anyString(), anyString());
         verify(childRepositoryMock, times(0)).save(isA(Child.class));
+    }
+
+    @Test
+    public void updateChildTest_whenLastnameAndBirthDateThatWeChangedAlreadyExistInDBButLastnameIsDifferent_thenReturnChildUpdated() {
+        //GIVEN
+        Child childToUpdate = new Child(25, "Martin", "Jean", "12/12/2020", "02/05/2020", "http://image.jpeg", "christine@email.fr");
+        Child childFindById = new Child(25, "Martin", "Wiliam", "12/12/2020", "02/05/2020", "http://image.jpeg", "christine@email.fr");
+        List<Child> emptyListOfChild =  new ArrayList<>();
+        //WHEN
+        when(childRepositoryMock.findById(anyInt())).thenReturn(Optional.of(childFindById));
+        when(childRepositoryMock.findByFirstnameAndLastnameAndBirthDate(anyString(), anyString(), anyString())).thenReturn(Optional.of(emptyListOfChild));
+        when(childRepositoryMock.save(isA(Child.class))).thenReturn(childToUpdate);
+        Child childUpdatedWithSuccessWhenLastnameAndBirthDateAlreadyExistInDB = childServiceTest.updateChild(childToUpdate)
+;        //THEN
+       assertEquals(childToUpdate, childUpdatedWithSuccessWhenLastnameAndBirthDateAlreadyExistInDB);
+       assertEquals(25, childUpdatedWithSuccessWhenLastnameAndBirthDateAlreadyExistInDB.getId());
+       assertEquals("Martin", childUpdatedWithSuccessWhenLastnameAndBirthDateAlreadyExistInDB.getLastname());
+       assertEquals("Jean", childUpdatedWithSuccessWhenLastnameAndBirthDateAlreadyExistInDB.getFirstname());
     }
 
 

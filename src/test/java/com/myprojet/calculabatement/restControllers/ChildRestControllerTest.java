@@ -226,7 +226,7 @@ class ChildRestControllerTest {
     }
 
     @Test
-    void updateChildTest_whenChildExists_thenReturnChildUpdated() throws Exception {
+    void updateChildTest_whenChildToUpdateIsFound_thenReturnChildUpdated() throws Exception {
         //GIVEN
         Child childTestUpdated = new Child(
                 15, "LastnameUpdated", "FirstnameUpdated", "12/01/2020", "02/05/2020", "http://image.jpeg", "christine@email.fr");
@@ -256,6 +256,32 @@ class ChildRestControllerTest {
                 .andExpect(result -> assertEquals("Child not found, unable to update!",
                         result.getResolvedException().getMessage()))
                 .andExpect(jsonPath("$.message", is("Child not found, unable to update!")))
+                .andDo(print());
+    }
+
+    @Test
+    void updateChildTest_whenChildExistsByFirstnameAndLastnameAndBirthdate_thenReturnErrorMessageAndStatus404() throws Exception {
+        //GIVEN
+        Child childFirstnameAndLastnameAndBirthDateAlreadyExist = new Child(
+                15, "Sanchez", "Lea", "12/01/2020", "02/05/2019", "http://image.jpeg", "christine@email.fr");
+        //WHEN
+        when(childServiceMock.updateChild(any(Child.class))).thenThrow(new ChildAlreadyExistException(
+                "Child with firstname: " + childFirstnameAndLastnameAndBirthDateAlreadyExist.getFirstname()
+                + " and lastname: " + childFirstnameAndLastnameAndBirthDateAlreadyExist.getLastname() +
+                        " already exists, unable to update!"));
+        //THEN
+        mockMvcChild.perform(MockMvcRequestBuilders.put("/child/update")
+                        .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)
+                        .content(ConvertObjectToJsonString.asJsonString(childFirstnameAndLastnameAndBirthDateAlreadyExist)))
+                .andExpect(status().isBadRequest())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof ChildAlreadyExistException))
+                .andExpect(result -> assertEquals( "Child with firstname: " + childFirstnameAndLastnameAndBirthDateAlreadyExist.getFirstname()
+                                + " and lastname: " + childFirstnameAndLastnameAndBirthDateAlreadyExist.getLastname() +
+                                " already exists, unable to update!",
+                        result.getResolvedException().getMessage()))
+                .andExpect(jsonPath("$.message", is( "Child with firstname: " + childFirstnameAndLastnameAndBirthDateAlreadyExist.getFirstname()
+                        + " and lastname: " + childFirstnameAndLastnameAndBirthDateAlreadyExist.getLastname() +
+                        " already exists, unable to update!")))
                 .andDo(print());
     }
 
