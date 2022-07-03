@@ -1,5 +1,6 @@
 package com.myprojet.calculabatement.services;
 
+import com.myprojet.calculabatement.exceptions.MonthNotValidException;
 import com.myprojet.calculabatement.exceptions.MonthlyAlreadyExistException;
 import com.myprojet.calculabatement.exceptions.MonthlyNotFoundException;
 import com.myprojet.calculabatement.exceptions.YearNotValidException;
@@ -92,6 +93,30 @@ public class MonthlyServiceImplTest {
     }
 
     @Test
+    public void addMonthlyTest_whenYearIsCurrentYearAndMonthGreaterThanCurrentMonth_thenThrowMonthNotValidException() {
+        //GIVEN
+        Monthly monthlyWithMonthNotValid = new Monthly(25, Month.DECEMBRE, "2022", 680D, 18, 18, 20, 8, 1);
+        //WHEN
+        //THEN
+        assertThrows(MonthNotValidException.class, () -> monthlyServiceTest.addMonthly(monthlyWithMonthNotValid));
+        verify(monthlyRepositoryMock, times(0)).save(isA(Monthly.class));
+    }
+
+    @Test
+    public void addMonthlyTest_whenYearIsNotCurrentYearAndMonthGreaterThanCurrentMonth_thenReturnMonthlyUpdated() {
+        //GIVEN
+        Monthly monthlyToAdd = new Monthly(25, Month.DECEMBRE, "2021", 680D, 18, 18, 20, 8, 1);
+        //WHEN
+        when(monthlyRepositoryMock.save(any(Monthly.class))).thenReturn(monthlyToAdd);
+        Monthly monthlyAdded =  monthlyServiceTest.addMonthly(monthlyToAdd);
+        //THEN
+        assertEquals(monthlyToAdd,monthlyAdded);
+        assertEquals("2021",monthlyAdded.getYear());
+        assertEquals(Month.DECEMBRE,monthlyAdded.getMonth());
+        verify(monthlyRepositoryMock, times(1)).save(isA(Monthly.class));
+    }
+
+    @Test
     public void updateMonthlyTest_whenMonthlyNotExist_thenThrowMonthlyNotFoundException() {
         Monthly monthlyNotExist = new Monthly(990, Month.JANVIER, "2023", 620D, 18, 18, 20, 8, 1);
         //WHEN
@@ -142,6 +167,35 @@ public class MonthlyServiceImplTest {
         assertThrows(YearNotValidException.class, () -> monthlyServiceTest.updateMonthly(monthlyWithYearNotValid));
         verify(monthlyRepositoryMock, times(0)).save(isA(Monthly.class));
     }
+
+    @Test
+    public void updateMonthlyTest_whenYearIsCurrentYearAndMonthGreaterThanCurrentMonth_thenThrowMonthNotValidException() {
+        //GIVEN
+        Monthly monthlyToUpdate = new Monthly(25, Month.JUIN, "2022", 680D, 18, 18, 20, 8, 1);
+        Monthly monthlyWithMonthNotValid = new Monthly(25, Month.DECEMBRE, "2022", 680D, 18, 18, 20, 8, 1);
+        //WHEN
+        when(monthlyRepositoryMock.findById(anyInt())).thenReturn(Optional.of(monthlyToUpdate));
+        //THEN
+        assertThrows(MonthNotValidException.class, () -> monthlyServiceTest.updateMonthly(monthlyWithMonthNotValid));
+        verify(monthlyRepositoryMock, times(0)).save(isA(Monthly.class));
+    }
+
+    @Test
+    public void updateMonthlyTest_whenYearIsNotCurrentYearAndMonthGreaterThanCurrentMonth_thenReturnMonthlyUpdated() {
+        //GIVEN
+        Monthly monthlyToUpdate = new Monthly(25, Month.JUIN, "2021", 680D, 18, 18, 20, 8, 1);
+        Monthly monthlyUpdated = new Monthly(25, Month.DECEMBRE, "2021", 680D, 18, 18, 20, 8, 1);
+        //WHEN
+        when(monthlyRepositoryMock.findById(anyInt())).thenReturn(Optional.of(monthlyToUpdate));
+        when(monthlyRepositoryMock.save(any(Monthly.class))).thenReturn(monthlyUpdated);
+        Monthly monthlyUpdatedResult =  monthlyServiceTest.updateMonthly(monthlyUpdated);
+        //THEN
+        assertEquals(monthlyUpdated,monthlyUpdatedResult);
+        assertEquals("2021",monthlyUpdated.getYear());
+        assertEquals(Month.DECEMBRE,monthlyUpdated.getMonth());
+        verify(monthlyRepositoryMock, times(1)).save(isA(Monthly.class));
+    }
+
 
     @Test
     public void updateMonthlyTest_whenMonthlyAlreadyExistByMonthAndByYear_thenThrowMonthlyAlreadyExistException() {

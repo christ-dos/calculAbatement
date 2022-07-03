@@ -1,9 +1,6 @@
 package com.myprojet.calculabatement.restControllers;
 
-import com.myprojet.calculabatement.exceptions.MonthlyAlreadyExistException;
-import com.myprojet.calculabatement.exceptions.MonthlyNotFoundException;
-import com.myprojet.calculabatement.exceptions.NetBrutCoefficientNotNullException;
-import com.myprojet.calculabatement.exceptions.YearNotValidException;
+import com.myprojet.calculabatement.exceptions.*;
 import com.myprojet.calculabatement.models.Month;
 import com.myprojet.calculabatement.models.Monthly;
 import com.myprojet.calculabatement.repositories.MonthlyRepository;
@@ -111,6 +108,23 @@ class MonthlyRestControllerTest {
                 .andExpect(result -> assertEquals("The year entered must be between 1952 and " + LocalDateTime.now().getYear() + "!",
                         result.getResolvedException().getMessage()))
                 .andExpect(jsonPath("$.message", is("The year entered must be between 1952 and " + LocalDateTime.now().getYear() + "!")))
+                .andDo(print());
+    }
+
+    @Test
+    void addMonthlyTest_whenMonthlyYearIsCurrentYearAndMonthIsGreaterThanCurrentMonth_thenReturnErrorMessageAndStatusBadRequest() throws Exception {
+        //GIVEN
+        //WHEN
+        when(monthlyServiceMock.addMonthly(any(Monthly.class))).thenThrow(new MonthNotValidException("The month entered must be less than " + LocalDateTime.now().getMonth() + "!"));
+        //THEN
+        mockMvcMonthly.perform(MockMvcRequestBuilders.post("/monthly/add")
+                        .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)
+                        .content(ConvertObjectToJsonString.asJsonString(monthlyTest)))
+                .andExpect(status().isBadRequest())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof MonthNotValidException))
+                .andExpect(result -> assertEquals("The month entered must be less than " + LocalDateTime.now().getMonth() + "!",
+                        result.getResolvedException().getMessage()))
+                .andExpect(jsonPath("$.message", is("The month entered must be less than " + LocalDateTime.now().getMonth() + "!")))
                 .andDo(print());
     }
 
@@ -289,6 +303,23 @@ class MonthlyRestControllerTest {
                 .andExpect(result -> assertEquals("Year entry is not valid!",
                         result.getResolvedException().getMessage()))
                 .andExpect(jsonPath("$.message", is("Year entry is not valid!")))
+                .andDo(print());
+    }
+
+    @Test
+    void updateMonthlyTest_whenMonthlyYearIsCurrentYearAndMonthIsGreaterThanCurrentMonth_thenReturnErrorMessageAndStatusBadRequest() throws Exception {
+        //GIVEN
+        //WHEN
+        when(monthlyServiceMock.updateMonthly(any(Monthly.class))).thenThrow(new MonthNotValidException("The month entered must be less than " + LocalDateTime.now().getMonth() + "!"));
+        //THEN
+        mockMvcMonthly.perform(MockMvcRequestBuilders.put("/monthly/update")
+                        .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)
+                        .content(ConvertObjectToJsonString.asJsonString(monthlyTest)))
+                .andExpect(status().isBadRequest())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof MonthNotValidException))
+                .andExpect(result -> assertEquals("The month entered must be less than " + LocalDateTime.now().getMonth() + "!",
+                        result.getResolvedException().getMessage()))
+                .andExpect(jsonPath("$.message", is("The month entered must be less than " + LocalDateTime.now().getMonth() + "!")))
                 .andDo(print());
     }
 

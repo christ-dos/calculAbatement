@@ -1,9 +1,6 @@
 package com.myprojet.calculabatement.IT;
 
-import com.myprojet.calculabatement.exceptions.MonthlyAlreadyExistException;
-import com.myprojet.calculabatement.exceptions.MonthlyNotFoundException;
-import com.myprojet.calculabatement.exceptions.NetBrutCoefficientNotNullException;
-import com.myprojet.calculabatement.exceptions.YearNotValidException;
+import com.myprojet.calculabatement.exceptions.*;
 import com.myprojet.calculabatement.models.Child;
 import com.myprojet.calculabatement.models.Month;
 import com.myprojet.calculabatement.models.Monthly;
@@ -158,8 +155,37 @@ public class MonthlyTestIT {
         );
         assertEquals("L'année saisie doit être comprise entre 1952 et "
                 + LocalDateTime.now().getYear() + " !", thrown.getMessage());
+
+        List<Monthly> monthlies = (List<Monthly>) monthlyServiceTest.getAllMonthly();
+        assertTrue(monthlies.size() == 0);
+
     }
 
+    @Test
+    void addMonthlyTest_whenMonthlyYearIsCurrentYearAndMonthIsGreaterThanCurrentMonth_thenReturnErrorMessageAndStatusBadRequest() throws Exception {
+        //GIVEN
+        Monthly monthlyToAddHadMonthNotValid = new Monthly(2, Month.DECEMBRE, "2022",
+                500D, 10, 10, 10, 0, 1);
+        //WHEN
+        //THEN
+        mockMvcMonthly.perform(MockMvcRequestBuilders.post("/monthly/add")
+                        .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)
+                        .content(ConvertObjectToJsonString.asJsonString(monthlyToAddHadMonthNotValid)))
+                .andExpect(status().isBadRequest())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof MonthNotValidException))
+                .andExpect(result -> assertEquals("Le mois saisie doit être inférieur à "
+                                + Month.convertIntToStringOfMonth(LocalDateTime.now().getMonth().getValue())+ "!"
+                        , result.getResolvedException().getMessage()))
+                .andExpect(jsonPath("$.message", is("Le mois saisie doit être inférieur à "
+                        + Month.convertIntToStringOfMonth(LocalDateTime.now().getMonth().getValue())+ "!")))
+                .andDo(print());
+
+        MonthNotValidException thrown = assertThrows(MonthNotValidException.class, () ->
+                monthlyServiceTest.addMonthly(monthlyToAddHadMonthNotValid)
+        );
+        assertEquals("Le mois saisie doit être inférieur à "
+                + Month.convertIntToStringOfMonth(LocalDateTime.now().getMonth().getValue())+ "!", thrown.getMessage());
+    }
 
     @Test
     void getAllMonthliesByYearAndChildIdOrderByMonthDescTest_thenDisplayedListOfMonthliesByYearOrderByMonthDesc() throws Exception {
@@ -171,7 +197,6 @@ public class MonthlyTestIT {
                 new Monthly(4, Month.AVRIL, "2022", 500D, 10, 10, 10, 15, 2)
         );
         monthlyRepositoryTest.saveAll(monthlies);
-
         List<Monthly> allMonthlies = (List<Monthly>) monthlyServiceTest.getAllMonthly();
         assertEquals(4,allMonthlies.size());
         //WHEN
@@ -418,7 +443,7 @@ public class MonthlyTestIT {
     }
 
     @Test
-    void updateMonthlyTest_whenYearIsNotValid_thenReturnErrorMessageAndStatusNotFound() throws Exception {
+    void updateMonthlyTest_whenYearIsNotValid_thenReturnErrorMessageAndStatusBadRequest() throws Exception {
         //GIVEN
         Monthly monthlyJanvier2021= new Monthly(1, Month.JANVIER, "2021",
                 500D, 20, 20, 10, 0, 1);
@@ -453,8 +478,41 @@ public class MonthlyTestIT {
         assertEquals("2021", monthlies.get(0).getYear());
     }
 
+    @Test
+    void updateMonthlyTest_whenMonthIsGreaterThanCurrentMonthAndYearIsCurrentYear_thenReturnErrorMessageAndStatusBadRequest() throws Exception {
+        //GIVEN
+        Monthly monthlyJanuary2022= new Monthly(1, Month.JANVIER, "2022",
+                500D, 20, 20, 10, 0, 1);
+        Monthly monthlyToUpdateHadMonthNotValid = new Monthly(1, Month.DECEMBRE, "2022",
+                500D, 20, 20, 10, 0, 1);
+        //WHEN
+        monthlyServiceTest.addMonthly(monthlyJanuary2022);
+        //THEN
+        mockMvcMonthly.perform(MockMvcRequestBuilders.put("/monthly/update")
+                        .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)
+                        .content(ConvertObjectToJsonString.asJsonString(monthlyToUpdateHadMonthNotValid)))
+                .andExpect(status().isBadRequest())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof MonthNotValidException))
+                .andExpect(result -> assertEquals("Le mois saisie doit être inférieur à "
+                                + Month.convertIntToStringOfMonth(LocalDateTime.now().getMonth().getValue()) + "!",
+                        result.getResolvedException().getMessage()))
+                .andExpect(jsonPath("$.message", is("Le mois saisie doit être inférieur à "
+                        + Month.convertIntToStringOfMonth(LocalDateTime.now().getMonth().getValue()) + "!")))
+                .andDo(print());
 
 
+        MonthNotValidException thrown = assertThrows(MonthNotValidException.class, () ->
+                monthlyServiceTest.updateMonthly(monthlyToUpdateHadMonthNotValid)
+        );
+        assertEquals("Le mois saisie doit être inférieur à "
+                + Month.convertIntToStringOfMonth(LocalDateTime.now().getMonth().getValue()) + "!", thrown.getMessage());
+
+        List<Monthly> monthlies = (List<Monthly>) monthlyServiceTest.getAllMonthly();
+        assertTrue(monthlies.size() == 1);
+        assertEquals(Month.JANVIER, monthlies.get(0).getMonth());
+        assertEquals("2022", monthlies.get(0).getYear());
+
+    }
 
     @Test
     void deleteMonthlyByIdTest_thenReturnSuccessMessage() throws Exception {
