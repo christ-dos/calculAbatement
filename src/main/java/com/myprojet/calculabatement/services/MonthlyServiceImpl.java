@@ -89,7 +89,7 @@ public class MonthlyServiceImpl implements MonthlyService {
     }
 
     @Override
-    public Iterable<Monthly> getAllMonthlyByYearAndChildIdOrderByMonthDesc(String year, int childId) { // todo implement test in repository and monthlyServiceImpl
+    public Iterable<Monthly> getAllMonthlyByYearAndChildIdOrderByMonthDesc(String year, int childId) {
         return monthlyRepository.findMonthlyByYearAndChildIdOrderByMonthDesc(year, childId);
     }
 

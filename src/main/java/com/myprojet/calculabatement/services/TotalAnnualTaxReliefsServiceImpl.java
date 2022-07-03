@@ -51,7 +51,7 @@ public class TotalAnnualTaxReliefsServiceImpl implements TotalAnnualTaxReliefsSe
     public double getTotalAnnualReportableAmountsByChild(Child child, String year) {
         List<Monthly> monthliesByYear = child.getMonthlies().stream().filter(monthly -> monthly.getYear().equals(year)).collect(Collectors.toList());
         if (monthliesByYear.isEmpty()) {
-            log.error("Service: Monthly not found for year: " + year + ", and for child ID: "+ child.getId()); //todo implement test pr ce if ajouter
+            log.error("Service: Monthly not found for year: " + year + ", and for child ID: "+ child.getId());
             throw new MonthlyNotFoundException("Il n'y a aucune entrée enregistré pour l'année: " + year);
         }
         double taxRelief = calculateTaxReliefService.calculateTaxReliefByChild(year, child.getId());
