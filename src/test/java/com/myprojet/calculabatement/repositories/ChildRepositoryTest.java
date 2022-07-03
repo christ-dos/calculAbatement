@@ -30,12 +30,12 @@ public class ChildRepositoryTest {
 
     @BeforeEach
     public void setPerTest() {
-        User userSaved = new User("christine@email.fr", "pass", "Duarte", "Christine");
+        User userSaved = new User("christine@email.fr", "pass", "duarte", "christine");
         userRepositoryTest.save(userSaved);
-        User userSylvie = new User("sylvie@email.fr", "pass", "Martines", "Sylvie");
+        User userSylvie = new User("sylvie@email.fr", "pass", "martines", "sylvie");
         userRepositoryTest.save(userSylvie);
 
-        Child childToSave = new Child(1, "Riboulet", "Romy", "14/12/2020", "15/03/2020", LocalDateTime.now(),"http://image.jpeg", "sylvie@email.fr");
+        Child childToSave = new Child(1, "riboulet", "romy", "14/12/2020", "15/03/2020", LocalDateTime.now(),"http://image.jpeg", "sylvie@email.fr");
         childRepositoryTest.save(childToSave);
 
     }

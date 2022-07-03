@@ -305,17 +305,29 @@ public class ChildTestIT {
                         .content(ConvertObjectToJsonString.asJsonString(childToAddAlreadyExist)))
                 .andExpect(status().isBadRequest())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof ChildAlreadyExistException))
-                .andExpect(result -> assertEquals("L'enfant "+ childToAddAlreadyExist.getFirstname().toUpperCase() + " " + childToAddAlreadyExist.getLastname().toUpperCase() + " que vous essayez d'ajouter existe déja!",
+                .andExpect(result -> assertEquals("L'enfant "
+                                + childToAddAlreadyExist.getFirstname().toUpperCase()
+                                + " " + childToAddAlreadyExist.getLastname().toUpperCase()
+                                + " né en " + childToAddAlreadyExist.getBirthDate()
+                                + ", que vous essayez d'ajouter existe déja!",
                         result.getResolvedException().getMessage()))
                 .andExpect(jsonPath("$.message", is(
-                        "L'enfant "+ childToAddAlreadyExist.getFirstname().toUpperCase() + " " + childToAddAlreadyExist.getLastname().toUpperCase() + " que vous essayez d'ajouter existe déja!")))
+                        "L'enfant "
+                                + childToAddAlreadyExist.getFirstname().toUpperCase() + " "
+                                + childToAddAlreadyExist.getLastname().toUpperCase()
+                                + " né en " + childToAddAlreadyExist.getBirthDate()
+                                + ", que vous essayez d'ajouter existe déja!")))
                 .andDo(print());
 
         ChildAlreadyExistException thrown = assertThrows(ChildAlreadyExistException.class, () ->
             childServiceTest.addChild(childToAddAlreadyExist)
             );
         assertEquals(
-                "L'enfant "+ childToAddAlreadyExist.getFirstname().toUpperCase() + " " + childToAddAlreadyExist.getLastname().toUpperCase() + " que vous essayez d'ajouter existe déja!", thrown.getMessage());
+                "L'enfant "
+                        + childToAddAlreadyExist.getFirstname().toUpperCase()
+                        + " " + childToAddAlreadyExist.getLastname().toUpperCase()
+                        + " né en " + childToAddAlreadyExist.getBirthDate()
+                        + ", que vous essayez d'ajouter existe déja!", thrown.getMessage());
 
         Child childAlreadyExistSavedInRepository = childRepositoryTest.save(childToAddAlreadyExist);
         assertEquals(1, childAlreadyExistSavedInRepository.getId());
@@ -373,10 +385,16 @@ public class ChildTestIT {
                 .andExpect(status().isNotFound())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof ChildNotFoundException))
                 .andExpect(result -> assertEquals(
-                        "L'enfant "+ childTest.getFirstname().toUpperCase() + " " + childTest.getLastname().toUpperCase() + " que vous essayez de mettre à jour n'existe pas!",
+                        "L'enfant "
+                                + childTest.getFirstname().toUpperCase() + " "
+                                + childTest.getLastname().toUpperCase()
+                                + " que vous essayez de mettre à jour n'existe pas!",
                         result.getResolvedException().getMessage()))
                 .andExpect(jsonPath("$.message", is(
-                        "L'enfant "+ childTest.getFirstname().toUpperCase() + " " + childTest.getLastname().toUpperCase() + " que vous essayez de mettre à jour n'existe pas!")))
+                        "L'enfant "
+                                + childTest.getFirstname().toUpperCase() + " "
+                                + childTest.getLastname().toUpperCase()
+                                + " que vous essayez de mettre à jour n'existe pas!")))
                 .andDo(print());
 
         ChildNotFoundException thrown = assertThrows(ChildNotFoundException.class, () ->
@@ -409,11 +427,15 @@ public class ChildTestIT {
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof ChildAlreadyExistException))
                 .andExpect(result -> assertEquals( "L'enfant: "
                                 + childThatTryToUpdate.getFirstname().toUpperCase() + " "
-                                + childThatTryToUpdate.getLastname().toUpperCase() + " est déjà enregistré dans la base de données!",
+                                + childThatTryToUpdate.getLastname().toUpperCase()
+                                + " né en " + childThatTryToUpdate.getBirthDate() +","
+                                + " est déjà enregistré dans la base de données!",
                         result.getResolvedException().getMessage()))
                 .andExpect(jsonPath("$.message", is( "L'enfant: "
                         + childThatTryToUpdate.getFirstname().toUpperCase() + " "
-                        + childThatTryToUpdate.getLastname().toUpperCase() + " est déjà enregistré dans la base de données!")))
+                        + childThatTryToUpdate.getLastname().toUpperCase()
+                        + " né en " + childThatTryToUpdate.getBirthDate()
+                        + ", est déjà enregistré dans la base de données!")))
                 .andDo(print());
 
         ChildAlreadyExistException thrown = assertThrows(ChildAlreadyExistException.class, () ->
@@ -421,7 +443,9 @@ public class ChildTestIT {
         );
         assertEquals("L'enfant: "
                 + childThatTryToUpdate.getFirstname().toUpperCase() + " "
-                + childThatTryToUpdate.getLastname().toUpperCase() + " est déjà enregistré dans la base de données!"
+                + childThatTryToUpdate.getLastname().toUpperCase()
+                + " né en " + childThatTryToUpdate.getBirthDate()
+                + ", est déjà enregistré dans la base de données!"
                 , thrown.getMessage());
 
         Child childIDTwo = childServiceTest.getChildById(2);

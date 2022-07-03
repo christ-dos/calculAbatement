@@ -75,12 +75,13 @@ public class ChildServiceImplTest {
     @Test
     public void updateChildTest_whenLastnameAndFirstnameAndBirthDateThatWeChangedAlreadyExistInDB_thenThrowChildAlreadyExistException() {
         //GIVEN
+        Child childToUpdate = new Child(25, "Martin", "Nathan", "12/08/2020", "02/05/2020", "http://image.jpeg", "christine@email.fr");
         Child childUpdated = new Child(25, "Martin", "Paul", "12/08/2020", "02/05/2020", "http://image.jpeg", "christine@email.fr");
         List<Child> childFindByFirstnameAndLastnameAndBirthDateList = Arrays.asList(
                 new Child(50, "Martin", "Paul", "12/08/2020", "02/05/2020", "http://image.jpeg", "christine@email.fr")
         );
         //WHEN
-        when(childRepositoryMock.findById(anyInt())).thenReturn(Optional.of(childUpdated));
+        when(childRepositoryMock.findById(anyInt())).thenReturn(Optional.of(childToUpdate));
         when(childRepositoryMock.findByFirstnameAndLastnameAndBirthDate(anyString(), anyString(), anyString())).thenReturn(Optional.of(childFindByFirstnameAndLastnameAndBirthDateList));
         //THEN
         assertThrows(ChildAlreadyExistException.class, () -> childServiceTest.updateChild(childUpdated));

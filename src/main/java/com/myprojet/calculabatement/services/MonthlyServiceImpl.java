@@ -27,7 +27,10 @@ public class MonthlyServiceImpl implements MonthlyService {
     public Monthly addMonthly(Monthly monthly) {
       if (isMonthlyAlreadyExistByMonthAndYear(monthly)) {
             log.error("Service: The monthly that we try to add with ID: " + monthly.getMonthlyId() + " already exists!");
-            throw new MonthlyAlreadyExistException("La déclaration mensuelle pour: "+ monthly.getMonth() + " " + monthly.getYear() + ", que vous essayez d'ajouter existe déja!");
+            throw new MonthlyAlreadyExistException("La déclaration mensuelle pour: "
+                    + monthly.getMonth() + " "
+                    + monthly.getYear()
+                    + ", que vous essayez d'ajouter existe déja!");
       }
         if(isYearNotValid(monthly.getYear())){
             throw new YearNotValidException("L'année saisie doit être comprise entre 1952 et "
