@@ -43,7 +43,7 @@ public class CalculateTaxReliefServiceImpl implements CalculateTaxReliefService 
                 //get smic values by Insee Api
                 smicValues = rateSmicProxy.getRateSmicByInseeApi(year, "12");
             } catch (Exception e) {
-                System.out.println("Cause: " + e.getCause()); //todo revoir ce catch
+                log.error("An error occurs with cause: " + e.getCause());
             }
         } else {
             List<String> YearTimePeriodList = Arrays.asList(smicValues.get(smicValues.size() - 1).getTimePeriod().split("-"));

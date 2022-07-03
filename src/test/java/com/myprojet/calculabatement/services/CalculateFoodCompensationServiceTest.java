@@ -150,6 +150,6 @@ public class CalculateFoodCompensationServiceTest {
         child.setMonthlies(monthliesByYear3026);
         //THEN
         assertThrows(MonthlyNotFoundException.class, () ->
-                calculateFoodCompensationServiceTest.calculateFoodCompensationByYearAndByChild("2022", monthliesByYear3026, child.getFeesLunch(), child.getFeesSnack()));
+                calculateFoodCompensationServiceTest.calculateFoodCompensationByYearAndByChild("3026", child.getMonthlies(), child.getFeesLunch(), child.getFeesSnack()));
     }
 }

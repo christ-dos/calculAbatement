@@ -24,7 +24,7 @@ public class CalculateFoodCompensationService {
         if (monthlies.isEmpty()) {
             log.error("Service: Monthly not found for year: " + year);
             throw new MonthlyNotFoundException("Il n'y a aucune entrée enregistré pour l'année: " + year);
-        }// todo verifier si cette exception est nécessaire?
+        }
         int sumLunchByChild = monthlies.stream()
                 .filter(monthly -> monthly.getYear().equals(year))
                 .map(Monthly::getLunch)
