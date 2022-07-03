@@ -401,7 +401,6 @@ public class ChildTestIT {
         //WHEN
         childServiceTest.addChild(childFirstnameAndLastnameAndBirthDateAlreadyExist);
         childServiceTest.addChild(childToUpdate);
-
         //THEN
         mockMvcChild.perform(MockMvcRequestBuilders.put("/child/update")
                         .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)
@@ -416,6 +415,19 @@ public class ChildTestIT {
                         + childThatTryToUpdate.getFirstname().toUpperCase() + " "
                         + childThatTryToUpdate.getLastname().toUpperCase() + " est déjà enregistré dans la base de données!")))
                 .andDo(print());
+
+        ChildAlreadyExistException thrown = assertThrows(ChildAlreadyExistException.class, () ->
+                childServiceTest.updateChild(childThatTryToUpdate)
+        );
+        assertEquals("L'enfant: "
+                + childThatTryToUpdate.getFirstname().toUpperCase() + " "
+                + childThatTryToUpdate.getLastname().toUpperCase() + " est déjà enregistré dans la base de données!"
+                , thrown.getMessage());
+
+        Child childIDTwo = childServiceTest.getChildById(2);
+        assertEquals(2,childIDTwo.getId());
+        assertEquals("Sanchez",childIDTwo.getLastname());
+        assertEquals("Lilly",childIDTwo.getFirstname());
     }
 
 

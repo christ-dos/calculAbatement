@@ -3,6 +3,7 @@ package com.myprojet.calculabatement.IT;
 import com.myprojet.calculabatement.exceptions.MonthlyAlreadyExistException;
 import com.myprojet.calculabatement.exceptions.MonthlyNotFoundException;
 import com.myprojet.calculabatement.exceptions.NetBrutCoefficientNotNullException;
+import com.myprojet.calculabatement.exceptions.YearNotValidException;
 import com.myprojet.calculabatement.models.Child;
 import com.myprojet.calculabatement.models.Month;
 import com.myprojet.calculabatement.models.Monthly;
@@ -25,9 +26,13 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -103,13 +108,13 @@ public class MonthlyTestIT {
     void addMonthlyTest_whenMonthlyByMonthAndYearAlreadyExistInDB_thenReturnErrorMessageAndStatusBadRequest() throws Exception {
         //GIVEN
         monthlyServiceTest.addMonthly(monthlyTest);
-        Monthly monthlyAlreadyExistByMonthAndByYear = new Monthly(250, Month.JANVIER, "2021",
+        Monthly monthlyToAddAlreadyExistByMonthAndByYear = new Monthly(250, Month.JANVIER, "2021",
                 500D, 10, 10, 10, 0, 1);
         //WHEN
         //THEN
         mockMvcMonthly.perform(MockMvcRequestBuilders.post("/monthly/add")
                         .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)
-                        .content(ConvertObjectToJsonString.asJsonString(monthlyAlreadyExistByMonthAndByYear)))
+                        .content(ConvertObjectToJsonString.asJsonString(monthlyToAddAlreadyExistByMonthAndByYear)))
                 .andExpect(status().isBadRequest())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof MonthlyAlreadyExistException))
                 .andExpect(result -> assertEquals("La déclaration mensuelle pour: JANVIER 2021, que vous essayez d'ajouter existe déja!",
@@ -118,18 +123,41 @@ public class MonthlyTestIT {
                 .andDo(print());
 
         MonthlyAlreadyExistException thrown = assertThrows(MonthlyAlreadyExistException.class, () ->
-            monthlyServiceTest.addMonthly(monthlyTest)
+            monthlyServiceTest.addMonthly(monthlyToAddAlreadyExistByMonthAndByYear)
         );
         assertEquals("La déclaration mensuelle pour: JANVIER 2021, que vous essayez d'ajouter existe déja!", thrown.getMessage());
-
-        Monthly monthlyAlreadyExistSavedInRepository = monthlyRepositoryTest.save(monthlyTest);
-        assertEquals(1, monthlyAlreadyExistSavedInRepository.getMonthlyId());
-        assertEquals(1, monthlyAlreadyExistSavedInRepository.getChildId());
 
         List<Monthly> monthlies = (List<Monthly>) monthlyServiceTest.getAllMonthly();
         assertTrue(monthlies.size() == 1);
         assertEquals(1, monthlies.get(0).getMonthlyId());
         assertEquals(1, monthlies.get(0).getChildId());
+    }
+
+    @Test
+    void addMonthlyTest_whenMonthlyYearIsNotBetween1952AndCurrentYear_thenReturnErrorMessageAndStatusBadRequest() throws Exception {
+        //GIVEN
+        //monthlyServiceTest.addMonthly(monthlyTest);
+        Monthly monthlyToAddHadYearNotValid = new Monthly(250, Month.JANVIER, "1100",
+                500D, 10, 10, 10, 0, 1);
+        //WHEN
+        //THEN
+        mockMvcMonthly.perform(MockMvcRequestBuilders.post("/monthly/add")
+                        .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)
+                        .content(ConvertObjectToJsonString.asJsonString(monthlyToAddHadYearNotValid)))
+                .andExpect(status().isBadRequest())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof YearNotValidException))
+                .andExpect(result -> assertEquals("L'année saisie doit être comprise entre 1952 et "
+                                + LocalDateTime.now().getYear() + " !",
+                        result.getResolvedException().getMessage()))
+                .andExpect(jsonPath("$.message", is("L'année saisie doit être comprise entre 1952 et "
+                        + LocalDateTime.now().getYear() + " !")))
+                .andDo(print());
+
+        YearNotValidException thrown = assertThrows(YearNotValidException.class, () ->
+                monthlyServiceTest.addMonthly(monthlyToAddHadYearNotValid)
+        );
+        assertEquals("L'année saisie doit être comprise entre 1952 et "
+                + LocalDateTime.now().getYear() + " !", thrown.getMessage());
     }
 
 
@@ -350,6 +378,83 @@ public class MonthlyTestIT {
         boolean isMonthlyAfterUpdateTest = monthlyRepositoryTest.existsById(1);
         assertFalse(isMonthlyAfterUpdateTest);
     }
+
+    @Test
+    void updateMonthlyTest_whenMonthlyByMonthAndYearAlreadyExistInDB_thenReturnErrorMessageAndStatusBadRequest() throws Exception {
+        //GIVEN
+        Monthly monthlyToUpdate = new Monthly(2, Month.FEVRIER, "2021",
+                500D, 10, 10, 10, 0, 1);
+        Monthly monthlyToUpdateAlreadyExistByMonthAndByYear = new Monthly(2, Month.JANVIER, "2021",
+                500D, 10, 10, 10, 0, 1);
+        //WHEN
+        monthlyServiceTest.addMonthly(monthlyTest);
+        monthlyServiceTest.addMonthly(monthlyToUpdate);
+        //THEN
+        mockMvcMonthly.perform(MockMvcRequestBuilders.put("/monthly/update")
+                        .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)
+                        .content(ConvertObjectToJsonString.asJsonString(monthlyToUpdateAlreadyExistByMonthAndByYear)))
+                .andExpect(status().isBadRequest())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof MonthlyAlreadyExistException))
+                .andExpect(result -> assertEquals("Le mois: " + monthlyToUpdateAlreadyExistByMonthAndByYear.getMonth()
+                                + " existe déja pour l'année: " + monthlyToUpdateAlreadyExistByMonthAndByYear.getYear() + " !",
+                        result.getResolvedException().getMessage()))
+                .andExpect(jsonPath("$.message", is("Le mois: " + monthlyToUpdateAlreadyExistByMonthAndByYear.getMonth()
+                        + " existe déja pour l'année: " + monthlyToUpdateAlreadyExistByMonthAndByYear.getYear() + " !")))
+                .andDo(print());
+
+        MonthlyAlreadyExistException thrown = assertThrows(MonthlyAlreadyExistException.class, () ->
+                monthlyServiceTest.updateMonthly(monthlyToUpdateAlreadyExistByMonthAndByYear)
+        );
+        assertEquals("Le mois: " + monthlyToUpdateAlreadyExistByMonthAndByYear.getMonth()
+                + " existe déja pour l'année: " + monthlyToUpdateAlreadyExistByMonthAndByYear.getYear() + " !", thrown.getMessage());
+
+        List<Monthly> monthlies = (List<Monthly>) monthlyServiceTest.getAllMonthly();
+        assertTrue(monthlies.size() == 2);
+        assertEquals(1, monthlies.get(0).getMonthlyId());
+        assertEquals(1, monthlies.get(0).getChildId());
+        //Verify that the monthly ID 2 was not updated
+        assertEquals(Month.FEVRIER, monthlies.get(1).getMonth());
+        assertEquals("2021", monthlies.get(1).getYear());
+    }
+
+    @Test
+    void updateMonthlyTest_whenYearIsNotValid_thenReturnErrorMessageAndStatusNotFound() throws Exception {
+        //GIVEN
+        Monthly monthlyJanvier2021= new Monthly(1, Month.JANVIER, "2021",
+                500D, 20, 20, 10, 0, 1);
+        Monthly monthlyToUpdateHadYearNotValid = new Monthly(1, Month.JANVIER, "1100",
+                500D, 20, 20, 10, 0, 1);
+        //WHEN
+        monthlyServiceTest.addMonthly(monthlyJanvier2021);
+        //THEN
+        mockMvcMonthly.perform(MockMvcRequestBuilders.put("/monthly/update")
+                        .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)
+                        .content(ConvertObjectToJsonString.asJsonString(monthlyToUpdateHadYearNotValid)))
+                .andExpect(status().isBadRequest())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof YearNotValidException))
+                .andExpect(result -> assertEquals("L'année saisie doit être comprise entre 1952 et 2022 !",
+                        result.getResolvedException().getMessage()))
+                .andExpect(jsonPath("$.message", is("L'année saisie doit être comprise entre 1952 et 2022 !")))
+                .andDo(print());
+
+
+        YearNotValidException thrown = assertThrows(YearNotValidException.class, () ->
+                monthlyServiceTest.updateMonthly(monthlyToUpdateHadYearNotValid)
+        );
+        assertEquals("L'année saisie doit être comprise entre 1952 et "
+                + LocalDateTime.now().getYear() + " !", thrown.getMessage());
+
+        List<Monthly> monthlies = (List<Monthly>) monthlyServiceTest.getAllMonthly();
+        assertTrue(monthlies.size() == 1);
+        assertEquals(1, monthlies.get(0).getMonthlyId());
+        assertEquals(1, monthlies.get(0).getChildId());
+        //Verify that the monthly ID 2 was not updated
+        assertEquals(Month.JANVIER, monthlies.get(0).getMonth());
+        assertEquals("2021", monthlies.get(0).getYear());
+    }
+
+
+
 
     @Test
     void deleteMonthlyByIdTest_thenReturnSuccessMessage() throws Exception {

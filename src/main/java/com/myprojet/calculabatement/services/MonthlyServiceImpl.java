@@ -28,11 +28,10 @@ public class MonthlyServiceImpl implements MonthlyService {
       if (isMonthlyAlreadyExistByMonthAndYear(monthly)) {
             log.error("Service: The monthly that we try to add with ID: " + monthly.getMonthlyId() + " already exists!");
             throw new MonthlyAlreadyExistException("La déclaration mensuelle pour: "+ monthly.getMonth() + " " + monthly.getYear() + ", que vous essayez d'ajouter existe déja!");
-        //todo test integration et controller
       }
         if(isYearNotValid(monthly.getYear())){
-            throw new YearNotValidException("L'année saisie doit être comprise entre 1952 et " + LocalDateTime.now().getYear() + " !");
-        //todo test integration et controller
+            throw new YearNotValidException("L'année saisie doit être comprise entre 1952 et "
+                    + LocalDateTime.now().getYear() + " !");
         }
         log.debug("Service: Monthly added to children ID: " + monthly.getChildId());
         return monthlyRepository.save(monthly);
@@ -48,12 +47,11 @@ public class MonthlyServiceImpl implements MonthlyService {
         if(!monthly.getMonth().equals(monthlyToUpdate.get().getMonth()) || !monthly.getYear().equals(monthlyToUpdate.get().getYear())){
             if(isMonthlyAlreadyExistByMonthAndYear(monthly)){
                 log.error("Service: Monthly with month: " + monthly.getMonth() + " already exist for year: " + monthly.getYear());
-                throw new MonthlyAlreadyExistException("Le mois: " + monthly.getMonth() + " existe déja pour l'année: " + monthly.getYear());
-           //todo test integration et controller
+                throw new MonthlyAlreadyExistException("Le mois: " + monthly.getMonth()
+                        + " existe déja pour l'année: " + monthly.getYear() + " !");
             }
             if(isYearNotValid(monthly.getYear())){
                 throw new YearNotValidException("L'année saisie doit être comprise entre 1952 et " + LocalDateTime.now().getYear() + " !");
-                //todo implementer test integration et contreoller
             }
             monthlyToUpdate.get().setMonth(monthly.getMonth());
             monthlyToUpdate.get().setYear(monthly.getYear());

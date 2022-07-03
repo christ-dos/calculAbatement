@@ -3,6 +3,7 @@ package com.myprojet.calculabatement.restControllers;
 import com.myprojet.calculabatement.exceptions.MonthlyAlreadyExistException;
 import com.myprojet.calculabatement.exceptions.MonthlyNotFoundException;
 import com.myprojet.calculabatement.exceptions.NetBrutCoefficientNotNullException;
+import com.myprojet.calculabatement.exceptions.YearNotValidException;
 import com.myprojet.calculabatement.models.Month;
 import com.myprojet.calculabatement.models.Monthly;
 import com.myprojet.calculabatement.repositories.MonthlyRepository;
@@ -21,6 +22,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -62,6 +64,7 @@ class MonthlyRestControllerTest {
 
     @Test
     void addMonthlyTest_whenMonthlyNotExistsInDB_thenReturnMonthlyAdded() throws Exception {
+        //GIVEN
         //WHEN
         when(monthlyServiceMock.addMonthly(any(Monthly.class))).thenReturn(monthlyTest);
         //THEN
@@ -75,11 +78,10 @@ class MonthlyRestControllerTest {
                 .andExpect(jsonPath("$.taxableSalary", is(500D)))
                 .andExpect(jsonPath("$.childId", is(1)))
                 .andDo(print());
-
     }
 
     @Test
-    void addMonthlyTest_whenMonthlyAlreadyExistInDB_thenReturnErrorMessageAndStatusBadRequest() throws Exception {
+    void addMonthlyTest_whenMonthlyByMonthAndYearAlreadyExistInDB_thenReturnErrorMessageAndStatusBadRequest() throws Exception {
         //GIVEN
         //WHEN
         when(monthlyServiceMock.addMonthly(any(Monthly.class))).thenThrow(new MonthlyAlreadyExistException("Monthly already exists, unable to add!"));
@@ -92,6 +94,23 @@ class MonthlyRestControllerTest {
                 .andExpect(result -> assertEquals("Monthly already exists, unable to add!",
                         result.getResolvedException().getMessage()))
                 .andExpect(jsonPath("$.message", is("Monthly already exists, unable to add!")))
+                .andDo(print());
+    }
+
+    @Test
+    void addMonthlyTest_whenMonthlyYearNotValid_thenReturnErrorMessageAndStatusBadRequest() throws Exception {
+        //GIVEN
+        //WHEN
+        when(monthlyServiceMock.addMonthly(any(Monthly.class))).thenThrow(new YearNotValidException("The year entered must be between 1952 and " + LocalDateTime.now().getYear() + "!"));
+        //THEN
+        mockMvcMonthly.perform(MockMvcRequestBuilders.post("/monthly/add")
+                        .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)
+                        .content(ConvertObjectToJsonString.asJsonString(monthlyTest)))
+                .andExpect(status().isBadRequest())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof YearNotValidException))
+                .andExpect(result -> assertEquals("The year entered must be between 1952 and " + LocalDateTime.now().getYear() + "!",
+                        result.getResolvedException().getMessage()))
+                .andExpect(jsonPath("$.message", is("The year entered must be between 1952 and " + LocalDateTime.now().getYear() + "!")))
                 .andDo(print());
     }
 
@@ -230,6 +249,49 @@ class MonthlyRestControllerTest {
                 .andExpect(jsonPath("$.message", is("Monthly not found!")))
                 .andDo(print());
     }
+
+    @Test
+    void updateMonthlyTest_whenMonthAndYearUpdatedAlreadyExistInDB_thenReturnErrorMessageAndStatusNotFound() throws Exception {
+        //GIVEN
+        Monthly monthlyToUpdateAreadyExist = new Monthly(5, Month.JANVIER, "2021",
+                500D, 20, 20, 10, 0, 1);
+        //WHEN
+        when(monthlyRepositoryMock.findById(anyInt())).thenReturn(java.util.Optional.ofNullable(monthlyTest));
+        when(monthlyServiceMock.updateMonthly(any(Monthly.class)))
+                .thenThrow(new MonthlyAlreadyExistException("The month and year updated already Exists!"));
+        //THEN
+        mockMvcMonthly.perform(MockMvcRequestBuilders.put("/monthly/update")
+                        .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)
+                        .content(ConvertObjectToJsonString.asJsonString(monthlyToUpdateAreadyExist)))
+                .andExpect(status().isBadRequest())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof MonthlyAlreadyExistException))
+                .andExpect(result -> assertEquals("The month and year updated already Exists!",
+                        result.getResolvedException().getMessage()))
+                .andExpect(jsonPath("$.message", is("The month and year updated already Exists!")))
+                .andDo(print());
+    }
+
+    @Test
+    void updateMonthlyTest_whenYearIsNotValid_thenReturnErrorMessageAndStatusNotFound() throws Exception {
+        //GIVEN
+        Monthly monthlyToUpdateHadYearNotValid = new Monthly(5, Month.JANVIER, "1100",
+                500D, 20, 20, 10, 0, 1);
+        //WHEN
+        when(monthlyRepositoryMock.findById(anyInt())).thenReturn(java.util.Optional.ofNullable(monthlyTest));
+        when(monthlyServiceMock.updateMonthly(any(Monthly.class)))
+                .thenThrow(new YearNotValidException("Year entry is not valid!"));
+        //THEN
+        mockMvcMonthly.perform(MockMvcRequestBuilders.put("/monthly/update")
+                        .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)
+                        .content(ConvertObjectToJsonString.asJsonString(monthlyToUpdateHadYearNotValid)))
+                .andExpect(status().isBadRequest())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof YearNotValidException))
+                .andExpect(result -> assertEquals("Year entry is not valid!",
+                        result.getResolvedException().getMessage()))
+                .andExpect(jsonPath("$.message", is("Year entry is not valid!")))
+                .andDo(print());
+    }
+
 
     @Test
     void deleteMonthlyByIdTest_thenReturnSuccessMessage() throws Exception {
