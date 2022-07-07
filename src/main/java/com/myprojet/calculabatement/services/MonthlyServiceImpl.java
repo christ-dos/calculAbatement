@@ -42,7 +42,7 @@ public class MonthlyServiceImpl implements MonthlyService {
             int numberOfCurrentMonth = LocalDateTime.now().getMonth().getValue();
             Month currentMonth = Month.convertIntToStringOfMonth(numberOfCurrentMonth);
             throw new MonthNotValidException("Le mois saisie doit être inférieur à "
-                    + currentMonth + "!"); // todo implementer integration
+                    + currentMonth + "!");
         }
         log.debug("Service: Monthly added to children ID: " + monthly.getChildId());
         return monthlyRepository.save(monthly);
@@ -68,7 +68,7 @@ public class MonthlyServiceImpl implements MonthlyService {
                 int numberOfCurrentMonth = LocalDateTime.now().getMonth().getValue();
                 Month currentMonth = Month.convertIntToStringOfMonth(numberOfCurrentMonth);
                 throw new MonthNotValidException("Le mois saisie doit être inférieur à "
-                        + currentMonth + "!"); // todo implementer et integration
+                        + currentMonth + "!");
             }
             monthlyToUpdate.get().setMonth(monthly.getMonth());
             monthlyToUpdate.get().setYear(monthly.getYear());
