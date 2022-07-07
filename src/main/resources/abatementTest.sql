@@ -15,8 +15,8 @@ CREATE TABLE user
     ENGINE = innoDB;
 
 INSERT INTO user(email, password, lastname, firstname)
-VALUES ('christine@email.fr', 'pass', 'Duarte', 'Christine'),
-       ('sylvie@email.fr', 'pass', 'Santos', 'Sylvie');
+VALUES ('christine@email.fr', 'pass', 'duarte', 'christine'),
+       ('sylvie@email.fr', 'pass', 'santos', 'sylvie');
 
 
 CREATE TABLE child
@@ -36,10 +36,6 @@ CREATE TABLE child
 )
     ENGINE = innoDB;
 
-# INSERT INTO child(child_lastname, child_firstname, birth_date, begin_contract, user_email)
-# VALUES ('Romy','Riboulet','12/01/2020', '01/02/2022','christine@email.fr');
-
-
 CREATE TABLE monthly
 (
     monthly_id     TINYINT AUTO_INCREMENT                                                                                               NOT NULL,
@@ -55,10 +51,6 @@ CREATE TABLE monthly
 )
     ENGINE = innoDB;
 
-# INSERT INTO monthly  (month, year, taxable_salary, lunch, taste, day_worked, hours_worked, child_id)
-# VALUES ('MARCH', '2022', 600.50, 18, 18, 18, 0, 1);
-
-
 ALTER TABLE child
     ADD CONSTRAINT user_child_fk
         FOREIGN KEY (user_email)
@@ -71,7 +63,7 @@ ALTER TABLE monthly
         FOREIGN KEY (child_id)
             REFERENCES child (id)
             ON DELETE CASCADE
-            ON UPDATE CASCADE;
+            ON UPDATE NO ACTION ;
 commit;
 
 

@@ -51,7 +51,7 @@ public class TotalAnnualTaxReliefsServiceImpl implements TotalAnnualTaxReliefsSe
     public double getTotalAnnualReportableAmountsByChild(Child child, String year) {
         List<Monthly> monthliesByYear = child.getMonthlies().stream().filter(monthly -> monthly.getYear().equals(year)).collect(Collectors.toList());
         if (monthliesByYear.isEmpty()) {
-            log.error("Service: Monthly not found for year: " + year + ", and for child ID: "+ child.getId()); //todo implement test pr ce if ajouter
+            log.error("Service: Monthly not found for year: " + year + ", and for child ID: "+ child.getId());
             throw new MonthlyNotFoundException("Il n'y a aucune entrée enregistré pour l'année: " + year);
         }
         double taxRelief = calculateTaxReliefService.calculateTaxReliefByChild(year, child.getId());
@@ -77,13 +77,8 @@ public class TotalAnnualTaxReliefsServiceImpl implements TotalAnnualTaxReliefsSe
         Integer intValueOfMaxMonthInMonthliesFilteredByYear = child.getMonthlies().stream()
                 .filter(monthly -> monthly.getYear().equals(year))
                 .map(monthly -> monthly.getMonth().getValue()).max(Integer::compare).get();
-       // Month stringValueOfMaxMonthInMonthliesFilteredByYear = Month.convertIntToStringOfMonth(intValueOfMaxMonthInMonthliesFilteredByYear);
-        System.out.println("result entier du mois: " + intValueOfMaxMonthInMonthliesFilteredByYear);
-       // System.out.println("monthResult: " + stringValueOfMaxMonthInMonthliesFilteredByYear); //todo clean code
 
         int childAge = CalculateAge.getAge(child.getBirthDate(), year, Integer.toString(intValueOfMaxMonthInMonthliesFilteredByYear));
-        System.out.println("childAge: " + childAge); // todo clean code
-
         if (childAge == 1) {
             foodCompensationByYearAndByChildId = getSumFoodCompensationWhenChildIsOneYearOld(child, year);
             log.info("Service: The child is one year old and food compensation equal: " + foodCompensationByYearAndByChildId);

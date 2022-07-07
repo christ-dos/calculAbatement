@@ -1,5 +1,7 @@
 package com.myprojet.calculabatement.services;
 
+import com.myprojet.calculabatement.exceptions.ChildNotFoundException;
+import com.myprojet.calculabatement.exceptions.MonthlyNotFoundException;
 import com.myprojet.calculabatement.models.Child;
 import com.myprojet.calculabatement.models.Month;
 import com.myprojet.calculabatement.models.Monthly;
@@ -14,9 +16,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 @ExtendWith(MockitoExtension.class)
 public class TotalAnnualTaxReliefsServiceImplTest {
@@ -190,4 +194,15 @@ public class TotalAnnualTaxReliefsServiceImplTest {
         assertEquals(0D, totalAnnualReportableAmountsResult);
     }
 
+    @Test
+    public void getTotalAnnualReportableAmountsByChildTest_whenListOfMonthliesByYearIsEmpty_thenThrownMonthlyNotFoundException() {
+        //GIVEN
+        Child childRomy = new Child(1, "Riboulet", "Romy", "12/01/2021", "02/05/2021", "https://www.hdwallpaper.nu.jpg", "christine@email.fr", Arrays.asList(
+                new Monthly(1, Month.JANVIER, "2021", 200D, 10, 10, 20, 0.0, 1),
+                new Monthly(2, Month.FEVRIER, "2021", 200D, 10, 10, 20, 0.0, 1)
+        ));
+        //WHEN
+        //THEN
+        assertThrows(MonthlyNotFoundException.class, () -> totalAnnualTaxReliefsServiceImplTest.getTotalAnnualReportableAmountsByChild(childRomy,"2010"));
+    }
 }

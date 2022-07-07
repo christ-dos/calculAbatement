@@ -70,6 +70,6 @@ public class MonthlyRestController {
     public ResponseEntity<?> deleteMonthlyById(@PathVariable("id") int monthlyId) {
         String successMessage  = monthlyService.deleteMonthlyById(monthlyId);
         log.debug("Controller: monthly deleted with ID: " + monthlyId);
-        return new ResponseEntity<>(successMessage, HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

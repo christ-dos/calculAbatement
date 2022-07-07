@@ -37,9 +37,9 @@ public class MonthlyRepositoryTest {
         User userSaved = new User("christine@email.fr", "pass", "Duarte", "Christine");
         userRepositoryTest.save(userSaved);
 
-        Child childSavedOne = new Child(1, "Benoit", "Evan", "14/12/2014", "15/03/2020", LocalDateTime.now(), "http://image.jpeg","christine@email.fr");
+        Child childSavedOne = new Child(1, "benoit", "evan", "14/12/2014", "15/03/2020", LocalDateTime.now(), "http://image.jpeg","christine@email.fr");
         childRepositoryTest.save(childSavedOne);
-        Child childSavedTwo = new Child(2, "Bernard", "Jean", "14/12/2014", "15/03/2020", LocalDateTime.now(), "http://image.jpeg","christine@email.fr");
+        Child childSavedTwo = new Child(2, "bernard", "jean", "14/12/2014", "15/03/2020", LocalDateTime.now(), "http://image.jpeg","christine@email.fr");
         childRepositoryTest.save(childSavedTwo);
 
 

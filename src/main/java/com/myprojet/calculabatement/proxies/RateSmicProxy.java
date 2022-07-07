@@ -25,7 +25,6 @@ public class RateSmicProxy {
 
     private WebClient myWebClientForApiInsee;
 
-
     @Autowired
     public RateSmicProxy( WebClient myWebClientForApiInsee) {
         this.myWebClientForApiInsee = myWebClientForApiInsee;
@@ -35,10 +34,9 @@ public class RateSmicProxy {
     public List<RateSmicApi> getRateSmicByInseeApi(String year, String monthValue) {
         if (Integer.parseInt(year) > LocalDate.now().getYear() || Integer.parseInt(year) <= 1951) {
             log.error("Proxy: Invalid year for requête!");
-            throw new IllegalYearException("L'année n'est pas valide");
+            throw new IllegalYearException("L'année: " + year +"  n'est pas valide");
         }
         //add a zero before number of the month to obtain 2 digits
-       // monthValue = StringUtils.leftPad(monthValue, 2, "0"); //todo clean code
         String uri = "/data/SERIES_BDM/000822484?startPeriod=" + year + "-01" + "&endPeriod=" + year + "-" + monthValue;
 
         ResponseEntity<String> serieSmicResponse = myWebClientForApiInsee.get()

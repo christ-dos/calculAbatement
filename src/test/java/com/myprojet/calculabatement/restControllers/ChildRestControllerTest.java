@@ -64,12 +64,12 @@ class ChildRestControllerTest {
                 Arrays.asList(
                         new Monthly(1, Month.JANVIER, "2021", 500D, 20, 20, 10, 0, 1),
                         new Monthly(2, Month.FEVRIER, "2021", 500D, 20, 20, 10, 0, 1),
-                        new Monthly(3, Month.MARS, "2021", 500D, 20, 20, 10, 0, 2)
+                        new Monthly(3, Month.MARS, "2021", 500D, 20, 20, 10, 0, 1)
                 ));
     }
 
     @Test
-    void getAllChildrenTest_theReturnAnIterableOfChild() throws Exception {
+    void getAllChildrenTest_theReturnAnIterableOfChildOrderByDateAddedDesc() throws Exception {
         //GIVEN
         List<Child> children = Arrays.asList(
                 new Child(3, "Charton", "Nathan", "14/05/2021", "24/08/2021", LocalDateTime.now(), "http://image.jpeg", "christine@email.fr"),
@@ -112,19 +112,19 @@ class ChildRestControllerTest {
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof ChildNotFoundException))
                 .andExpect(result -> assertEquals("Child not found!",
                         result.getResolvedException().getMessage()))
-                .andExpect(jsonPath("$.message", is("Child not found, please try again!")))
+                .andExpect(jsonPath("$.message", is("Child not found!")))
                 .andDo(print());
     }
 
     @Test
-    void getAnnualTaxableSalaryByChildTest_whenChildHadMonthliesSaved_thenReturnResponseEntityWithTheResult() throws Exception {
+    void getAnnualTaxableSalaryByChildTest_whenChildHasMonthliesSaved_thenReturnResponseEntityWithTheResult() throws Exception {
         //GIVEN
         //WHEN
         when(childServiceMock.getChildById(anyInt())).thenReturn(childTest);
-        when(totalAnnualTaxReliefsServiceMock.getTotalAnnualReportableAmountsByChild(
-                any(Child.class), anyString())).thenReturn(637.50);
+        when(taxableSalaryServiceMock.getSumTaxableSalaryByChildAndByYear(
+                anyString(), anyInt())).thenReturn(637.5);
         //THEN
-        mockMvcChild.perform(MockMvcRequestBuilders.get("/child/reportableamounts?childId=15&year=2021"))
+        mockMvcChild.perform(MockMvcRequestBuilders.get("/child/taxablesalary?childId=15&year=2021"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", is(637.5)))
                 .andDo(print());
@@ -136,7 +136,7 @@ class ChildRestControllerTest {
         //WHEN
         when(childServiceMock.getChildById(anyInt())).thenReturn(childTest);
         when(totalAnnualTaxReliefsServiceMock.getTotalAnnualReportableAmountsByChild(
-                any(Child.class), anyString())).thenReturn(637.50);
+                any(Child.class), anyString())).thenReturn(637.5);
         //THEN
         mockMvcChild.perform(MockMvcRequestBuilders.get("/child/reportableamounts?childId=15&year=2021"))
                 .andExpect(status().isOk())
@@ -160,7 +160,7 @@ class ChildRestControllerTest {
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof MonthlyNotFoundException))
                 .andExpect(result -> assertEquals("Monthly not found!",
                         result.getResolvedException().getMessage()))
-                .andExpect(jsonPath("$.message", is("Monthly not found, please try again!")))
+                .andExpect(jsonPath("$.message", is("Monthly not found!")))
                 .andDo(print());
     }
 
@@ -187,12 +187,12 @@ class ChildRestControllerTest {
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof MonthlyNotFoundException))
                 .andExpect(result -> assertEquals("Monthly not found!",
                         result.getResolvedException().getMessage()))
-                .andExpect(jsonPath("$.message", is("Monthly not found, please try again!")))
+                .andExpect(jsonPath("$.message", is("Monthly not found!")))
                 .andDo(print());
     }
 
     @Test
-    void addChildTest_whenChildIsNotExistsInDB_thenReturnChildAdded() throws Exception {
+    void addChildTest_whenChildNotExistsInDB_thenReturnChildAdded() throws Exception {
         //GIVEN
         //WHEN
         when(childServiceMock.addChild(any(Child.class))).thenReturn(childTest);
@@ -221,12 +221,12 @@ class ChildRestControllerTest {
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof ChildAlreadyExistException))
                 .andExpect(result -> assertEquals("Child already exists, unable to add!",
                         result.getResolvedException().getMessage()))
-                .andExpect(jsonPath("$.message", is("The child that we try to save already exist, please process to an update!")))
+                .andExpect(jsonPath("$.message", is("Child already exists, unable to add!")))
                 .andDo(print());
     }
 
     @Test
-    void updateChildTest_whenChildExists_thenReturnChildUpdated() throws Exception {
+    void updateChildTest_whenChildToUpdateIsFound_thenReturnChildUpdated() throws Exception {
         //GIVEN
         Child childTestUpdated = new Child(
                 15, "LastnameUpdated", "FirstnameUpdated", "12/01/2020", "02/05/2020", "http://image.jpeg", "christine@email.fr");
@@ -235,7 +235,7 @@ class ChildRestControllerTest {
         //THEN
         mockMvcChild.perform(MockMvcRequestBuilders.put("/child/update")
                         .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)
-                        .content(ConvertObjectToJsonString.asJsonString(childTest)))
+                        .content(ConvertObjectToJsonString.asJsonString(childTestUpdated)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.firstname", is("FirstnameUpdated")))
                 .andExpect(jsonPath("$.lastname", is("LastnameUpdated")))
@@ -255,7 +255,33 @@ class ChildRestControllerTest {
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof ChildNotFoundException))
                 .andExpect(result -> assertEquals("Child not found, unable to update!",
                         result.getResolvedException().getMessage()))
-                .andExpect(jsonPath("$.message", is("Child not found, please try again!")))
+                .andExpect(jsonPath("$.message", is("Child not found, unable to update!")))
+                .andDo(print());
+    }
+
+    @Test
+    void updateChildTest_whenChildExistsByFirstnameAndLastnameAndBirthdate_thenReturnErrorMessageAndStatus404() throws Exception {
+        //GIVEN
+        Child childFirstnameAndLastnameAndBirthDateAlreadyExist = new Child(
+                15, "Sanchez", "Lea", "12/01/2020", "02/05/2019", "http://image.jpeg", "christine@email.fr");
+        //WHEN
+        when(childServiceMock.updateChild(any(Child.class))).thenThrow(new ChildAlreadyExistException(
+                "Child with firstname: " + childFirstnameAndLastnameAndBirthDateAlreadyExist.getFirstname()
+                + " and lastname: " + childFirstnameAndLastnameAndBirthDateAlreadyExist.getLastname() +
+                        " already exists, unable to update!"));
+        //THEN
+        mockMvcChild.perform(MockMvcRequestBuilders.put("/child/update")
+                        .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)
+                        .content(ConvertObjectToJsonString.asJsonString(childFirstnameAndLastnameAndBirthDateAlreadyExist)))
+                .andExpect(status().isBadRequest())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof ChildAlreadyExistException))
+                .andExpect(result -> assertEquals( "Child with firstname: " + childFirstnameAndLastnameAndBirthDateAlreadyExist.getFirstname()
+                                + " and lastname: " + childFirstnameAndLastnameAndBirthDateAlreadyExist.getLastname() +
+                                " already exists, unable to update!",
+                        result.getResolvedException().getMessage()))
+                .andExpect(jsonPath("$.message", is( "Child with firstname: " + childFirstnameAndLastnameAndBirthDateAlreadyExist.getFirstname()
+                        + " and lastname: " + childFirstnameAndLastnameAndBirthDateAlreadyExist.getLastname() +
+                        " already exists, unable to update!")))
                 .andDo(print());
     }
 
@@ -267,7 +293,6 @@ class ChildRestControllerTest {
         //THEN
         mockMvcChild.perform(MockMvcRequestBuilders.delete("/child/delete/15"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", is("L'enfant a été supprimé!")))
                 .andDo(print());
     }
 }
