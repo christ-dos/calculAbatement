@@ -17,7 +17,7 @@ public class BeansConfiguration {
         return webClientBuilder
                 .clone()
                 .baseUrl(baseApiUrl)
-                .defaultHeader("Authorization", "Bearer 6bc53e08-2e61-3693-b166-19a02350b0c4")
+                .defaultHeader("Authorization", "Bearer a72981eb-1d7a-3d7e-9e21-ef554dbf6f35")
                 .build();
     }
 
